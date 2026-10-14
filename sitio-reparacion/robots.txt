@@ -1,0 +1,11 @@
+# TapaTech Tapachula — robots.txt
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /admin
+Disallow: /api/
+Disallow: /datos/
+Disallow: /tools/
+
+# ⚠️ Cambia reparaciondecelulares.vercel.app por tu dominio real al desplegar
+Sitemap: https://reparaciondecelulares.vercel.app/sitemap.xml

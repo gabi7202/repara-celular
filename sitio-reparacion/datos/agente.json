@@ -1,0 +1,107 @@
+{
+  "_comentario": "Configuración del agente de voz. Todo lo editable sin tocar código: nombre, voz, modelos, motores y límites. Las claves de API NUNCA van aquí: van en el servidor (ADMIN/GROQ_API_KEY en env).",
+
+  "asistente": {
+    "nombre": "Lupita",
+    "perfilVoz": "Mujer mexicana de 45 a 55 años, tono medio-agudo (nunca grave), carácter simpático y alegre, ritmo natural con pausas claras",
+    "idioma": "es-MX",
+    "saludo": "¡Hola! Soy Lupita, del taller TapaTech en Tapachula. ¿Qué le pasó a tu equipo?",
+    "despedida": "¡Gracias por llamar a TapaTech! Que tengas bonito día.",
+    "respuestaSinAudio": "No pude hablar en voz alta, pero aquí te dejo la respuesta escrita."
+  },
+
+  "llm": {
+    "proveedor": "groq",
+    "modelo": "llama-3.3-70b-versatile",
+    "modeloRapido": "llama-3.1-8b-instant",
+    "temperature": 0.45,
+    "maxTokens": 260,
+    "topP": 0.9,
+    "promptUrl": "datos/prompt-agente.md",
+    "incluirFewShot": true,
+    "historialMaximo": 12,
+    "endpoint": "/api/chat"
+  },
+
+  "stt": {
+    "motorPreferido": "auto",
+    "_motores": "auto = Web Speech API del navegador (gratis, tiempo real) y si no existe, grabación + Groq Whisper",
+    "modeloWhisper": "whisper-large-v3-turbo",
+    "endpoint": "/api/stt",
+    "idioma": "es-MX",
+    "silencioMs": 900,
+    "grabacionMaximaSeg": 25,
+    "umbralVolumen": 0.012,
+    "echoCancellation": true,
+    "noiseSuppression": true
+  },
+
+  "tts": {
+    "ordenMotores": ["webhook", "groq", "navegador"],
+    "_ordenMotores": "Prueba el webhook gratuito (Edge neuronal es-MX), luego PlayAI vía Groq y al final la voz del navegador. Cambia el orden si quieres forzar uno.",
+    "webhook": {
+      "url": "",
+      "_url": "Pega aquí la URL de tu webhook TTS gratuito (tools/tts-edge.py lo levanta en tu servidor). Recibe POST {text, voice, rate, pitch, volume} y devuelve audio.",
+      "formato": "mp3",
+      "timeoutMs": 9000
+    },
+    "groq": {
+      "modelo": "playai-tts",
+      "voz": "Jennifer",
+      "_vocesAlternativas": ["Deedee", "Jennifer", "Wendy", "Judy", "Eleanor"],
+      "estilo": "Cheerful",
+      "velocidad": 1.0,
+      "endpoint": "/api/tts"
+    },
+    "navegador": {
+      "preferirVoces": ["Dalia", "es-MX", "es_MX", "Paulina", "Sabina", "Ximena", "Esmeralda", "Monica", "Helena", "Laura", "es-US", "Google español de México"],
+      "evitarVoces": ["Jorge", "Raul", "Diego", "Miguel", "Carlos"],
+      "_evitarVoces": "Se evitan voces masculinas graves para respetar el perfil pedido",
+      "velocidad": 1.0,
+      "tono": 1.06
+    },
+    "vozEdge": "es-MX-DaliaNeural",
+    "_vozEdge": "Verificado con edge-tts: las ÚNICAS voces es-MX son es-MX-DaliaNeural (mujer adulta, cálida y alegre — coincide exacto con el perfil pedido) y es-MX-JorgeNeural (hombre). Si quieres otro acento en español: es-AR-ElenaNeural, es-CO-SalomeNeural, es-ES-PilarNeural, es-US-PalomaNeural. Cambia también tts.navegador.preferirVoces.",
+    "ratePorDefecto": "+2%",
+    "pitchPorDefecto": "+4Hz",
+    "volumePorDefecto": "100"
+  },
+
+  "prosodia": {
+    "pausaCortaMs": 200,
+    "pausaMediaMs": 500,
+    "pausaLargaMs": 900,
+    "rateLento": 0.85,
+    "rateRapido": 1.12,
+    "pitchSubir": 1.1,
+    "pitchBajar": 0.92,
+    "presets": {
+      "alegre":   { "rate": 1.06, "pitch": 1.1,  "volume": 1.0 },
+      "serio":    { "rate": 0.94, "pitch": 0.94, "volume": 0.95 },
+      "empatico": { "rate": 0.88, "pitch": 0.98, "volume": 0.9 }
+    }
+  },
+
+  "conversacion": {
+    "manosLibres": true,
+    "_manosLibres": "true = el micrófono se reabre solo cuando Lupita termina de hablar (con interrupción permitida)",
+    "interrumpir": true,
+    "autoEscucharTrasMs": 450,
+    "maxTurnosSinAccion": 8,
+    "recordarSilencio": 1,
+    "notificarSiPestanaOculta": true,
+    "guardarTranscripcion": true
+  },
+
+  "escalado": {
+    "whatsapp": "529622889585",
+    "telefono": "+529622889585",
+    "motivos": ["reclamo de garantía", "equipo con reporte", "desbloqueo de cuenta", "cliente molesto", "fuera de horario", "no entiende el audio", "solicita humano"]
+  },
+
+  "permisos": {
+    "explicacionAntesDePedir": "Para hablar contigo necesitamos usar el micrófono de este dispositivo. El audio se transcribe y se envía al asistente; no se guarda en el sitio.",
+    "negado": "Sin permiso de micrófono no puedo escucharte, pero puedes escribirnos por WhatsApp o usar el cotizador.",
+    "avisoGrabacion": true
+  }
+}
