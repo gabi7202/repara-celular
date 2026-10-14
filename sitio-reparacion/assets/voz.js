@@ -138,8 +138,8 @@ function catalogoCompacto() {
       var t = P[s.id]; if (!t) return;
       var marcas = Object.keys(t).map(function (mk) {
         var v = t[mk];
-        if (v && v.incell) return mk + ' economica ' + v.incell[0] + '-' + v.incell[1] + ' premium ' + v.premium[0] + '-' + v.premium[1];
-        if (Array.isArray(v)) return mk + ' ' + v[0] + '-' + v[1];
+        if (v && v.incell) return mk + ' economica desde ' + v.incell[0] + ' premium desde ' + v.premium[0];
+        if (Array.isArray(v)) return v[0] === 0 ? '' : mk + ' desde ' + v[0];
         return '';
       }).filter(Boolean);
       lineas.push(dev + '/' + s.id + ' (' + s.nombre + ', ' + s.tiempo + ', garantia ' + (s.garantia || 0) + ' dias): ' + marcas.join(' | '));
@@ -177,7 +177,7 @@ function construirContexto() {
   if (ultimoFolio) partes.push('- Folio de la cotización que el usuario tiene en pantalla: ' + ultimoFolio);
   var dom = $('#vozLog');
   if (dom && dom.dataset.turnos) partes.push('- Turnos de esta conversación: ' + dom.dataset.turnos);
-  partes.push('- CATALOGO DE PRECIOS (MXN, pieza + mano de obra incluidos):');
+  partes.push('- CATALOGO DE PRECIOS (MXN, aproximados "desde", pieza + mano de obra incluidos). REGLA: al dar cualquier precio di SIEMPRE "aproximadamente desde X pesos, depende de tu modelo" y agrega "siempre te damos la mejor calidad al mejor precio". Nunca des un rango alto ni una cifra única como precio final. En iPhone ofrece la opcion de pantalla SIN mensaje de pieza cambiada (desde 2000). Las tapas traseras solo existen para iPhone (desde 1000); si el cliente tiene Android no las ofrezcas.');
   partes.push(catalogoCompacto());
   return partes.join('\n');
 }
@@ -807,7 +807,7 @@ function pintarViz(rms) {
 function notificar(titulo, cuerpo) {
   if (!(CFG.conversacion && CFG.conversacion.notificarSiPestanaOculta)) return;
   if (!D.hidden || !W.Notification || Notification.permission !== 'granted') return;
-  try { new Notification(titulo, { body: String(cuerpo).slice(0, 180), tag: 'lupita', silent: true }); } catch (e) {}
+  try { new Notification(titulo, { body: String(cuerpo).slice(0, 180), tag: 'lupita', icon: '/assets/lupita-mascota.svg', badge: '/assets/icon-192.png', silent: true }); } catch (e) {}
 }
 function micActivo(on) {
   var m = $('#vozMic'); if (!m) return;

@@ -24,6 +24,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
+const crypto = require('crypto');
 const { URL } = require('url');
 
 /* Carga .env sin dependencias (dotenv-style): claves → process.env.
@@ -54,6 +55,11 @@ const WEBHOOK = process.env.LEAD_WEBHOOK || '';
 const CORS = (process.env.CORS_ORIGINS || '').split(',').filter(Boolean);
 const LEADS = path.join(DATA, 'leads.jsonl');
 const EVENTOS = path.join(DATA, 'eventos.jsonl');
+const VISITAS = path.join(DATA, 'visitas.jsonl');
+/* huella anónima IP+UA — misma fórmula que api/_lib.js en Vercel */
+const LUPITA_FREQ = (process.env.LUPITA_FREQ || 'dia').toLowerCase();
+const MS_PERIOD = LUPITA_FREQ === '3dias' ? 3 * 864e5 : 864e5;
+function huella(ipAddr, ua){ return crypto.createHash('sha256').update((process.env.LUPITA_SAL || 'tapatech-lupita-v1') + '|' + ipAddr + '|' + String(ua||'').slice(0,120)).digest('hex').slice(0,32); }
 
 const MIME = {
   '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8', '.js':'text/javascript; charset=utf-8',
@@ -99,7 +105,7 @@ function normalizar(lead, ip){
   out.nombre = String(out.nombre || '').slice(0, 120);
   out.telefono = String(out.telefono || '').replace(/\D/g,'').slice(0, 15);
   out.email = String(out.email || '').slice(0, 160);
-  out.ip = ip; out.created_at = out.created_at || new Date().toISOString();
+  out.ip = ip; out.ip_hash = huella(ip, lead && lead.ua); out.created_at = out.created_at || new Date().toISOString();
   out.updated_at = new Date().toISOString();
   if (typeof out.utm === 'object' && out.utm) out.utm = JSON.stringify(out.utm).slice(0, 500);
   return out;
@@ -217,6 +223,47 @@ const server = http.createServer(async (req, res) => {
     let body; try { body = await leerBody(req, 8 * 1024); } catch(e){ return json(res, 400, { ok:false }, req); }
     anexar(EVENTOS, { ev: String(body.event || body.ev || '').slice(0, 60), d: body.data || body.payload || {}, ts: new Date().toISOString(), ip });
     return json(res, 201, { ok:true }, req);
+  }
+
+  /* ── Lupita · remarketing: /api/visitas (misma semántica que Vercel) ── */
+  if (u.pathname === '/api/visitas'){
+    if (req.method === 'GET'){
+      if (!auth(q)) return json(res, 401, { ok:false, error:'pin_invalido' }, req);
+      const rows = leer(VISITAS);
+      return json(res, 200, { ok:true, total: rows.length, visitas: rows.slice(-400).reverse() }, req);
+    }
+    if (req.method !== 'POST') return json(res, 405, { ok:false }, req);
+    if (!permitir(ip, 120)) return json(res, 429, { ok:false }, req);
+    let body; try { body = await leerBody(req, 8 * 1024); } catch(e){ return json(res, 400, { ok:false }, req); }
+    const accion = String(body.accion || 'visita');
+    const rows = leer(VISITAS);
+    const now = Date.now();
+    const h = body.hash ? String(body.hash).slice(0,64) : huella(ip, req.headers['user-agent']);
+    if (accion === 'avisado'){
+      const v = rows.find(r => r.h === h);
+      if (v){ v.ultimo_aviso = now; v.avisos = (v.avisos||0)+1; v.contexto_aviso = String(body.contexto||'').slice(0,200); escribir(VISITAS, rows); }
+      return json(res, 201, { ok:true }, req);
+    }
+    if (accion === 'clic_notif'){
+      const v = rows.find(r => r.h === h);
+      if (v){ v.retornos = (v.retornos||0)+1; v.ultimo_retorno = new Date().toISOString(); escribir(VISITAS, rows); }
+      return json(res, 201, { ok:true }, req);
+    }
+    let v = rows.find(r => r.h === h);
+    const esNueva = !v;
+    if (esNueva){ v = { h, vistas: 0, created_at:new Date().toISOString() }; rows.push(v); }
+    v.vistas = (v.vistas||0)+1; v.ultima = new Date().toISOString();
+    if (body.datos && typeof body.datos === 'object'){
+      v.ctx = { pagina:String(body.datos.pagina||'').slice(0,120), falla:String(body.datos.falla||'').slice(0,90), origen:String(body.datos.origen||'').slice(0,60) };
+    }
+    const leads = leer(LEADS);
+    let convirtio = false;
+    try { convirtio = leads.some(l => l.ip_hash === h); } catch(e){}
+    if (convirtio) v.convirtio = true;
+    const sinAvisoReciente = !v.ultimo_aviso || (now - v.ultimo_aviso) >= MS_PERIOD;
+    const notificar = !convirtio && !esNueva && v.vistas >= 2 && sinAvisoReciente && (v.avisos||0) < 5;
+    escribir(VISITAS, rows.length > 2000 ? rows.slice(-2000) : rows);
+    return json(res, 201, { ok:true, nueva: esNueva, notificar, freq: LUPITA_FREQ }, req);
   }
 
   /* ── IA: Groq (LLM + Whisper) y TTS neuronal ─────────────────────────── */
