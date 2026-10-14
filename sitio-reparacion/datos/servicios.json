@@ -1,5 +1,5 @@
 {
-  "_comentario": "FUENTE DE VERDAD para el sitio y para el futuro agente de voz IA. Edita aquí precios y horarios y luego refleja los cambios en el bloque CONFIG/CATALOGO de index.html (o viceversa). Formato: [min, max] en MXN, pieza + mano de obra.",
+  "_comentario": "FUENTE DE VERDAD para el sitio y el agente de voz IA. Precios en MXN formato [min, max]; el sitio muestra SOLO el min como \"aprox. desde\". Edita aquí y refleja en CATALOGO de index.html (o viceversa).",
   "negocio": {
     "nombre": "TapaTech Tapachula",
     "telefono": "+529622889585",
@@ -76,19 +76,21 @@
   "servicios": {
     "celular": {
       "pantalla": {
-        "nombre": "Cambio de pantalla / display",
+        "nombre": "Pantalla / display",
         "tiempo": "40–60 min",
         "garantia": 30,
         "calidades": {
           "incell": [
-            600,
-            1700
+            500,
+            1300
           ],
           "premium": [
-            1500,
-            5200
+            1200,
+            3800
           ]
-        }
+        },
+        "nota_android": "Android: pantallas desde $500 MXN; OLED curvas desde $1,200 MXN, según modelo. Siempre la mejor calidad y el mejor precio.",
+        "nota_iphone": "iPhone: pantallas desde $1,000 MXN; sin mensaje de pieza cambiada desde $2,000 MXN, según modelo. Siempre la mejor calidad y el mejor precio."
       },
       "bateria": {
         "nombre": "Cambio de batería",
@@ -97,7 +99,19 @@
         "precio": [
           400,
           1100
-        ]
+        ],
+        "nota": "Baterías Android desde $400 MXN; baterías iPhone desde $800 MXN, según modelo."
+      },
+      "tapa": {
+        "nombre": "Tapa trasera (solo iPhone)",
+        "soloApple": true,
+        "tiempo": "40–60 min",
+        "garantia": 30,
+        "precio": [
+          1000,
+          2200
+        ],
+        "nota": "iPhone: tapas desde $1,000 MXN según modelo."
       },
       "puerto": {
         "nombre": "Puerto / pin de carga",
@@ -346,5 +360,18 @@
       "Nintendo Switch OLED",
       "Steam Deck"
     ]
+  },
+  "politicas_precios": {
+    "modelo": "precios_desde",
+    "regla": "Nunca publicar rangos altos ni cifras únicas como precio final. Mostrar \"desde $X MXN, depende de tu modelo — siempre la mejor calidad y el mejor precio\". Precio cerrado solo tras diagnóstico gratuito.",
+    "minimos": {
+      "pantalla_android": 500,
+      "pantalla_oled_curva_android": 1200,
+      "pantalla_iphone": 1000,
+      "pantalla_iphone_sin_mensaje": 2000,
+      "tapa_iphone": 1000,
+      "bateria_android": 400,
+      "bateria_iphone": 800
+    }
   }
 }

@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0E7490" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#0891B2">
+<!-- Barra del navegador: en Android/Chrome el color lo maneja ESTE meta (no el sitio).
+     1º meta = valor por defecto; 2º = modo claro; 3º = se aplica durante toda la sesión vía JS. -->
+<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#FFF7F4">
+<meta id="tcLupita" name="theme-color" content="#FA8072">
 
 <!-- ══════════════ SEO PRINCIPAL (cambia textos y dominio aquí) ══════════════ -->
 <title>Reparación de Celulares en Tapachula | Cambio de Pantalla en 40 min · TapaTech</title>
@@ -99,8 +102,8 @@
         "https://www.google.com/maps/search/reparacion+de+celulares/@14.8934489,-92.2596839,15z?entry=ttu"
       ],
       "makesOffer": [
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Cambio de pantalla de celular en Tapachula", "serviceType": "Reparación de celulares" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": 600, "maxPrice": 5200, "priceCurrency": "MXN" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Cambio de batería de celular", "serviceType": "Reparación de celulares" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": 400, "maxPrice": 1100, "priceCurrency": "MXN" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Cambio de pantalla de celular en Tapachula", "serviceType": "Reparación de celulares" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": 500, "priceCurrency": "MXN", "eligibleQuantityDescription": "Pantallas Android desde $500 MXN y OLED curvas desde $1,200; iPhone desde $1,000 y sin mensaje de pieza cambiada desde $2,000, según modelo." } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Cambio de batería de celular", "serviceType": "Reparación de celulares" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": 400, "priceCurrency": "MXN", "eligibleQuantityDescription": "Baterías Android desde $400 MXN y iPhone desde $800 MXN, según modelo." } },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Reparación de laptops: formateo, SSD, RAM, pantalla", "serviceType": "Reparación de laptops" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": 400, "maxPrice": 3800, "priceCurrency": "MXN" } },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Reparación de consolas Xbox, PlayStation y Nintendo Switch", "serviceType": "Reparación de consolas" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": 450, "maxPrice": 2500, "priceCurrency": "MXN" } },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Diagnóstico de equipo", "description": "Diagnóstico gratuito, se descuenta del total si autorizas la reparación." }, "price": 0, "priceCurrency": "MXN" },
@@ -134,7 +137,7 @@
       "@type": "FAQPage",
       "@id": "https://reparaciondecelulares.vercel.app/#faq",
       "mainEntity": [
-        { "@type": "Question", "name": "¿Cuánto cuesta cambiar la pantalla de un celular en Tapachula?", "acceptedAnswer": { "@type": "Answer", "text": "Depende del modelo y de la calidad de la pantalla. En TapaTech una pantalla económica tipo Incell va de $600 a $1,700 MXN y una pantalla premium OLED/Original de $1,500 a $5,200 MXN, ya con pieza y mano de obra incluidas. El diagnóstico es gratuito y te damos el precio exacto antes de tocar tu equipo." } },
+        { "@type": "Question", "name": "¿Cuánto cuesta cambiar la pantalla de un celular en Tapachula?", "acceptedAnswer": { "@type": "Answer", "text": "Depende del modelo y la calidad. En TapaTech las pantallas para celulares Android empiezan desde $500 MXN y las pantallas OLED curvas desde $1,200 MXN; para iPhone las pantallas parten desde $1,000 MXN y las que no muestran el mensaje de pieza cambiada desde $2,000 MXN. Siempre damos la mejor calidad al mejor precio, con pieza y mano de obra incluidas. El diagnóstico es gratuito y el precio exacto se confirma antes de tocar tu equipo." } },
         { "@type": "Question", "name": "¿Cuánto tarda una reparación de pantalla?", "acceptedAnswer": { "@type": "Answer", "text": "El 80% de los cambios de pantalla se entregan en 40 a 60 minutos mientras esperas, siempre que haya pieza en stock para tu modelo. Baterías y puertos de carga suelen quedar el mismo día. Reparaciones de placa, equipos mojados o consolas toman de 24 a 72 horas." } },
         { "@type": "Question", "name": "¿Tienen garantía las reparaciones?", "acceptedAnswer": { "@type": "Answer", "text": "Sí. Toda reparación incluye garantía escrita de 30 días sobre la pieza instalada y la mano de obra. Si la falla regresa por defecto de la pieza o del trabajo, se repone sin costo. La garantía no cubre golpes nuevos, humedad posterior ni pantallas estrelladas por caída." } },
         { "@type": "Question", "name": "¿Necesitan mi contraseña o patrón para reparar el celular?", "acceptedAnswer": { "@type": "Answer", "text": "No. Para cambio de pantalla, batería, puerto de carga o cámara no necesitamos tu contraseña: probamos el táctil, el brillo, los sensores y las cámaras desde la pantalla de bloqueo o el modo de emergencia. Tu información privada nunca se revisa. Solo pedimos acceso cuando tú lo autorizas por escrito para recuperación de datos o desbloqueo de cuenta." } },
@@ -157,18 +160,23 @@
 *{margin:0}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:84px}
 :root{
-  --ink:#0B1220; --ink-2:#101B33; --ink-3:#16264A;
-  --paper:#FFFFFF; --paper-2:#F5F8FD; --paper-3:#EEF1F6;
-  --txt:#0F172A; --txt-2:#334155; --txt-3:#5B6B85;
-  /* Paleta institucional CloudFix (cian/teal) */
-  --acc:#0891B2; --on-acc:#FFFFFF; --acc-ink:#0E7490; --acc-soft:#ECFEFF; --acc-pale:#A5F3FC;
-  --ai:#7C3AED; --ai-ink:#6D28D9; --ai-soft:#F3EEFF;
-  /* Lupita (mascota): color salmón — SOLO para la mascota, no afecta el resto del sitio */
+  /* ─── IDENTIDAD DE COLOR v4 (única paleta autorizada) ───────────────
+     Fondo: degradado blanco(70%) → salmón suave(30%) en TODO el sitio.
+     Texto: negro puro / negro claro / gris / blanco.
+     Acento CTA: azul cielo con texto blanco. Nada más. */
+  --ink:#111111; --ink-2:#1B1B1B; --ink-3:#262626;
+  --paper:#FFFFFF; --paper-2:#FDF5F2; --paper-3:#FBEEE8;
+  --salmon:#FFB19E; /* salmón suave del degradado de fondo */
+  --txt:#000000; --txt-2:#3A3A3A; --txt-3:#6E6E6E;
+  /* Acento = azul cielo (CTAs y enlaces) */
+  --acc:#38B6F0; --on-acc:#FFFFFF; --acc-ink:#1583BE; --acc-soft:#E9F6FD; --acc-pale:#BCE4FA;
+  --ai:#38B6F0; --ai-ink:#1583BE; --ai-soft:#E9F6FD;
+  /* Lupita (mascota): salmón — SOLO la mascota */
   --lupita:#FA8072; --lupita-ink:#C1493C; --lupita-soft:#FFF1EE; --lupita-deep:#7A2B22;
-  --ok:#16A34A; --ok-soft:#DCFCE7;
-  --warn:#FFB020; --warn-soft:#FFF4DF;
-  --danger:#FF5A5F;
-  --line:#E6EAF0; --line-dark:#123B47;
+  --ok:#111111; --ok-soft:#EFEFEF;
+  --warn:#3A3A3A; --warn-soft:#EFEFEF;
+  --danger:#C1493C;
+  --line:#EBDDD6; --line-dark:#E4CFC5;
   --r-s:10px; --r-m:16px; --r-l:24px; --r-xl:32px;
   --sh-s:0 1px 2px rgba(11,15,18,.06),0 2px 8px rgba(11,15,18,.05);
   --sh-m:0 4px 12px rgba(11,15,18,.08),0 12px 32px rgba(11,15,18,.07);
@@ -178,19 +186,15 @@ html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:84p
   --ff-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
   --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
 }
-html[data-theme="dark"]{
-  --paper:#0B1220; --paper-2:#101B33; --paper-3:#16264A;
-  --txt:#EAF0FB; --txt-2:#B4C0DA; --txt-3:#8190A8;
-  --acc:#22D3EE; --on-acc:#062A33; --acc-ink:#A5F3FC; --acc-soft:#0E3A46; --acc-pale:#67E8F9;
-  --ai:#A78BFA; --ai-ink:#C4B5FD; --ai-soft:#1E1636;
-  --lupita:#FF9E91; --lupita-ink:#FFC9BF; --lupita-soft:#3A1D1A; --lupita-deep:#FFE3DD;
-  --ok:#4ADE80; --ok-soft:#0E2C1C;
-  --warn:#FFC24D; --warn-soft:#2A2113;
-  --line:#22304E; --line-dark:#22304E;
-  --sh-s:0 1px 2px rgba(0,0,0,.4); --sh-m:0 6px 20px rgba(0,0,0,.45);
-}
+/* Modo oscuro desactivado por decisión de marca: el sitio SIEMPRE usa
+   fondo degradado blanco→salmón y texto negro. Se conserva la regla vacía
+   para que cualquier data-theme heredado no altere nada. */
+html[data-theme="dark"]{}
 body{
-  font-family:var(--ff); background:var(--paper); color:var(--txt);
+  font-family:var(--ff); color:var(--txt);
+  /* Fondo principal: 70% blanco → 30% salmón suave (equilibrio pedido) */
+  background:linear-gradient(180deg,#FFFFFF 0%,#FFF7F4 45%,#FFE9E1 100%);
+  background-attachment:fixed;
   font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
   overflow-x:hidden; padding-bottom:calc(64px + var(--sab));
 }
@@ -205,16 +209,17 @@ h3{font-size:clamp(1.1rem,2.6vw,1.3rem);letter-spacing:-.01em}
 p{text-wrap:pretty}
 .wrap{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:20px}
 .sec{padding-block:clamp(52px,8vw,96px)}
-.sec--tint{background:var(--paper-2)}
-.sec--dark{background:var(--ink);color:#EAF0FB}
-.sec--dark h2,.sec--dark h3{color:#fff}
+.sec--tint{background:transparent} /* el degradado del body es el único fondo */
+/* Secciones que antes eran negras: ahora cristal sobre el degradado salmón */
+.sec--dark{background:rgba(255,255,255,.5);backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);color:var(--txt);border-block:1px solid var(--line)}
+.sec--dark h2,.sec--dark h3{color:#000}
 .skip{position:absolute;left:-9999px;top:0;background:var(--acc);color:var(--acc-ink);padding:12px 18px;z-index:999;border-radius:0 0 var(--r-s) 0;font-weight:700}
 .skip:focus{left:0}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px;border-radius:6px}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.72rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--acc-ink);background:var(--acc-soft);padding:7px 14px;border-radius:999px;margin-bottom:16px}
-.sec--dark .eyebrow{background:rgba(34,211,238,.16);color:#A5F3FC}
+.sec--dark .eyebrow{background:var(--acc-soft);color:var(--acc-ink)}
 .lead{color:var(--txt-2);font-size:clamp(1rem,2.2vw,1.14rem);max-width:62ch}
-.sec--dark .lead{color:#B4C0DA}
+.sec--dark .lead{color:var(--txt-2)}
 .acc{color:var(--acc)}
 .mono{font-family:var(--ff-mono);font-variant-numeric:tabular-nums}
 .hd-sec{max-width:70ch;margin-bottom:clamp(28px,4vw,44px)}
@@ -223,14 +228,15 @@ p{text-wrap:pretty}
 /* ── Botones ─────────────────────────────────────────────── */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 24px;border-radius:999px;font-weight:800;font-size:.95rem;text-decoration:none;border:2px solid transparent;cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,background .16s ease,color .16s ease;white-space:nowrap;letter-spacing:-.01em}
 .btn:active{transform:translateY(1px) scale(.99)}
-.btn--acc{background:var(--acc);color:var(--on-acc);box-shadow:0 6px 20px rgba(8,145,178,.32)}
-.btn--acc:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(8,145,178,.42)}
-.btn--wa{background:#25D366;color:#04240F;box-shadow:0 6px 20px rgba(37,211,102,.28)}
+.btn--acc{background:var(--acc);color:#FFFFFF;box-shadow:0 6px 20px rgba(56,182,240,.35)}
+.btn--acc:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(56,182,240,.45)}
+/* WhatsApp ya NO es verde: botón secundario negro con texto blanco */
+.btn--wa{background:var(--ink);color:#FFFFFF;box-shadow:0 6px 20px rgba(0,0,0,.22)}
 .btn--wa:hover{transform:translateY(-2px)}
-.btn--ghost{border-color:var(--line);color:var(--txt);background:transparent}
+.btn--ghost{border-color:var(--line);color:var(--txt);background:rgba(255,255,255,.6)}
 .btn--ghost:hover{border-color:var(--acc);color:var(--acc-ink);background:var(--acc-soft)}
-.sec--dark .btn--ghost{border-color:#2A3E66;color:#EAF0FB}
-.sec--dark .btn--ghost:hover{background:rgba(34,211,238,.12);border-color:#22D3EE;color:#A5F3FC}
+.sec--dark .btn--ghost{border-color:var(--line);color:var(--txt)}
+.sec--dark .btn--ghost:hover{background:var(--acc-soft);border-color:var(--acc);color:var(--acc-ink)}
 .btn--dark{background:var(--ink);color:#fff}
 .btn--dark:hover{transform:translateY(-2px);box-shadow:var(--sh-m)}
 .btn--sm{padding:10px 16px;font-size:.85rem}
@@ -239,17 +245,17 @@ p{text-wrap:pretty}
 .btn[disabled]{opacity:.45;pointer-events:none}
 .btn-row{display:flex;flex-wrap:wrap;gap:12px}
 
-/* ── Topbar con estado abierto/cerrado en vivo ───────────── */
-.topbar{background:var(--ink);color:#C7D2E8;font-size:.8rem;padding:9px 0;position:relative;z-index:60}
+/* ── Topbar con estado abierto/cerrado en vivo (negro, texto gris claro) ── */
+.topbar{background:var(--ink);color:#CFCFCF;font-size:.8rem;padding:9px 0;position:relative;z-index:60}
 .topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
 .topbar b{color:#fff;font-weight:700}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--ok);display:inline-block;box-shadow:0 0 0 0 rgba(8,145,178,.7);animation:pulse 2.4s infinite;flex:none}
-.dot--off{background:var(--warn);animation:none}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.55)}70%{box-shadow:0 0 0 9px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--acc);display:inline-block;box-shadow:0 0 0 0 rgba(56,182,240,.7);animation:pulse 2.4s infinite;flex:none}
+.dot--off{background:#FFFFFF;animation:none}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(56,182,240,.55)}70%{box-shadow:0 0 0 9px rgba(56,182,240,0)}100%{box-shadow:0 0 0 0 rgba(56,182,240,0)}}
 .status{display:inline-flex;align-items:center;gap:8px;font-weight:600}
 .topbar-links{display:flex;align-items:center;gap:16px}
-.topbar-links a{text-decoration:none;color:#C7D2E8;display:inline-flex;align-items:center;gap:6px}
-.topbar-links a:hover{color:var(--acc)}
+.topbar-links a{text-decoration:none;color:#CFCFCF;display:inline-flex;align-items:center;gap:6px}
+.topbar-links a:hover{color:#fff}
 @media(max-width:700px){.topbar-links .hide-s{display:none}}
 
 /* ── Header ──────────────────────────────────────────────── */
@@ -257,8 +263,7 @@ p{text-wrap:pretty}
 .hdr.is-stuck{box-shadow:var(--sh-s)}
 .hdr .wrap{display:flex;align-items:center;gap:18px;height:66px}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:900;letter-spacing:-.03em;font-size:1.16rem}
-.logo-mark{width:34px;height:34px;border-radius:9px;background:var(--ink);display:grid;place-items:center;flex:none;border:1px solid var(--line-dark);color:#60A5FA}
-html[data-theme="dark"] .logo-mark{background:var(--acc);border-color:var(--acc);color:#fff}
+.logo-mark{width:34px;height:34px;border-radius:9px;background:var(--acc);display:grid;place-items:center;flex:none;border:1px solid var(--acc);color:#fff}
 .ftr .logo-mark,.ftr-brand .logo-mark{background:var(--acc);border-color:var(--acc);color:#fff}
 .logo-mark svg{width:19px;height:19px}
 .logo small{display:block;font-size:.6rem;letter-spacing:.16em;font-weight:700;color:var(--txt-3);text-transform:uppercase;margin-top:-3px}
@@ -281,29 +286,30 @@ html[data-theme="dark"] .logo-mark{background:var(--acc);border-color:var(--acc)
 @media(max-width:420px){.hdr-cta .btn--ghost{display:none}}
 
 /* ── Hero ────────────────────────────────────────────────── */
-.hero{position:relative;background:linear-gradient(180deg,var(--ink) 0%,#0E1519 62%,var(--paper) 62%,var(--paper) 100%);color:#EAF0FB;overflow:hidden;padding-bottom:clamp(34px,5vw,60px)}
-.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(900px 420px at 78% 8%,rgba(8,145,178,.20),transparent 62%),radial-gradient(600px 380px at 6% 92%,rgba(255,176,32,.10),transparent 60%);pointer-events:none}
+/* ── Hero CRISTAL: panel translúcido blanco sobre el degradado salmón ── */
+.hero{position:relative;background:linear-gradient(165deg,rgba(255,255,255,.78) 0%,rgba(255,244,240,.66) 55%,rgba(255,231,222,.6) 100%);backdrop-filter:blur(14px) saturate(150%);-webkit-backdrop-filter:blur(14px) saturate(150%);color:var(--txt);overflow:hidden;padding-bottom:clamp(34px,5vw,60px);border-bottom:1px solid var(--line)}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(900px 420px at 78% 8%,rgba(56,182,240,.10),transparent 62%),radial-gradient(600px 380px at 6% 92%,rgba(250,128,114,.12),transparent 60%);pointer-events:none}
 .hero .wrap{position:relative;display:grid;grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr);gap:clamp(26px,4vw,54px);align-items:center;padding-block:clamp(38px,6vw,74px) clamp(20px,3vw,34px)}
-.hero h1{color:#fff}
-.hero h1 em{font-style:normal;color:#60A5FA;position:relative;white-space:nowrap}
-.hero h1 em::after{content:"";position:absolute;left:0;right:0;bottom:.06em;height:.09em;background:#60A5FA;opacity:.32;border-radius:2px}
-.hero-sub{color:#B4C0DA;font-size:clamp(1rem,2.3vw,1.16rem);margin-top:18px;max-width:56ch}
+.hero h1{color:#000}
+.hero h1 em{font-style:normal;color:var(--acc-ink);position:relative;white-space:nowrap}
+.hero h1 em::after{content:"";position:absolute;left:0;right:0;bottom:.06em;height:.09em;background:var(--acc);opacity:.4;border-radius:2px}
+.hero-sub{color:var(--txt-2);font-size:clamp(1rem,2.3vw,1.16rem);margin-top:18px;max-width:56ch}
 .hero-badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;padding:0;list-style:none}
-.hero-badges li{display:inline-flex;align-items:center;gap:7px;font-size:.79rem;font-weight:600;color:#D7E3F8;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);padding:7px 13px;border-radius:999px;backdrop-filter:blur(6px)}
-.hero-badges svg{width:14px;height:14px;color:#60A5FA;flex:none}
+.hero-badges li{display:inline-flex;align-items:center;gap:7px;font-size:.79rem;font-weight:600;color:var(--txt);background:rgba(255,255,255,.7);border:1px solid var(--line);padding:7px 13px;border-radius:999px;backdrop-filter:blur(6px)}
+.hero-badges svg{width:14px;height:14px;color:var(--acc-ink);flex:none}
 .hero-cta{margin-top:26px}
-.hero-note{margin-top:14px;font-size:.82rem;color:#8190A8;display:flex;align-items:center;gap:8px}
+.hero-note{margin-top:14px;font-size:.82rem;color:var(--txt-3);display:flex;align-items:center;gap:8px}
 .hero-media{position:relative}
-.hero-frame{position:relative;border-radius:var(--r-l);overflow:hidden;border:1px solid rgba(255,255,255,.14);box-shadow:var(--sh-l);background:#101A1F;aspect-ratio:14/9}
+.hero-frame{position:relative;border-radius:var(--r-l);overflow:hidden;border:1px solid rgba(255,255,255,.7);box-shadow:var(--sh-l);background:#fff;aspect-ratio:14/9}
 .hero-frame img{width:100%;height:100%;object-fit:cover}
-.chip{position:absolute;background:rgba(11,15,18,.86);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.16);color:#fff;border-radius:var(--r-m);padding:11px 14px;font-size:.78rem;font-weight:700;box-shadow:var(--sh-m)}
-.chip svg{width:17px;height:17px;color:#60A5FA;flex:none}
+.chip{position:absolute;background:rgba(17,17,17,.86);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.16);color:#fff;border-radius:var(--r-m);padding:11px 14px;font-size:.78rem;font-weight:700;box-shadow:var(--sh-m)}
+.chip svg{width:17px;height:17px;color:#38B6F0;flex:none}
 .chip-wrap{display:flex;align-items:center;gap:9px;width:100%;will-change:transform}
 .chip--tl{top:-14px;left:-10px}
 .chip--br{bottom:-14px;right:-6px}
-.chip small{display:block;font-weight:600;color:#8190A8;font-size:.68rem;letter-spacing:.02em}
+.chip small{display:block;font-weight:600;color:#6E6E6E;font-size:.68rem;letter-spacing:.02em}
 @media(max-width:900px){
-  .hero{background:linear-gradient(180deg,var(--ink) 0%,#0E1519 100%)}
+  .hero{background:linear-gradient(165deg,rgba(255,255,255,.8) 0%,rgba(255,238,231,.7) 100%)}
   .hero .wrap{grid-template-columns:1fr;padding-bottom:26px}
   .hero-media{order:2;margin-top:6px}
   .chip--tl{top:-12px;left:0}.chip--br{bottom:-12px;right:0}
@@ -327,23 +333,23 @@ html[data-theme="dark"] .logo-mark{background:var(--acc);border-color:var(--acc)
 @media(max-width:620px){.grid--2,.grid--3,.grid--4{grid-template-columns:1fr}}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-l);padding:22px;transition:transform .18s ease,box-shadow .18s ease,border-color .18s}
 .card:hover{transform:translateY(-3px);box-shadow:var(--sh-m);border-color:color-mix(in srgb,var(--acc) 45%,var(--line))}
-.sec--dark .card{background:rgba(255,255,255,.04);border-color:var(--line-dark)}
-.sec--dark .card:hover{background:rgba(255,255,255,.07)}
+.sec--dark .card{background:rgba(255,255,255,.72);border-color:var(--line)}
+.sec--dark .card:hover{background:#FFFFFF}
 .card h3{margin-bottom:8px}
 .card p{color:var(--txt-2);font-size:.92rem}
-.sec--dark .card p{color:#B4C0DA}
+.sec--dark .card p{color:#3A3A3A}
 .ico{width:44px;height:44px;border-radius:13px;background:var(--acc-soft);color:var(--acc-ink);display:grid;place-items:center;margin-bottom:14px;flex:none}
 .ico svg{width:22px;height:22px}
-.sec--dark .ico{background:rgba(34,211,238,.16);color:#60A5FA}
-.ico--warn{background:var(--warn-soft);color:#7A4B00}
+.sec--dark .ico{background:var(--acc-soft);color:var(--acc-ink)}
+.ico--warn{background:var(--warn-soft);color:#3A3A3A}
 .tag{display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:var(--paper-3);color:var(--txt-2)}
 .tag--acc{background:var(--acc-soft);color:var(--acc-ink)}
-.tag--warn{background:var(--warn-soft);color:#7A4B00}
+.tag--warn{background:var(--warn-soft);color:#3A3A3A}
 .price{font-family:var(--ff-mono);font-weight:800;letter-spacing:-.02em}
 .list{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:8px}
 .list li{position:relative;padding-left:24px;font-size:.9rem;color:var(--txt-2)}
 .list li::before{content:"";position:absolute;left:2px;top:.52em;width:12px;height:7px;border-left:2.4px solid var(--acc);border-bottom:2.4px solid var(--acc);transform:rotate(-45deg)}
-.sec--dark .list li{color:#B4C0DA}
+.sec--dark .list li{color:#3A3A3A}
 
 /* ── Síntomas (tarjetas clickeables que precargan el cotizador) ── */
 .sym{display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:var(--r-m);padding:16px;cursor:pointer;transition:.18s;text-decoration:none;color:inherit}
@@ -374,8 +380,8 @@ html[data-theme="dark"] .tab[aria-selected="true"]{background:var(--acc);color:v
 .cot{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-m)}
 .cot-head{background:var(--ink);color:#fff;padding:20px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .cot-head h3{color:#fff;font-size:1.12rem}
-.cot-head p{color:#8190A8;font-size:.84rem;margin:0}
-.cot-badge{margin-left:auto;background:rgba(8,145,178,.16);color:var(--acc);border:1px solid rgba(8,145,178,.3);padding:6px 12px;border-radius:999px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.cot-head p{color:#6E6E6E;font-size:.84rem;margin:0}
+.cot-badge{margin-left:auto;background:rgba(56,182,240,.16);color:var(--acc);border:1px solid rgba(56,182,240,.3);padding:6px 12px;border-radius:999px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
 .cot-body{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:0}
 .cot-form{padding:24px;border-right:1px solid var(--line)}
 .cot-out{padding:24px;background:var(--paper-2)}
@@ -411,10 +417,10 @@ textarea.ctl{resize:vertical;min-height:96px}
 .steps{counter-reset:s;display:grid;gap:18px}
 .step{position:relative;padding-left:58px;counter-increment:s}
 .step::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:0;width:42px;height:42px;border-radius:13px;background:var(--acc);color:var(--on-acc);font-weight:900;font-family:var(--ff-mono);display:grid;place-items:center;font-size:.92rem}
-.sec--dark .step::before{background:rgba(34,211,238,.18);color:#A5F3FC;border:1px solid rgba(34,211,238,.32)}
+.sec--dark .step::before{background:rgba(56,182,240,.18);color:#1583BE;border:1px solid rgba(56,182,240,.32)}
 .step h3{font-size:1.04rem;margin-bottom:5px}
 .step p{font-size:.9rem;color:var(--txt-2)}
-.sec--dark .step p{color:#B4C0DA}
+.sec--dark .step p{color:#3A3A3A}
 .step .mini{display:inline-block;margin-top:7px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--acc)}
 
 /* ── Tabla de precios ────────────────────────────────────── */
@@ -444,11 +450,11 @@ html[data-theme="dark"] td.num.free{color:var(--acc)}
 .pledge{display:flex;gap:14px;align-items:flex-start;padding:18px;border-radius:var(--r-m);background:rgba(255,255,255,.04);border:1px solid var(--line-dark)}
 .pledge svg{width:22px;height:22px;color:var(--acc);flex:none;margin-top:2px}
 .pledge b{display:block;font-size:.98rem;color:#fff;margin-bottom:4px}
-.pledge p{font-size:.87rem;color:#B4C0DA;margin:0}
+.pledge p{font-size:.87rem;color:#3A3A3A;margin:0}
 
 /* ── Reseñas ─────────────────────────────────────────────── */
 .rev{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-l);padding:22px;display:flex;flex-direction:column;gap:12px;height:100%}
-.rev-stars{display:flex;gap:2px;color:#FFB020}
+.rev-stars{display:flex;gap:2px;color:#111111}
 .rev-stars svg{width:16px;height:16px;fill:currentColor}
 .rev blockquote{font-size:.93rem;color:var(--txt);line-height:1.6;flex:1}
 .rev-who{display:flex;align-items:center;gap:11px;border-top:1px solid var(--line);padding-top:12px}
@@ -474,8 +480,8 @@ html[data-theme="dark"] .myth-body b{color:var(--acc)}
 @media(max-width:620px){.form-grid{grid-template-columns:1fr}}
 .form-msg{display:none;margin-top:14px;padding:14px 16px;border-radius:var(--r-s);font-size:.88rem;border:1.5px solid var(--acc);background:var(--acc-soft);color:var(--acc-ink)}
 .form-msg.is-on{display:block}
-.form-msg.err{border-color:var(--danger);background:#FFECEC;color:#8A1A1D}
-html[data-theme="dark"] .form-msg.err{background:#2A1416;color:#FFC0C2}
+.form-msg.err{border-color:var(--danger);background:#FFF1EE;color:#C1493C}
+html[data-theme="dark"] .form-msg.err{background:#EFEFEF;color:#FFDAD5}
 .field-err{border-color:var(--danger)!important}
 
 /* ── FAQ ─────────────────────────────────────────────────── */
@@ -495,11 +501,11 @@ html[data-theme="dark"] .faq details[open] summary{color:var(--acc)}
 .map-facade{position:relative;border-radius:var(--r-l);overflow:hidden;border:1px solid var(--line);aspect-ratio:4/3;background:var(--paper-3)}
 .map-facade iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .map-ph{position:absolute;inset:0;display:grid;place-items:center;gap:10px;text-align:center;padding:20px;background:
-  linear-gradient(0deg,rgba(11,15,18,.72),rgba(11,15,18,.72)),
-  repeating-linear-gradient(45deg,#12203C 0 12px,#0E1A33 12px 24px);color:#fff;cursor:pointer}
-.map-ph svg{width:34px;height:34px;color:#60A5FA}
+  linear-gradient(0deg,rgba(17,17,17,.72),rgba(17,17,17,.72)),
+  repeating-linear-gradient(45deg,#1B1B1B 0 12px,#111111 12px 24px);color:#fff;cursor:pointer}
+.map-ph svg{width:34px;height:34px;color:#38B6F0}
 .map-ph b{font-size:.95rem}
-.map-ph small{color:#B4C0DA;font-size:.78rem}
+.map-ph small{color:#CFCFCF;font-size:.78rem}
 .info-row{display:flex;gap:13px;padding:14px 0;border-bottom:1px dashed var(--line)}
 .info-row:last-child{border-bottom:0}
 .info-row svg{width:19px;height:19px;color:var(--acc);flex:none;margin-top:3px}
@@ -508,28 +514,28 @@ html[data-theme="dark"] .faq details[open] summary{color:var(--acc)}
 .info-row a:hover{color:var(--acc-ink);text-decoration:underline}
 
 /* ── Footer ──────────────────────────────────────────────── */
-.ftr{background:var(--ink);color:#B4C0DA;padding-block:clamp(40px,6vw,64px) 26px;font-size:.9rem}
-.ftr a{color:#C7D2E8;text-decoration:none}
+.ftr{background:var(--ink);color:#6E6E6E;padding-block:clamp(40px,6vw,64px) 26px;font-size:.9rem}
+.ftr a{color:#CFCFCF;text-decoration:none}
 .ftr a:hover{color:var(--acc)}
 .ftr-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:30px}
 @media(max-width:880px){.ftr-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.ftr-grid{grid-template-columns:1fr}}
 .ftr h4{color:#fff;font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;font-weight:800}
 .ftr ul{list-style:none;padding:0;margin:0;display:grid;gap:9px}
-.ftr-bottom{margin-top:36px;padding-top:20px;border-top:1px solid var(--line-dark);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:.78rem;color:#8190A8}
+.ftr-bottom{margin-top:36px;padding-top:20px;border-top:1px solid #262626;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:.78rem;color:#6E6E6E}
 .ftr-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:900;font-size:1.1rem;letter-spacing:-.02em;margin-bottom:12px}
 
 /* ── Barra fija móvil + WhatsApp flotante ────────────────── */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:70;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:9px 12px calc(9px + var(--sab));background:color-mix(in srgb,var(--paper) 94%,transparent);backdrop-filter:blur(14px);border-top:1px solid var(--line);box-shadow:0 -6px 24px rgba(11,15,18,.10)}
 .dock a,.dock button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:var(--r-s);text-decoration:none;font-size:.68rem;font-weight:800;letter-spacing:.02em;border:0;background:transparent;cursor:pointer;color:var(--txt-2)}
 .dock svg{width:21px;height:21px}
-.dock .d-wa{color:#128C4A}
+.dock .d-wa{color:#3A3A3A}
 .dock .d-cta{background:var(--acc);color:var(--on-acc)}
 @media(min-width:900px){.dock{display:none}}
-.wa-float{position:fixed;right:18px;bottom:calc(84px + var(--sab));z-index:65;width:58px;height:58px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 10px 28px rgba(37,211,102,.45);text-decoration:none;transition:transform .18s}
+.wa-float{position:fixed;right:18px;bottom:calc(84px + var(--sab));z-index:65;width:58px;height:58px;border-radius:50%;background:#111111;display:grid;place-items:center;box-shadow:0 10px 28px rgba(0,0,0,.45);text-decoration:none;transition:transform .18s}
 .wa-float:hover{transform:scale(1.07)}
 .wa-float svg{width:30px;height:30px;fill:#fff}
-.wa-float::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid #25D366;animation:ring 2.6s ease-out infinite}
+.wa-float::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid #111111;animation:ring 2.6s ease-out infinite}
 @keyframes ring{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.5);opacity:0}}
 @media(min-width:900px){.wa-float{bottom:24px}}
 
@@ -582,24 +588,24 @@ html[data-theme="dark"] .faq details[open] summary{color:var(--acc)}
 }
 
 /* ═══════════ v2 · FLUIDEZ, MICROINTERACCIONES Y CONVERSIÓN ═══════════ */
-.progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:90;pointer-events:none;background:linear-gradient(90deg,var(--acc),#7C3AED);will-change:width}
+.progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:90;pointer-events:none;background:linear-gradient(90deg,var(--acc),#38B6F0);will-change:width}
 #resenas,#mitos,#faq,#proceso,#garantia,#ubicacion,#domicilio,#problemas{content-visibility:auto;contain-intrinsic-size:auto 780px}
 .card,.rev,.vs-card{position:relative}
 .card::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:var(--sh-m);opacity:0;transition:opacity .24s ease;pointer-events:none}
 .card:hover::after{opacity:1}
 .card:hover{transform:translateY(-3px);box-shadow:none;border-color:color-mix(in srgb,var(--acc) 45%,var(--line))}
 .nav a.is-active{background:var(--acc-soft);color:var(--acc-ink)}
-html[data-theme="dark"] .nav a.is-active{background:rgba(34,211,238,.14);color:var(--acc)}
+html[data-theme="dark"] .nav a.is-active{background:rgba(56,182,240,.14);color:var(--acc)}
 .svc{cursor:pointer;border-radius:var(--r-s);transition:background .16s}
 .svc:hover{background:var(--paper-2)}
 .svc-go{display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-size:.7rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--acc-ink);opacity:.7;transition:opacity .16s,gap .16s}
 html[data-theme="dark"] .svc-go{color:var(--acc)}
 .svc:hover .svc-go{opacity:1;gap:9px}
 .strip{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;padding:20px 24px;border-radius:var(--r-l);margin-top:34px;background:linear-gradient(120deg,var(--acc-soft),var(--paper) 62%);border:1px solid color-mix(in srgb,var(--acc) 34%,var(--line))}
-.sec--dark .strip{background:linear-gradient(120deg,rgba(34,211,238,.14),rgba(255,255,255,.03));border-color:rgba(34,211,238,.30)}
+.sec--dark .strip{background:linear-gradient(120deg,var(--acc-soft),rgba(255,255,255,.7) 62%);border-color:rgba(56,182,240,.35)}
 .strip h3{font-size:1.04rem;margin-bottom:3px}
 .strip p{font-size:.88rem;color:var(--txt-2);margin:0;max-width:56ch}
-.sec--dark .strip p{color:#B4C0DA}
+.sec--dark .strip p{color:#3A3A3A}
 @media(max-width:640px){.strip{flex-direction:column;align-items:stretch}}
 .wiz-bar{display:flex;gap:6px;margin-bottom:9px}
 .wiz-bar i{height:5px;flex:1;border-radius:3px;background:var(--line);transition:background .3s ease}
@@ -647,7 +653,7 @@ html[data-lite="1"] .chip{transform:none!important}
 .dock .d-lbl{font-size:.58rem;opacity:.85;font-weight:700;letter-spacing:0;text-transform:none;margin-top:-2px}
 .spin{width:16px;height:16px;border:2.4px solid rgba(6,48,30,.28);border-top-color:currentColor;border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical-align:-3px}
 @keyframes sp{to{transform:rotate(360deg)}}
-.hero-phone{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:.86rem;color:#B4C0DA;text-decoration:none}
+.hero-phone{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:.86rem;color:var(--txt-2);text-decoration:none}
 .hero-phone:hover{color:var(--acc)}
 .hero-phone b{color:#fff;font-family:var(--ff-mono);letter-spacing:.02em}
 @media print{.progress,.to-top,.modal{display:none!important}}
@@ -662,14 +668,14 @@ html[data-lite="1"] .chip{transform:none!important}
 @media(min-width:760px){.voz{inset:auto 20px 20px auto;width:420px;max-height:min(80dvh,720px);border-radius:var(--r-xl);border:1px solid var(--line)}}
 .voz-hd{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--ink);color:#fff;border-radius:var(--r-xl) var(--r-xl) 0 0}
 @media(min-width:760px){.voz-hd{border-radius:var(--r-xl) var(--r-xl) 0 0}}
-.voz-av{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#FFCABF,var(--lupita) 62%,#E2665A);display:grid;place-items:center;flex:none;position:relative;box-shadow:0 4px 12px rgba(250,128,114,.4)}
+.voz-av{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#FFE3DD,var(--lupita) 62%,#C1493C);display:grid;place-items:center;flex:none;position:relative;box-shadow:0 4px 12px rgba(250,128,114,.4)}
 .voz-av svg{width:32px;height:32px;color:#fff}
 .voz-av.hablando::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--lupita);animation:ring 1.6s ease-out infinite}
 .voz-av.escuchando::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--lupita-ink);animation:ring 1.2s ease-out infinite}
 .voz-hd b{display:block;font-size:.98rem;line-height:1.2}
-.voz-hd small{display:block;font-size:.76rem;color:#8190A8}
-.voz-hd .voz-x{margin-left:auto;width:34px;height:34px;border-radius:50%;border:1px solid #2A3E66;background:transparent;color:#fff;cursor:pointer;display:grid;place-items:center;flex:none}
-.voz-hd .voz-x:hover{background:#1B2A33}
+.voz-hd small{display:block;font-size:.76rem;color:#CFCFCF}
+.voz-hd .voz-x{margin-left:auto;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;cursor:pointer;display:grid;place-items:center;flex:none}
+.voz-hd .voz-x:hover{background:#262626}
 .voz-log{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--paper-2);-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
 .burb{max-width:86%;padding:11px 14px;border-radius:18px;font-size:.92rem;line-height:1.5;animation:burbIn .22s ease both;word-wrap:break-word}
 @keyframes burbIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -677,8 +683,8 @@ html[data-lite="1"] .chip{transform:none!important}
 .burb--user{align-self:flex-end;background:var(--acc);color:var(--on-acc);border-bottom-right-radius:6px;font-weight:600}
 .burb--sys{align-self:center;background:transparent;color:var(--txt-3);font-size:.8rem;text-align:center;padding:4px 8px}
 .burb--interim{align-self:flex-end;background:transparent;border:1.5px dashed var(--acc);color:var(--txt-2);font-style:italic}
-.burb--error{align-self:center;background:#FFECEC;border:1px solid #FFC9CB;color:#8A1A1D;font-size:.85rem;text-align:center}
-html[data-theme="dark"] .burb--error{background:#2A1416;border-color:#5A2A2C;color:#FFC0C2}
+.burb--error{align-self:center;background:#FFF1EE;border:1px solid #C1493C;color:#C1493C;font-size:.85rem;text-align:center}
+html[data-theme="dark"] .burb--error{background:#EFEFEF;border-color:#C1493C;color:#FFDAD5}
 .voz-ctrl{display:flex;align-items:center;gap:10px;padding:12px 16px calc(12px + var(--sab));border-top:1px solid var(--line);background:var(--paper)}
 .mic{width:62px;height:62px;border-radius:50%;border:0;background:var(--lupita);color:#fff;display:grid;place-items:center;cursor:pointer;flex:none;position:relative;transition:transform .15s,background .2s;box-shadow:0 8px 22px rgba(250,128,114,.4)}
 .mic:hover{transform:scale(1.05)}
@@ -836,7 +842,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
       <div class="hero-frame">
         <img src="assets/hero.webp" width="1400" height="900" fetchpriority="high" decoding="async"
              alt="Técnico de TapaTech cambiando la pantalla de un celular en el taller de Tapachula"
-             style="background:#101A1F url(data:image/webp;base64,UklGRpwAAABXRUJQVlA4IJAAAACQBQCdASocABwAPtFOokyoJCMiN/qoAQAaCWIAwgWMgON2vVaTb2zqmOR8fXvDRL3vaqH/AAD+8qjRfZB6HxJGJ+cC+aoBtIBC6gWFpzxzjv7a9R3ZoCLvFCtFgXsqdvne5qJw3XtHRALicsYu28foFBQkTrX4l4dPHl+LfLmQ2EbawwJYKKzC/kenNQ1GAAA=) center/cover no-repeat">
+             style="background:#FFFFFF url(data:image/webp;base64,UklGRpwAAABXRUJQVlA4IJAAAACQBQCdASocABwAPtFOokyoJCMiN/qoAQAaCWIAwgWMgON2vVaTb2zqmOR8fXvDRL3vaqH/AAD+8qjRfZB6HxJGJ+cC+aoBtIBC6gWFpzxzjv7a9R3ZoCLvFCtFgXsqdvne5qJw3XtHRALicsYu28foFBQkTrX4l4dPHl+LfLmQ2EbawwJYKKzC/kenNQ1GAAA=) center/cover no-repeat">
       </div>
       <div class="chip chip--tl"><span class="chip-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
@@ -866,38 +872,32 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
     <div class="hd-sec rv">
       <span class="eyebrow">Reparación de celulares · Fallas más comunes</span>
       <h2>Dime qué le pasa a tu celular y te digo cuánto cuesta repararlo</h2>
-      <p class="lead">Estas son las fallas que más reparamos en nuestro taller de celulares en Tapachula. Toca tu problema para cargar el cotizador con ese servicio: los precios ya incluyen pieza y mano de obra, el diagnóstico es gratis y no te obligamos a reparar.</p>
+      <p class="lead">Estas son las fallas que más reparamos en nuestro taller de celulares en Tapachula. Toca tu problema para cargar el cotizador con ese servicio: eliges tipo de reparación y sistema (Android o iPhone), ves un aproximado inmediato y confirmas el precio exacto por WhatsApp tras un diagnóstico gratis, sin compromiso.</p>
     </div>
     <div class="grid grid--3">
       <button class="sym rv" type="button" data-svc="pantalla" data-dev="celular">
         <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="m9 7 3 4-3 4M14 9l3 3-3 3"/></svg></span>
         <span><b>Pantalla rota, negra o con líneas</b><span>Se cambia el módulo completo y queda como nuevo.</span></span>
-        <span class="from"><small>desde</small><b>$600</b></span>
       </button>
       <button class="sym rv" data-d="1" type="button" data-svc="bateria" data-dev="celular">
         <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="16" height="10" rx="2.5"/><path d="M21 10v4M6 10.5v3M9.5 10.5v3"/></svg></span>
         <span><b>La batería se descarga rápido</b><span>Se apaga al 30% o ya no carga. Cambio el mismo día.</span></span>
-        <span class="from"><small>desde</small><b>$400</b></span>
       </button>
       <button class="sym rv" data-d="2" type="button" data-svc="puerto" data-dev="celular">
         <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 3v7a3 3 0 0 0 6 0V3M12 13v8"/></svg></span>
         <span><b>No carga o el cable se mueve</b><span>Puerto de carga o pin dañados; se reemplaza la pieza.</span></span>
-        <span class="from"><small>desde</small><b>$350</b></span>
       </button>
       <button class="sym rv" type="button" data-svc="mojado" data-dev="celular">
         <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.4 6 10.4A6 6 0 0 1 6 13.4C6 9.4 12 3 12 3Z"/></svg></span>
         <span><b>Se mojó o cayó al agua</b><span>Limpieza ultrasónica de placa. No lo metas en arroz.</span></span>
-        <span class="from"><small>desde</small><b>$500</b></span>
       </button>
       <button class="sym rv" data-d="1" type="button" data-svc="lenta" data-dev="laptop">
         <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="11" rx="2"/><path d="M2 20h20"/></svg></span>
         <span><b>Laptop lenta o se calienta</b><span>SSD + limpieza + pasta térmica: revive en 24–48 h.</span></span>
-        <span class="from"><small>desde</small><b>$400</b></span>
       </button>
       <button class="sym rv" data-d="2" type="button" data-svc="hdmi" data-dev="consola">
         <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="3"/><path d="M7 12h2M15 12h2M11 11v2"/></svg></span>
         <span><b>Xbox/PS sin imagen o no enciende</b><span>Puerto HDMI, fuente de poder y reballing.</span></span>
-        <span class="from"><small>desde</small><b>$800</b></span>
       </button>
     </div>
   </div>
@@ -920,30 +920,30 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
     <div class="grid grid--2" style="align-items:start">
       <div class="card rv" style="padding:6px 22px 14px">
         <div class="panel" id="p-cel" role="tabpanel" aria-labelledby="tab-cel" tabindex="0">
-          <div class="svc" data-dev="celular" data-svc="pantalla" role="button" tabindex="0"><div><h4>Cambio de pantalla / display</h4><p>Incell económico o premium OLED. Prueba de táctil, brillo y sensores frente a ti.</p></div><div class="price"><small>desde</small><span class="mono">$600</span></div></div>
-          <div class="svc" data-dev="celular" data-svc="bateria" role="button" tabindex="0"><div><h4>Cambio de batería</h4><p>Batería nueva con ciclo de prueba y reporte de salud antes/después.</p></div><div class="price"><small>desde</small><span class="mono">$400</span></div></div>
-          <div class="svc" data-dev="celular" data-svc="puerto" role="button" tabindex="0"><div><h4>Puerto de carga y pines</h4><p>USB-C, Lightning y micro USB. Incluye limpieza de pelusa y prueba de carga rápida.</p></div><div class="price"><small>desde</small><span class="mono">$350</span></div></div>
-          <div class="svc" data-dev="celular" data-svc="camara" role="button" tabindex="0"><div><h4>Cámaras, bocinas y micrófono</h4><p>Fotos borrosas, cristal roto, no te escuchan en llamadas o altavoz saturado.</p></div><div class="price"><small>desde</small><span class="mono">$350</span></div></div>
-          <div class="svc" data-dev="celular" data-svc="mojado" role="button" tabindex="0"><div><h4>Equipo mojado / limpieza ultrasónica</h4><p>Desarme, baño ultrasónico de placa y protección anticorrosión.</p></div><div class="price"><small>desde</small><span class="mono">$500</span></div></div>
-          <div class="svc" data-dev="celular" data-svc="software" role="button" tabindex="0"><div><h4>Software, liberación y cuentas</h4><p>Formateo, virus, se quedó en logo, liberación de compañía con chip local.</p></div><div class="price"><small>desde</small><span class="mono">$250</span></div></div>
-          <div class="svc" data-dev="celular" data-svc="placa" role="button" tabindex="0"><div><h4>Microsoldadura de placa</h4><p>Revisión con microscopio para equipos que “ya no encienden” o no dan imagen.</p></div><div class="price"><small>cotizar</small><span class="mono">$900+</span></div></div>
+          <div class="svc" data-dev="celular" data-svc="pantalla" role="button" tabindex="0"><div><h4>Cambio de pantalla / display</h4><p>Incell económico o premium OLED. Prueba de táctil, brillo y sensores frente a ti.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="celular" data-svc="bateria" role="button" tabindex="0"><div><h4>Cambio de batería</h4><p>Batería nueva con ciclo de prueba y reporte de salud antes/después.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="celular" data-svc="puerto" role="button" tabindex="0"><div><h4>Puerto de carga y pines</h4><p>USB-C, Lightning y micro USB. Incluye limpieza de pelusa y prueba de carga rápida.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="celular" data-svc="camara" role="button" tabindex="0"><div><h4>Cámaras, bocinas y micrófono</h4><p>Fotos borrosas, cristal roto, no te escuchan en llamadas o altavoz saturado.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="celular" data-svc="mojado" role="button" tabindex="0"><div><h4>Equipo mojado / limpieza ultrasónica</h4><p>Desarme, baño ultrasónico de placa y protección anticorrosión.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="celular" data-svc="software" role="button" tabindex="0"><div><h4>Software, liberación y cuentas</h4><p>Formateo, virus, se quedó en logo, liberación de compañía con chip local.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="celular" data-svc="placa" role="button" tabindex="0"><div><h4>Microsoldadura de placa</h4><p>Revisión con microscopio para equipos que “ya no encienden” o no dan imagen.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
         </div>
         <div class="panel" id="p-lap" role="tabpanel" aria-labelledby="tab-lap" tabindex="0" hidden>
-          <div class="svc" data-dev="laptop" data-svc="formateo" role="button" tabindex="0"><div><h4>Formateo e instalación de sistema</h4><p>Windows o macOS con drivers, Office y respaldos de tu información.</p></div><div class="price"><small>desde</small><span class="mono">$450</span></div></div>
-          <div class="svc" data-dev="laptop" data-svc="ssd" role="button" tabindex="0"><div><h4>Upgrade a SSD (vuela)</h4><p>De disco mecánico a SSD: tu laptop arranca en segundos. Incluye clonado.</p></div><div class="price"><small>desde</small><span class="mono">$900</span></div></div>
-          <div class="svc" data-dev="laptop" data-svc="ram" role="button" tabindex="0"><div><h4>Aumento de memoria RAM</h4><p>Ideal para escuela, diseño y muchas pestañas abiertas.</p></div><div class="price"><small>desde</small><span class="mono">$700</span></div></div>
-          <div class="svc" data-dev="laptop" data-svc="limpieza" role="button" tabindex="0"><div><h4>Limpieza interna + pasta térmica</h4><p>Para laptops que se calientan, hacen ruido o se apagan solas.</p></div><div class="price"><small>desde</small><span class="mono">$400</span></div></div>
-          <div class="svc" data-dev="laptop" data-svc="pantallaL" role="button" tabindex="0"><div><h4>Pantalla, teclado y bisagras</h4><p>Display roto, teclas que no responden, tapas desprendidas.</p></div><div class="price"><small>desde</small><span class="mono">$700</span></div></div>
-          <div class="svc" data-dev="laptop" data-svc="datos" role="button" tabindex="0"><div><h4>Recuperación de información</h4><p>Archivos borrados, disco dañado o equipo que no arranca. Confidencial.</p></div><div class="price"><small>desde</small><span class="mono">$800</span></div></div>
-          <div class="svc" data-dev="laptop" data-svc="placaL" role="button" tabindex="0"><div><h4>Reparación de placa / circuito de carga</h4><p>No enciende, no carga o se mojó. Diagnóstico con multímetro y microscopio.</p></div><div class="price"><small>cotizar</small><span class="mono">$1,200+</span></div></div>
+          <div class="svc" data-dev="laptop" data-svc="formateo" role="button" tabindex="0"><div><h4>Formateo e instalación de sistema</h4><p>Windows o macOS con drivers, Office y respaldos de tu información.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="laptop" data-svc="ssd" role="button" tabindex="0"><div><h4>Upgrade a SSD (vuela)</h4><p>De disco mecánico a SSD: tu laptop arranca en segundos. Incluye clonado.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="laptop" data-svc="ram" role="button" tabindex="0"><div><h4>Aumento de memoria RAM</h4><p>Ideal para escuela, diseño y muchas pestañas abiertas.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="laptop" data-svc="limpieza" role="button" tabindex="0"><div><h4>Limpieza interna + pasta térmica</h4><p>Para laptops que se calientan, hacen ruido o se apagan solas.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="laptop" data-svc="pantallaL" role="button" tabindex="0"><div><h4>Pantalla, teclado y bisagras</h4><p>Display roto, teclas que no responden, tapas desprendidas.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="laptop" data-svc="datos" role="button" tabindex="0"><div><h4>Recuperación de información</h4><p>Archivos borrados, disco dañado o equipo que no arranca. Confidencial.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="laptop" data-svc="placaL" role="button" tabindex="0"><div><h4>Reparación de placa / circuito de carga</h4><p>No enciende, no carga o se mojó. Diagnóstico con multímetro y microscopio.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
         </div>
         <div class="panel" id="p-con" role="tabpanel" aria-labelledby="tab-con" tabindex="0" hidden>
-          <div class="svc" data-dev="consola" data-svc="hdmi" role="button" tabindex="0"><div><h4>Puerto HDMI de Xbox / PS</h4><p>Sin imagen, parpadeo o “no detecta la TV”. Reemplazo del conector.</p></div><div class="price"><small>desde</small><span class="mono">$900</span></div></div>
-          <div class="svc" data-dev="consola" data-svc="enciende" role="button" tabindex="0"><div><h4>No enciende / fuente de poder</h4><p>Se apaga sola, hace ruido o luce roja/amarilla. Revisión de placa y PSU.</p></div><div class="price"><small>desde</small><span class="mono">$800</span></div></div>
-          <div class="svc" data-dev="consola" data-svc="lector" role="button" tabindex="0"><div><h4>Lector de discos</h4><p>No lee, no expulsa o raya los juegos. Limpieza o cambio de unidad.</p></div><div class="price"><small>desde</small><span class="mono">$700</span></div></div>
-          <div class="svc" data-dev="consola" data-svc="joystick" role="button" tabindex="0"><div><h4>Joysticks con drift y botones</h4><p>Mandos de Xbox, DualSense y Joy-Con de Switch que se mueven solos.</p></div><div class="price"><small>desde</small><span class="mono">$400</span></div></div>
-          <div class="svc" data-dev="consola" data-svc="termica" role="button" tabindex="0"><div><h4>Sobrecalentamiento y limpieza</h4><p>Cambio de pasta térmica y pads para consolas que suenan como avión.</p></div><div class="price"><small>desde</small><span class="mono">$500</span></div></div>
-          <div class="svc" data-dev="consola" data-svc="pantallaC" role="button" tabindex="0"><div><h4>Nintendo Switch: pantalla y riel</h4><p>Display roto, no carga en la base, riel de Joy-Con dañado.</p></div><div class="price"><small>desde</small><span class="mono">$600</span></div></div>
+          <div class="svc" data-dev="consola" data-svc="hdmi" role="button" tabindex="0"><div><h4>Puerto HDMI de Xbox / PS</h4><p>Sin imagen, parpadeo o “no detecta la TV”. Reemplazo del conector.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="consola" data-svc="enciende" role="button" tabindex="0"><div><h4>No enciende / fuente de poder</h4><p>Se apaga sola, hace ruido o luce roja/amarilla. Revisión de placa y PSU.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="consola" data-svc="lector" role="button" tabindex="0"><div><h4>Lector de discos</h4><p>No lee, no expulsa o raya los juegos. Limpieza o cambio de unidad.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="consola" data-svc="joystick" role="button" tabindex="0"><div><h4>Joysticks con drift y botones</h4><p>Mandos de Xbox, DualSense y Joy-Con de Switch que se mueven solos.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="consola" data-svc="termica" role="button" tabindex="0"><div><h4>Sobrecalentamiento y limpieza</h4><p>Cambio de pasta térmica y pads para consolas que suenan como avión.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
+          <div class="svc" data-dev="consola" data-svc="pantallaC" role="button" tabindex="0"><div><h4>Nintendo Switch: pantalla y riel</h4><p>Display roto, no carga en la base, riel de Joy-Con dañado.</p></div><div class="price"><small>aprox.</small><span class="mono">al instante</span></div></div>
         </div>
       </div>
 
@@ -988,7 +988,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
   <div class="wrap">
     <div class="hd-sec rv">
       <span class="eyebrow">Precio real en 60 segundos</span>
-      <h2>Cotizador de reparación: elige tu equipo y mira el rango al instante</h2>
+      <h2>Cotizador de reparación: elige tu reparación, tu sistema y mira el aproximado al instante</h2>
       <p class="lead">Sin registrarte y sin dejarnos tu número. Al terminar puedes confirmar por WhatsApp con tu cotización ya escrita, o generar un <b>boleto con folio y código QR</b> para presentarlo en el taller o entregárselo al mensajero.</p>
     </div>
 
@@ -1003,39 +1003,40 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
       <div class="cot-body">
         <!-- Columna formulario -->
         <div class="cot-form">
-          <div class="steps-mini" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+          <div class="steps-mini" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
 
           <div class="field">
-            <span class="lbl" id="lbl-dev">1 · ¿Qué equipo es?</span>
+            <label class="lbl" for="servicio">1 · ¿Qué reparación necesitas?</label>
+            <select class="ctl" id="servicio" name="servicio"></select>
+          </div>
+
+          <div class="field">
+            <span class="lbl" id="lbl-dev">2 · ¿Tu equipo es…?</span>
             <div class="pills" role="group" aria-labelledby="lbl-dev" id="grpDev">
-              <button type="button" class="pill is-on" data-dev="celular" aria-pressed="true">📱 Celular</button>
+              <button type="button" class="pill is-on" data-dev="celular" data-sis="android" aria-pressed="true">🤖 Celular Android</button>
+              <button type="button" class="pill" data-dev="celular" data-sis="iphone" aria-pressed="false"> iPhone</button>
               <button type="button" class="pill" data-dev="laptop" aria-pressed="false">💻 Laptop / PC</button>
               <button type="button" class="pill" data-dev="consola" aria-pressed="false">🎮 Consola</button>
             </div>
           </div>
 
           <div class="field">
-            <label class="lbl" for="marca">2 · Marca</label>
+            <label class="lbl" for="marca">3 · Marca</label>
             <select class="ctl" id="marca" name="marca"></select>
           </div>
 
           <div class="field">
-            <label class="lbl" for="modelo">3 · Modelo <span style="text-transform:none;letter-spacing:0;font-weight:600">(escríbelo, hay autocompletado)</span></label>
-            <input class="ctl" id="modelo" name="modelo" list="listaModelos" placeholder="Ej. iPhone 13, Galaxy A54, Redmi Note 12, Xbox Series S…" autocomplete="off">
+            <label class="lbl" for="modelo">4 · Modelo <span style="text-transform:none;letter-spacing:0;font-weight:600">(escríbelo, hay autocompletado)</span></label>
+            <input class="ctl" id="modelo" name="modelo" list="listaModelos" placeholder="Ej. Galaxy A54, iPhone 13, Redmi Note 12, Xbox Series S…" autocomplete="off">
             <datalist id="listaModelos"></datalist>
-            <p class="note mt-s">¿No sabes el modelo exacto? Déjalo así: te damos el rango general y lo confirmamos en el diagnóstico gratis.</p>
-          </div>
-
-          <div class="field">
-            <label class="lbl" for="servicio">4 · Servicio que necesitas</label>
-            <select class="ctl" id="servicio" name="servicio"></select>
+            <p class="note mt-s">¿No sabes el modelo exacto? Déjalo así: te damos el aproximado general y lo confirmamos en el diagnóstico gratis.</p>
           </div>
 
           <div class="field" id="wrapCalidad">
             <span class="lbl" id="lbl-cal">5 · Calidad de la pantalla</span>
             <div class="pills" role="group" aria-labelledby="lbl-cal" id="grpCal">
-              <button type="button" class="pill is-on" data-cal="incell" aria-pressed="true">Incell económica</button>
-              <button type="button" class="pill" data-cal="premium" aria-pressed="false">Premium / OLED</button>
+              <button type="button" class="pill is-on" data-cal="incell" aria-pressed="true">Económica (mejor precio)</button>
+              <button type="button" class="pill" data-cal="premium" aria-pressed="false">Premium / OLED (mejor calidad)</button>
               <button type="button" class="pill" data-cal="ambas" aria-pressed="false">Muéstrame las dos</button>
             </div>
           </div>
@@ -1056,12 +1057,13 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
           <div class="result" id="resBox">
             <div id="resEmpty" class="result-empty">
               <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="margin:0 auto 10px;color:var(--acc)" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 9h5M7 13h10M7 17h7"/></svg>
-              Elige marca y servicio para ver tu rango de precio al instante.
+              Elige la reparación y tu sistema (Android o iPhone) para ver tu aproximado al instante.
             </div>
             <div id="resData" hidden>
               <span class="tag tag--acc" id="resTag">Pantalla · Incell</span>
-              <p class="result-price mt-s" id="resPrice">$1,100 – $1,700 <span style="font-size:.42em;font-weight:800;letter-spacing:0">MXN</span></p>
-              <p class="note" id="resModel">iPhone 12 · pieza + mano de obra + garantía</p>
+              <p class="result-price mt-s" id="resPrice"><small style="display:block;font-size:.5em;font-weight:700;letter-spacing:.06em;color:var(--txt-3)">APROX. DESDE</small>$500 <span style="font-size:.42em;font-weight:800;letter-spacing:0">MXN</span></p>
+              <p class="note" id="resModel">Android · Samsung · Galaxy A54 — aproximado con pieza y mano de obra</p>
+              <p class="note" id="resNote" style="font-weight:700"></p>
               <ul class="result-meta">
                 <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Tiempo estimado: <b id="resTime">40–60 minutos</b></span></li>
                 <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.4 8.4 8 9 4.6-.6 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg><span>Garantía escrita: <b id="resWar">30 días</b></span></li>
@@ -1069,11 +1071,11 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
                 <li id="resStockRow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 7 9-4 9 4-9 4-9-4Z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg><span>Pieza: <b id="resStock">en stock, se confirma por WhatsApp</b></span></li>
               </ul>
               <div class="btn-row">
-                <a class="btn btn--wa btn--block" id="waCot" href="#" data-trk="wa_click_cotizador" rel="noopener">Confirmar por WhatsApp</a>
+                <a class="btn btn--wa btn--block" id="waCot" href="#" data-trk="wa_click_cotizador" rel="noopener">Enviar mi cotización por WhatsApp</a>
                 <button class="btn btn--ghost" type="button" id="btnBoleto" data-trk="boleto_generar">🎟️ Generar boleto con folio</button>
                 <button class="btn btn--ghost" type="button" id="btnCopy" data-trk="copiar_cotizacion">Copiar cotización</button>
               </div>
-              <p class="disclaimer">Rango de referencia con precios de pieza de esta semana. Los repuestos de telefonía dependen de importación y <b>suben y bajan</b>: por eso el precio exacto y cerrado te lo damos tras el diagnóstico gratuito, antes de intervenir tu equipo. Nunca cobramos de más sin avisarte.</p>
+              <p class="disclaimer">Aproximado "desde" con precios de pieza de esta semana. El precio final <b>depende de tu modelo exacto</b> y los repuestos se importan (suben y bajan): por eso el precio cerrado te lo damos tras el diagnóstico gratuito, antes de intervenir tu equipo. Siempre te daremos la mejor calidad y el mejor precio. Nunca cobramos de más sin avisarte.</p>
             </div>
           </div>
 
@@ -1120,7 +1122,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
   <circle cx="32" cy="34" r="21" fill="#FA8072"/>
   <circle cx="32" cy="34" r="21" fill="url(#lupS)" opacity=".9"/>
   <defs><radialGradient id="lupS" cx=".34" cy=".26" r=".9">
-    <stop offset="0" stop-color="#FFCABF"/><stop offset=".55" stop-color="#FA8072"/><stop offset="1" stop-color="#E2665A"/>
+    <stop offset="0" stop-color="#FFE3DD"/><stop offset=".55" stop-color="#FA8072"/><stop offset="1" stop-color="#C1493C"/>
   </radialGradient></defs>
   <!-- mechón/cabello -->
   <path d="M13.5 29c1.5-11 10.5-17.5 19-17.5 8 0 16 5.5 18 15.5-3.5-5.5-9-8.5-15-8.5-3 4-8.5 6.5-14.5 6.5-2.5 1-3.8 2.4-4.5 4h-3Z" fill="#7A2B22"/>
@@ -1128,18 +1130,18 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
   <circle cx="10.5" cy="35" r="4.5" fill="#FA8072"/><circle cx="10.5" cy="35" r="2.1" fill="#C1493C"/>
   <circle cx="53.5" cy="35" r="4.5" fill="#FA8072"/><circle cx="53.5" cy="35" r="2.1" fill="#C1493C"/>
   <!-- mejillas -->
-  <ellipse cx="20.5" cy="40" rx="4" ry="2.6" fill="#FF6B5E" opacity=".45"/>
-  <ellipse cx="43.5" cy="40" rx="4" ry="2.6" fill="#FF6B5E" opacity=".45"/>
+  <ellipse cx="20.5" cy="40" rx="4" ry="2.6" fill="#FA8072" opacity=".45"/>
+  <ellipse cx="43.5" cy="40" rx="4" ry="2.6" fill="#FA8072" opacity=".45"/>
   <!-- ojos (parpadean) -->
   <g class="lup-eyes">
-    <circle cx="25" cy="33" r="2.7" fill="#42100B"/>
-    <circle cx="39" cy="33" r="2.7" fill="#42100B"/>
+    <circle cx="25" cy="33" r="2.7" fill="#7A2B22"/>
+    <circle cx="39" cy="33" r="2.7" fill="#7A2B22"/>
     <circle cx="25.9" cy="32" r=".95" fill="#fff"/>
     <circle cx="39.9" cy="32" r=".95" fill="#fff"/>
   </g>
   <!-- boquita sonriente (se mueve al hablar) -->
-  <path class="lup-mouth" d="M25.5 41.5c1.8 3.6 4.3 5.2 6.5 5.2s4.7-1.6 6.5-5.2c-2 .9-4.2 1.3-6.5 1.3s-4.5-.4-6.5-1.3Z" fill="#42100B"/>
-  <path d="M29.5 46c1.6.8 3.4.8 5 0-.5 1.6-1.6 2.6-2.5 2.6S30 47.6 29.5 46Z" fill="#FF9E91"/>
+  <path class="lup-mouth" d="M25.5 41.5c1.8 3.6 4.3 5.2 6.5 5.2s4.7-1.6 6.5-5.2c-2 .9-4.2 1.3-6.5 1.3s-4.5-.4-6.5-1.3Z" fill="#7A2B22"/>
+  <path d="M29.5 46c1.6.8 3.4.8 5 0-.5 1.6-1.6 2.6-2.5 2.6S30 47.6 29.5 46Z" fill="#FA8072"/>
 </svg></span>
             <div style="flex:1;min-width:180px">
               <b id="voiceTitle">Habla con Lupita, nuestra asistente</b>
@@ -1153,7 +1155,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
   <circle cx="32" cy="34" r="21" fill="#FA8072"/>
   <circle cx="32" cy="34" r="21" fill="url(#lupS2)" opacity=".9"/>
   <defs><radialGradient id="lupS2" cx=".34" cy=".26" r=".9">
-    <stop offset="0" stop-color="#FFCABF"/><stop offset=".55" stop-color="#FA8072"/><stop offset="1" stop-color="#E2665A"/>
+    <stop offset="0" stop-color="#FFE3DD"/><stop offset=".55" stop-color="#FA8072"/><stop offset="1" stop-color="#C1493C"/>
   </radialGradient></defs>
   <!-- mechón/cabello -->
   <path d="M13.5 29c1.5-11 10.5-17.5 19-17.5 8 0 16 5.5 18 15.5-3.5-5.5-9-8.5-15-8.5-3 4-8.5 6.5-14.5 6.5-2.5 1-3.8 2.4-4.5 4h-3Z" fill="#7A2B22"/>
@@ -1161,18 +1163,18 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
   <circle cx="10.5" cy="35" r="4.5" fill="#FA8072"/><circle cx="10.5" cy="35" r="2.1" fill="#C1493C"/>
   <circle cx="53.5" cy="35" r="4.5" fill="#FA8072"/><circle cx="53.5" cy="35" r="2.1" fill="#C1493C"/>
   <!-- mejillas -->
-  <ellipse cx="20.5" cy="40" rx="4" ry="2.6" fill="#FF6B5E" opacity=".45"/>
-  <ellipse cx="43.5" cy="40" rx="4" ry="2.6" fill="#FF6B5E" opacity=".45"/>
+  <ellipse cx="20.5" cy="40" rx="4" ry="2.6" fill="#FA8072" opacity=".45"/>
+  <ellipse cx="43.5" cy="40" rx="4" ry="2.6" fill="#FA8072" opacity=".45"/>
   <!-- ojos (parpadean) -->
   <g>
-    <circle cx="25" cy="33" r="2.7" fill="#42100B"/>
-    <circle cx="39" cy="33" r="2.7" fill="#42100B"/>
+    <circle cx="25" cy="33" r="2.7" fill="#7A2B22"/>
+    <circle cx="39" cy="33" r="2.7" fill="#7A2B22"/>
     <circle cx="25.9" cy="32" r=".95" fill="#fff"/>
     <circle cx="39.9" cy="32" r=".95" fill="#fff"/>
   </g>
   <!-- boquita sonriente (se mueve al hablar) -->
-  <path d="M25.5 41.5c1.8 3.6 4.3 5.2 6.5 5.2s4.7-1.6 6.5-5.2c-2 .9-4.2 1.3-6.5 1.3s-4.5-.4-6.5-1.3Z" fill="#42100B"/>
-  <path d="M29.5 46c1.6.8 3.4.8 5 0-.5 1.6-1.6 2.6-2.5 2.6S30 47.6 29.5 46Z" fill="#FF9E91"/>
+  <path d="M25.5 41.5c1.8 3.6 4.3 5.2 6.5 5.2s4.7-1.6 6.5-5.2c-2 .9-4.2 1.3-6.5 1.3s-4.5-.4-6.5-1.3Z" fill="#7A2B22"/>
+  <path d="M29.5 46c1.6.8 3.4.8 5 0-.5 1.6-1.6 2.6-2.5 2.6S30 47.6 29.5 46Z" fill="#FA8072"/>
 </svg></span>
             <span id="voiceBtnLbl">🎙️ Hablar con Lupita (asistente de voz)</span>
           </button>
@@ -1243,37 +1245,27 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
       <p class="lead">Estos son rangos reales de taller, con pieza y mano de obra incluidas. Publicarlos nos compromete: si tu caso sale más barato, se cobra menos.</p>
     </div>
     <div class="grid" style="grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:22px;align-items:start">
-      <div class="tbl-wrap rv" style="max-width:100%">
-        <table>
-          <caption>Lista de precios orientativa 2026 · Moneda: pesos mexicanos (MXN)</caption>
-          <thead><tr><th scope="col">Servicio</th><th scope="col">Rango</th><th scope="col">Tiempo típico</th><th scope="col">Garantía</th></tr></thead>
-          <tbody>
-            <tr><th scope="row" style="font-weight:700">Pantalla celular Incell (económica)</th><td class="num">$600 – $1,700</td><td>40–60 min</td><td>30 días</td></tr>
-            <tr><th scope="row" style="font-weight:700">Pantalla celular premium OLED/AMOLED</th><td class="num">$1,500 – $5,200</td><td>40–90 min</td><td>30 días</td></tr>
-            <tr><th scope="row" style="font-weight:700">Batería de celular</th><td class="num">$400 – $1,100</td><td>30–50 min</td><td>30 días</td></tr>
-            <tr><th scope="row" style="font-weight:700">Puerto / pin de carga</th><td class="num">$350 – $800</td><td>40–70 min</td><td>30 días</td></tr>
-            <tr><th scope="row" style="font-weight:700">Cámara, bocina o micrófono</th><td class="num">$350 – $1,200</td><td>40–80 min</td><td>30 días</td></tr>
-            <tr><th scope="row" style="font-weight:700">Equipo mojado (limpieza ultrasónica)</th><td class="num">$500 – $1,500</td><td>24–48 h</td><td>15 días</td></tr>
-            <tr><th scope="row" style="font-weight:700">Software, formateo o liberación</th><td class="num">$250 – $700</td><td>1–3 h</td><td>15 días</td></tr>
-            <tr><th scope="row" style="font-weight:700">Microsoldadura de placa</th><td class="num">$900 – $3,500</td><td>24–72 h</td><td>30 días</td></tr>
-            <tr><th scope="row" style="font-weight:700">Formateo de laptop con respaldos</th><td class="num">$450 – $800</td><td>24 h</td><td>15 días</td></tr>
-            <tr><th scope="row" style="font-weight:700">Upgrade a SSD (incluye unidad 240–480 GB)</th><td class="num">$900 – $2,200</td><td>24 h</td><td>90 días</td></tr>
-            <tr><th scope="row" style="font-weight:700">Limpieza interna + pasta térmica</th><td class="num">$400 – $700</td><td>3–6 h</td><td>30 días</td></tr>
-            <tr><th scope="row" style="font-weight:700">Pantalla o teclado de laptop</th><td class="num">$700 – $3,800</td><td>24–48 h</td><td>30 días</td></tr>
-            <tr><th scope="row" style="font-weight:700">Consola: puerto HDMI</th><td class="num">$900 – $1,800</td><td>24–48 h</td><td>30 días</td></tr>
-            <tr><th scope="row" style="font-weight:700">Consola: no enciende / fuente</th><td class="num">$800 – $2,500</td><td>24–72 h</td><td>30 días</td></tr>
-            <tr><th scope="row" style="font-weight:700">Joystick con drift (Xbox, DualSense, Joy-Con)</th><td class="num">$400 – $900</td><td>1–3 h</td><td>30 días</td></tr>
-            <tr><th scope="row" style="font-weight:700">Recolección y entrega a domicilio</th><td class="num">$120</td><td>Mismo día</td><td>—</td></tr>
-            <tr><th scope="row" style="font-weight:700">Diagnóstico y cotización</th><td class="num free">GRATIS</td><td>15–30 min</td><td>—</td></tr>
-          </tbody>
-        </table>
+      <div class="rv" style="background:var(--card,#fff);border:1px solid rgba(0,0,0,.08);border-radius:16px;padding:24px 26px;box-shadow:0 6px 24px rgba(0,0,0,.05)">
+        <h3 style="margin-bottom:6px">Precios claros, siempre el mejor</h3>
+        <p class="note" style="margin-bottom:16px">Estos son los precios mínimos reales de nuestro taller (pieza + mano de obra + garantía). El precio exacto depende de tu modelo y te lo damos cerrado tras el diagnóstico gratuito.</p>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px;font-size:.97rem;line-height:1.45">
+          <li style="display:flex;justify-content:space-between;gap:14px;border-bottom:1px dashed rgba(0,0,0,.12);padding-bottom:12px"><span><b>Android · pantallas</b><br><small style="color:#333">desde <b style="color:#000">$500 MXN</b>, según tu modelo — siempre la mejor calidad y el mejor precio</small></span></li>
+          <li style="display:flex;justify-content:space-between;gap:14px;border-bottom:1px dashed rgba(0,0,0,.12);padding-bottom:12px"><span><b>Android · pantallas OLED curvas</b><br><small style="color:#333">desde <b style="color:#000">$1,200 MXN</b>, según tu modelo — siempre la mejor calidad y el mejor precio</small></span></li>
+          <li style="display:flex;justify-content:space-between;gap:14px;border-bottom:1px dashed rgba(0,0,0,.12);padding-bottom:12px"><span><b>iPhone · pantallas</b><br><small style="color:#333">desde <b style="color:#000">$1,000 MXN</b>, según tu modelo — siempre la mejor calidad y el mejor precio</small></span></li>
+          <li style="display:flex;justify-content:space-between;gap:14px;border-bottom:1px dashed rgba(0,0,0,.12);padding-bottom:12px"><span><b>iPhone · pantallas sin mensaje de pieza cambiada</b><br><small style="color:#333">desde <b style="color:#000">$2,000 MXN</b>, según tu modelo — siempre la mejor calidad y el mejor precio</small></span></li>
+          <li style="display:flex;justify-content:space-between;gap:14px;border-bottom:1px dashed rgba(0,0,0,.12);padding-bottom:12px"><span><b>iPhone · tapas traseras</b><br><small style="color:#333">desde <b style="color:#000">$1,000 MXN</b>, según tu modelo</small></span></li>
+          <li style="display:flex;justify-content:space-between;gap:14px;border-bottom:1px dashed rgba(0,0,0,.12);padding-bottom:12px"><span><b>Baterías Android</b><br><small style="color:#333">desde <b style="color:#000">$400 MXN</b>, según tu modelo</small></span></li>
+          <li style="display:flex;justify-content:space-between;gap:14px"><span><b>Baterías iPhone</b><br><small style="color:#333">desde <b style="color:#000">$800 MXN</b>, según tu modelo</small></span></li>
+        </ul>
+        <p class="note mt-m">¿Puerto de carga, cámara, equipo mojado, microsoldadura, laptop o consola? También las reparamos: usa el cotizador o mándanos el modelo por WhatsApp y te damos el aproximado al instante.</p>
+        <a class="btn btn--acc mt-m" href="#cotizador" data-trk="precios_a_cotizador">Cotizar mi modelo exacto</a>
       </div>
       <div class="rv" data-d="1">
         <h3 style="margin-bottom:14px">¿Pantalla premium o económica? La diferencia honesta</h3>
         <div class="vs">
           <div class="vs-card vs-card--best">
             <span class="tag tag--acc">Premium / OLED</span>
-            <h3 class="mt-s">$1,500 – $5,200</h3>
+            <h3 class="mt-s">La mejor calidad</h3>
             <div class="vs-row"><span>Color y negros</span><span>Como de fábrica</span></div>
             <div class="vs-row"><span>Brillo bajo el sol</span><span>Muy alto</span></div>
             <div class="vs-row"><span>Consumo de batería</span><span>Bajo</span></div>
@@ -1283,7 +1275,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
           </div>
           <div class="vs-card">
             <span class="tag">Incell económica</span>
-            <h3 class="mt-s">$600 – $1,700</h3>
+            <h3 class="mt-s">El mejor precio</h3>
             <div class="vs-row"><span>Color y negros</span><span>Buenos, menos vivos</span></div>
             <div class="vs-row"><span>Brillo bajo el sol</span><span>Moderado</span></div>
             <div class="vs-row"><span>Consumo de batería</span><span>Hasta 30% más</span></div>
@@ -1293,10 +1285,10 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
           </div>
         </div>
         <p class="note mt-m">Te mostramos las dos piezas físicamente antes de decidir, y te decimos cuál conviene según tu modelo y cuánto piensas conservar el equipo. Nunca instalamos algo que no aprobaste.</p>
-        <a class="btn btn--acc mt-m" href="#cotizador" data-trk="precios_a_cotizador">Cotizar mi modelo exacto</a>
+        <a class="btn btn--ghost mt-m" href="#cotizador">Ver el aproximado de mi modelo</a>
       </div>
     </div>
-    <p class="note mt-l" style="max-width:80ch">Los repuestos de telefonía se importan y su precio cambia según disponibilidad y tipo de cambio. Por eso publicamos rangos y no precios fijos: tu precio cerrado y por escrito lo recibes en el diagnóstico gratuito, y no se modifica después aunque la pieza suba.</p>
+    <p class="note mt-l" style="max-width:80ch">Los repuestos de telefonía se importan y su precio cambia según disponibilidad y tipo de cambio. Por eso publicamos precios "desde": tu precio cerrado y por escrito lo recibes en el diagnóstico gratuito, y no se modifica después aunque la pieza suba.</p>
     <div class="strip rv">
       <div><h3>Precio cerrado antes de empezar</h3><p>El monto que apruebas es el que pagas. Si aparece algo más, te llamamos con foto y tú decides.</p></div>
       <div class="btn-row"><a class="btn btn--acc" href="#cotizador" data-trk="strip_precios_cotizar">Cotizar mi modelo exacto</a><a class="btn btn--ghost" href="tel:+529622889585" data-trk="call_click_strip_precios">Llamar al taller</a></div>
@@ -1531,7 +1523,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
     </div>
     <div class="grid" style="grid-template-columns:minmax(0,1fr) minmax(0,.72fr);gap:34px;align-items:start">
       <div class="faq rv">
-        <details open><summary>¿Cuánto cuesta cambiar la pantalla de un celular en Tapachula?</summary><div class="faq-body">Depende del modelo y la calidad de la pieza. Una pantalla Incell económica va de <b>$600 a $1,700 MXN</b> y una premium OLED/AMOLED de <b>$1,500 a $5,200 MXN</b>, ya con mano de obra y garantía de 30 días. Usa el cotizador para ver tu modelo exacto o mándanos la foto de la pantalla por WhatsApp.</div></details>
+        <details open><summary>¿Cuánto cuesta cambiar la pantalla de un celular en Tapachula?</summary><div class="faq-body">Depende del modelo y la calidad de la pieza. En Android las pantallas parten <b>desde $500 MXN</b> y las OLED curvas <b>desde $1,200 MXN</b>; en iPhone las pantallas <b>desde $1,000 MXN</b> y sin el mensaje de pieza cambiada <b>desde $2,000 MXN</b>. Siempre con la mejor calidad al mejor precio, mano de obra y garantía de 30 días incluidos. Usa el cotizador para ver el aproximado de tu modelo o mándanos la foto de la pantalla por WhatsApp.</div></details>
         <details><summary>¿Cuánto tarda una reparación?</summary><div class="faq-body">Pantallas y baterías: <b>40 a 60 minutos</b> si hay pieza en stock, y puedes esperar en el local. Puertos de carga y cámaras: el mismo día. Equipos mojados, microsoldadura y consolas: <b>24 a 72 horas</b>. En el diagnóstico te damos la hora exacta de entrega por escrito.</div></details>
         <details><summary>¿Tienen garantía? ¿Qué cubre y qué no?</summary><div class="faq-body">Sí, <b>30 días por escrito</b> sobre pieza y mano de obra. Cubre defectos de fabricación de la pieza, fallas de táctil, pixeles muertos prematuros, que la batería no cargue y despegue de adhesivo por mala instalación. <b>No cubre</b> golpes nuevos, caídas, humedad posterior, pantalla estrellada por accidente ni daño causado por otro taller. En SSD de laptop la garantía es de 90 días.</div></details>
         <details><summary>¿Necesitan mi contraseña o patrón?</summary><div class="faq-body"><b>No</b> para pantalla, batería, carga, cámara o bocina: probamos todo desde la pantalla de bloqueo. Solo pedimos acceso cuando el servicio lo requiere (recuperación de datos, desbloqueo de cuenta, formateo) y siempre con tu autorización por escrito. Tu información es tuya.</div></details>
@@ -1554,12 +1546,15 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
           <h3 style="font-size:1rem">Guías útiles del blog</h3>
           <ul class="list mt-s">
             <li><a href="blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/" style="color:var(--acc-ink);font-weight:700;text-decoration:none">Cuánto cuesta cambiar la pantalla de un celular en Tapachula (guía de precios)</a></li>
+            <li><a href="blog/mi-celular-se-mojo-que-hacer/" style="color:var(--acc-ink);font-weight:700;text-decoration:none">Se me mojó el celular: qué hacer en los primeros 10 minutos</a></li>
+            <li><a href="blog/celular-no-enciende-causas-y-soluciones/" style="color:var(--acc-ink);font-weight:700;text-decoration:none">Mi celular no enciende: causas y precios reales</a></li>
+            <li><a href="blog/no-carga-puerto-o-bateria/" style="color:var(--acc-ink);font-weight:700;text-decoration:none">No carga: ¿puerto, cable, batería o placa?</a></li>
             <li><a href="blog/" style="color:var(--acc-ink);font-weight:700;text-decoration:none">Ver todas las guías →</a></li>
           </ul>
         </div>
         <div class="card mt-m" style="background:var(--warn-soft);border-color:transparent">
           <b style="display:block;margin-bottom:6px">⚠️ Antes de ir a otro taller</b>
-          <p style="font-size:.9rem;color:#6B4A00">Pide siempre: precio por escrito, folio de entrada, devolución de tu pieza vieja y garantía. Si te niegan cualquiera de las cuatro, busca otra opción.</p>
+          <p style="font-size:.9rem;color:#3A3A3A">Pide siempre: precio por escrito, folio de entrada, devolución de tu pieza vieja y garantía. Si te niegan cualquiera de las cuatro, busca otra opción.</p>
         </div>
       </aside>
     </div>
@@ -1613,7 +1608,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
       <a class="btn btn--wa btn--lg" id="waFinal" href="#" data-trk="wa_click_final" rel="noopener">Cotizar por WhatsApp</a>
       <a class="btn btn--ghost btn--lg" href="tel:+529622889585" data-trk="call_click_final">Llamar ahora</a>
     </div>
-    <p class="note rv" data-d="3" style="color:#8190A8;margin-top:16px">Atendemos Tapachula y municipios vecinos de la costa de Chiapas.</p>
+    <p class="note rv" data-d="3" style="color:#6E6E6E;margin-top:16px">Atendemos Tapachula y municipios vecinos de la costa de Chiapas.</p>
   </div>
 </section>
 </main>
@@ -1734,7 +1729,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
 </a>
 
 <noscript>
-  <div style="padding:16px;background:#FFF4DF;border-top:2px solid #FFB020;font-size:.9rem">
+  <div style="padding:16px;background:#EFEFEF;border-top:2px solid #3A3A3A;font-size:.9rem">
     <b>Activa JavaScript para usar el cotizador.</b> Mientras tanto puedes escribirnos por WhatsApp al
     <a href="https://wa.me/529622889585" style="font-weight:700">962 288 9585</a> o llamarnos. Diagnóstico gratis y garantía escrita de 30 días.
   </div>
@@ -1811,8 +1806,9 @@ const CATALOGO = {
       { id:"otra",     nombre:"Otra marca", modelos:["ZTE","Alcatel","Nokia","Infinix","Tecno","Lanix","Hisense","Otro modelo"] }
     ],
     servicios: [
-      { id:"pantalla", nombre:"Cambio de pantalla / display", calidad:true,  tiempo:"40–60 min", garantia:30 },
-      { id:"bateria",  nombre:"Cambio de batería",            calidad:false, tiempo:"30–50 min", garantia:30 },
+      { id:"pantalla", nombre:"Pantalla / display",           calidad:true,  tiempo:"40–60 min", garantia:30 },
+      { id:"bateria",  nombre:"Batería",                      calidad:false, tiempo:"30–50 min", garantia:30 },
+      { id:"tapa",     nombre:"Tapa trasera (solo iPhone)",   soloApple:true, calidad:false, tiempo:"40–60 min", garantia:30 },
       { id:"puerto",   nombre:"Puerto / pin de carga",        calidad:false, tiempo:"40–70 min", garantia:30 },
       { id:"camara",   nombre:"Cámara, bocina o micrófono",   calidad:false, tiempo:"40–80 min", garantia:30 },
       { id:"mojado",   nombre:"Equipo mojado (limpieza ultrasónica)", calidad:false, tiempo:"24–48 h", garantia:15 },
@@ -1821,8 +1817,9 @@ const CATALOGO = {
       { id:"diag",     nombre:"Diagnóstico completo",         calidad:false, tiempo:"15–30 min", garantia:0, gratis:true }
     ],
     precios: {
-      pantalla:{ apple:{incell:[1100,1700],premium:[2000,4600]}, samsung:{incell:[700,1500],premium:[1600,5200]}, xiaomi:{incell:[650,1300],premium:[1200,2600]}, motorola:{incell:[700,1400],premium:[1300,2600]}, honor:{incell:[700,1400],premium:[1200,2500]}, huawei:{incell:[700,1400],premium:[1300,2600]}, otra:{incell:[600,1500],premium:[1100,2800]} },
-      bateria: { apple:[550,1100], samsung:[450,950], xiaomi:[400,800], motorola:[450,850], honor:[450,850], huawei:[450,900], otra:[400,850] },
+      pantalla:{ apple:{incell:[1000,1600],premium:[2000,4600]}, samsung:{incell:[500,1300],premium:[1200,3800]}, xiaomi:{incell:[500,1200],premium:[1200,2600]}, motorola:{incell:[500,1200],premium:[1200,2600]}, honor:{incell:[500,1200],premium:[1200,2500]}, huawei:{incell:[500,1200],premium:[1200,2600]}, otra:{incell:[500,1300],premium:[1200,2800]} },
+      tapa:    { apple:[1000,2200], samsung:[0,0], xiaomi:[0,0], motorola:[0,0], honor:[0,0], huawei:[0,0], otra:[0,0] },
+      bateria: { apple:[800,1100], samsung:[400,850], xiaomi:[400,800], motorola:[400,850], honor:[400,850], huawei:[400,900], otra:[400,850] },
       puerto:  { apple:[450,800], samsung:[350,700], xiaomi:[350,650], motorola:[350,650], honor:[350,650], huawei:[400,700], otra:[350,700] },
       camara:  { apple:[600,1400], samsung:[450,1200], xiaomi:[400,1000], motorola:[400,1000], honor:[400,1000], huawei:[450,1100], otra:[350,1000] },
       mojado:  { apple:[700,1800], samsung:[550,1500], xiaomi:[500,1300], motorola:[500,1300], honor:[500,1300], huawei:[550,1400], otra:[500,1400] },
@@ -1968,10 +1965,10 @@ function pintarEstado(){
 pintarEstado(); setInterval(pintarEstado, 60000);
 $('#year').textContent = new Date().getFullYear();
 
-/* ── 3. Tema claro / oscuro (solo respeta preferencia del sistema; sitio simplificado) ── */
+/* ── 3. Tema: modo oscuro DESACTIVADO por decisión de marca (paleta única blanco/salmón/negro/azul cielo) ── */
 (function(){
   const root = document.documentElement;
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) root.setAttribute('data-theme', 'dark');
+  root.setAttribute('data-theme', 'light');
 })();
 
 /* ── 4. Menú móvil + sombra del header ─────────────────────────────────── */
@@ -2031,7 +2028,7 @@ tabs.forEach((t, i) => {
 });
 
 /* ── 7. COTIZADOR ──────────────────────────────────────────────────────── */
-const st = { dev:'celular', marca:'apple', modelo:'', svc:'pantalla', cal:'incell', extras:{ domicilio:false, express:false, respaldo:false } };
+const st = { dev:'celular', sis:'android', marca:'samsung', modelo:'', svc:'pantalla', cal:'incell', extras:{ domicilio:false, express:false, respaldo:false } };
 let ultimoFolio = null, ultimoRes = null;
 
 function fillMarcas(){
@@ -2039,18 +2036,28 @@ function fillMarcas(){
   sel.innerHTML = CATALOGO[st.dev].marcas.map(m => `<option value="${m.id}"${m.id===st.marca?' selected':''}>${m.nombre}</option>`).join('');
   st.marca = sel.value;
 }
+/* Marca coherente con el sistema elegido (Android ↔ iPhone) */
+function alinearMarcaConSistema(){
+  if (st.dev !== 'celular') return;
+  if (st.sis === 'iphone' && st.marca !== 'apple') st.marca = 'apple';
+  if (st.sis === 'android' && st.marca === 'apple') st.marca = 'samsung';
+}
 function fillModelos(){
   const m = CATALOGO[st.dev].marcas.find(x => x.id === st.marca);
   $('#listaModelos').innerHTML = (m ? m.modelos : []).map(x => `<option value="${x}">`).join('');
   $('#modelo').placeholder = m && m.modelos[0] ? 'Ej. ' + m.modelos[Math.min(3, m.modelos.length-1)] + ', ' + m.modelos[0] + '…' : 'Escribe tu modelo…';
 }
+function serviciosVisibles(){
+  return CATALOGO[st.dev].servicios.filter(s => !(s.soloApple && st.sis !== 'iphone'));
+}
 function fillServicios(){
-  if (!CATALOGO[st.dev].servicios.some(s => s.id === st.svc)) st.svc = CATALOGO[st.dev].servicios[0].id;
-  $('#servicio').innerHTML = CATALOGO[st.dev].servicios.map(s => `<option value="${s.id}"${s.id===st.svc?' selected':''}>${s.nombre}${s.gratis?' — GRATIS':''}</option>`).join('');
-  if (!CATALOGO[st.dev].servicios.some(s => s.id === st.svc)) st.svc = CATALOGO[st.dev].servicios[0].id;
+  const vs = serviciosVisibles();
+  if (!vs.some(s => s.id === st.svc)) st.svc = vs[0].id;
+  $('#servicio').innerHTML = vs.map(s => `<option value="${s.id}"${s.id===st.svc?' selected':''}>${s.nombre}${s.gratis?' — GRATIS':''}</option>`).join('');
   $('#servicio').value = st.svc;
 }
-function svcActual(){ return CATALOGO[st.dev].servicios.find(s => s.id === st.svc) || CATALOGO[st.dev].servicios[0]; }
+function svcActual(){ return serviciosVisibles().find(s => s.id === st.svc) || serviciosVisibles()[0]; }
+function sisTxt(){ return st.dev !== 'celular' ? CATALOGO[st.dev].etiqueta : (st.sis === 'iphone' ? 'iPhone' : 'Android'); }
 
 /* Ajuste fino por modelo: gama alta sube, modelos viejos bajan */
 function ajustar(rango, modeloTexto){
@@ -2062,6 +2069,7 @@ function ajustar(rango, modeloTexto){
   return [redondear(rango[0] * f), redondear(Math.max(rango[1] * f, rango[0] * f + 50))];
 }
 function calcular(){
+  alinearMarcaConSistema();
   const cat = CATALOGO[st.dev], svc = svcActual();
   const tabla = cat.precios[st.svc] || {};
   if (svc.gratis) return { svc, gratis:true, rangos:[['Diagnóstico',[0,0]]], extra:0, tiempo:svc.tiempo, garantia:0 };
@@ -2086,11 +2094,16 @@ function render(){
   $('#wrapCalidad').hidden = !svc.calidad;
   $('#resEmpty').hidden = true; $('#resData').hidden = false;
   const marca = CATALOGO[st.dev].marcas.find(m => m.id === st.marca);
-  $('#resTag').textContent = svc.nombre + (svc.calidad && st.cal !== 'ambas' ? ' · ' + (st.cal === 'premium' ? 'Premium/OLED' : 'Incell') : '');
+  $('#resTag').textContent = sisTxt() + ' · ' + svc.nombre + (svc.calidad && st.cal !== 'ambas' ? ' · ' + (st.cal === 'premium' ? 'Premium/OLED' : 'Económica') : '');
   $('#resPrice').innerHTML = r.gratis
     ? 'GRATIS'
-    : r.rangos.map(([lbl, rg], i) => `${i ? '<br>' : ''}<span style="font-size:${r.rangos.length>1?'.62em':'1em'}">${money(rg[0])} – ${money(rg[1])}</span>${r.rangos.length>1?' <small style="font-size:.4em;color:var(--txt-3)">'+lbl+'</small>':''}`).join('') + ' <span style="font-size:.42em;font-weight:800">MXN</span>';
-  $('#resModel').textContent = [marca ? marca.nombre : '', st.modelo, cat0()].filter(Boolean).join(' · ') + ' — pieza + mano de obra + garantía';
+    : r.rangos.map(([lbl, rg], i) => `${i ? '<br>' : ''}<small style="display:block;font-size:.5em;font-weight:700;letter-spacing:.06em;color:var(--txt-3)">APROX. DESDE</small><span style="font-size:${r.rangos.length>1?'.62em':'1em'}">${money(rg[0])}</span>${r.rangos.length>1?' <small style="font-size:.4em;color:var(--txt-3)">'+lbl+'</small>':''}`).join('') + ' <span style="font-size:.42em;font-weight:800">MXN</span>';
+  $('#resModel').textContent = [sisTxt(), marca ? marca.nombre : '', st.modelo].filter(Boolean).join(' · ') + ' — aproximado con pieza y mano de obra';
+  /* nota dinámica con la promesa de valor */
+  const rn = $('#resNote');
+  if (rn) rn.textContent = r.gratis ? '' : (st.sis === 'iphone'
+    ? 'Siempre te daremos la mejor calidad al mejor precio para tu iPhone. El precio exacto depende de tu modelo.'
+    : 'Siempre te daremos la mejor calidad y el mejor precio. El precio exacto depende de tu modelo.');
   $('#resTime').textContent = r.tiempo;
   $('#resWar').textContent = r.garantia ? r.garantia + ' días' : '—';
   $('#resStockRow').hidden = r.gratis;
@@ -2110,27 +2123,34 @@ function refrescarWA(){
 function mensajeCotizacion(r){
   const marca = (CATALOGO[st.dev].marcas.find(m => m.id === st.marca) || {}).nombre || '';
   const ex = Object.keys(st.extras).filter(k => st.extras[k]).map(k => ({domicilio:'Recolección a domicilio (+$120)',express:'Express mismo día (+$180)',respaldo:'Respaldo de información (+$150)'}[k]));
-  const precio = r.gratis ? 'GRATIS' : r.rangos.map(([l, rg]) => `${l}: ${money(rg[0])} – ${money(rg[1])} MXN`).join(' | ');
+  const precio = r.gratis ? 'GRATIS' : r.rangos.map(([l, rg]) => `${l}: aproximado desde ${money(rg[0])} MXN (depende del modelo exacto)`).join(' | ');
   return `¡Hola TapaTech! Acabo de cotizar en su sitio web.\n\n` +
-    `• Equipo: ${cat0()}\n• Marca: ${marca}\n• Modelo: ${st.modelo.trim() || 'por confirmar'}\n` +
+    `• Equipo: ${sisTxt()} (${cat0()})\n• Marca: ${marca}\n• Modelo: ${st.modelo.trim() || 'por confirmar'}\n` +
     `• Servicio: ${r.svc.nombre}${r.svc.calidad && st.cal !== 'ambas' ? ' (' + (st.cal === 'premium' ? 'Premium/OLED' : 'Incell económica') + ')' : ''}\n` +
     `• Rango estimado: ${precio}\n• Tiempo estimado: ${r.tiempo}\n` +
     (ex.length ? `• Extras: ${ex.join(', ')}\n` : '') +
     (ultimoFolio ? `• Folio: ${ultimoFolio}\n` : '') +
-    `\n¿Me confirman precio cerrado y disponibilidad de pieza? Gracias.`;
+    `\nSiempre buscamos dar la mejor calidad al mejor precio. ¿Me confirman el precio cerrado para mi modelo y disponibilidad de pieza? Gracias.`;
 }
 /* Controles del cotizador */
+function sincronizarPillsSis(){
+  $$('#grpDev .pill').forEach(x => {
+    const on = x.dataset.dev === st.dev && (x.dataset.dev !== 'celular' || (x.dataset.sis || 'android') === st.sis);
+    x.classList.toggle('is-on', on); x.setAttribute('aria-pressed', String(on));
+  });
+}
 $$('#grpDev .pill').forEach(b => b.addEventListener('click', () => {
-  $$('#grpDev .pill').forEach(x => { x.classList.remove('is-on'); x.setAttribute('aria-pressed','false'); });
-  b.classList.add('is-on'); b.setAttribute('aria-pressed','true');
-  st.dev = b.dataset.dev; st.marca = CATALOGO[st.dev].marcas[0].id; st.modelo = ''; st.svc = CATALOGO[st.dev].servicios[0].id;
-  $('#modelo').value = ''; fillMarcas(); fillModelos(); fillServicios(); render(); track('cotizador_dispositivo', { dispositivo: st.dev });
+  st.dev = b.dataset.dev; st.sis = b.dataset.dev === 'celular' ? (b.dataset.sis || 'android') : 'android';
+  st.marca = st.dev === 'celular' ? (st.sis === 'iphone' ? 'apple' : 'samsung') : CATALOGO[st.dev].marcas[0].id;
+  st.modelo = ''; $('#modelo').value = '';
+  sincronizarPillsSis(); fillMarcas(); fillModelos(); fillServicios(); render();
+  track('cotizador_sistema', { dispositivo: st.dev, sistema: st.sis });
 }));
 $$('#grpCal .pill').forEach(b => b.addEventListener('click', () => {
   $$('#grpCal .pill').forEach(x => { x.classList.remove('is-on'); x.setAttribute('aria-pressed','false'); });
   b.classList.add('is-on'); b.setAttribute('aria-pressed','true'); st.cal = b.dataset.cal; render(); track('cotizador_calidad', { calidad: st.cal });
 }));
-$('#marca').addEventListener('change', e => { st.marca = e.target.value || CATALOGO[st.dev].marcas[0].id; st.modelo = ''; $('#modelo').value = ''; fillModelos(); render(); });
+$('#marca').addEventListener('change', e => { st.marca = e.target.value || CATALOGO[st.dev].marcas[0].id; if (st.dev === 'celular') st.sis = st.marca === 'apple' ? 'iphone' : 'android'; sincronizarPillsSis(); st.modelo = ''; $('#modelo').value = ''; fillServicios(); fillModelos(); render(); });
 $('#modelo').addEventListener('input', e => { st.modelo = e.target.value; render(); });
 $('#servicio').addEventListener('change', e => { st.svc = e.target.value || CATALOGO[st.dev].servicios[0].id; render(); track('cotizador_servicio', { servicio: st.svc }); });
 $$('input[data-extra]').forEach(c => c.addEventListener('change', e => { st.extras[e.target.dataset.extra] = e.target.checked; render(); }));
@@ -2139,19 +2159,18 @@ fillMarcas(); fillModelos(); fillServicios(); render();
 /* Tarjetas de síntoma → precargan el cotizador */
 $$('.sym').forEach(b => b.addEventListener('click', () => {
   const map = { pantalla:'pantalla', bateria:'bateria', puerto:'puerto', mojado:'mojado', lenta:'limpieza', hdmi:'hdmi' };
-  st.dev = b.dataset.dev; st.svc = map[b.dataset.svc] || CATALOGO[st.dev].servicios[0].id;
-  st.marca = CATALOGO[st.dev].marcas[0].id; st.modelo = ''; $('#modelo').value = '';
-  $$('#grpDev .pill').forEach(x => { const on = x.dataset.dev === st.dev; x.classList.toggle('is-on', on); x.setAttribute('aria-pressed', String(on)); });
-  fillMarcas(); fillModelos(); fillServicios(); render();
+  st.dev = b.dataset.dev; st.svc = map[b.dataset.svc] || serviciosVisibles()[0].id;
+  if (st.dev === 'celular'){ st.sis = 'android'; st.marca = 'samsung'; } else { st.sis = 'android'; st.marca = CATALOGO[st.dev].marcas[0].id; }
+  st.modelo = ''; $('#modelo').value = '';
+  sincronizarPillsSis(); fillMarcas(); fillModelos(); fillServicios(); render();
   $('#cotizador').scrollIntoView({ behavior:'smooth', block:'start' });
   track('sintoma_click', { servicio: st.svc, dispositivo: st.dev });
 }));
 $$('[data-cot]').forEach(a => a.addEventListener('click', e => {
   e.preventDefault();
   const d = a.dataset.cot;
-  st.dev = d; st.marca = CATALOGO[d].marcas[0].id; st.svc = CATALOGO[d].servicios[0].id; st.modelo=''; $('#modelo').value='';
-  $$('#grpDev .pill').forEach(x => { const on = x.dataset.dev === d; x.classList.toggle('is-on', on); x.setAttribute('aria-pressed', String(on)); });
-  fillMarcas(); fillModelos(); fillServicios(); render();
+  st.dev = d; st.sis = 'android'; st.marca = CATALOGO[d].marcas[0].id; st.svc = CATALOGO[d].servicios[0].id; st.modelo=''; $('#modelo').value='';
+  sincronizarPillsSis(); fillMarcas(); fillModelos(); fillServicios(); render();
   $('#cotizador').scrollIntoView({ behavior:'smooth', block:'start' });
 }));
 
@@ -2159,9 +2178,14 @@ $$('[data-cot]').forEach(a => a.addEventListener('click', e => {
    El agente usa exactamente el mismo motor de precios que el cotizador: si
    cambias CATALOGO, cambia la voz. Una sola fuente de verdad.            */
 window.TAPATECH_DATA.cotizar = function(dev, marcaId, modelo, svcId, calidad){
+  /* si llega 'iphone' como marcaId o 'celular-iphone' como dev, normaliza */
+  let sis = 'android';
+  if (String(marcaId).toLowerCase().includes('iphone') || String(marcaId).toLowerCase() === 'apple'){ marcaId = 'apple'; sis = 'iphone'; }
+  if (String(dev).includes('iphone')){ dev = 'celular'; marcaId = 'apple'; sis = 'iphone'; }
   const cat = CATALOGO[dev];
   if (!cat) return { error: 'dispositivo_desconocido', validos: Object.keys(CATALOGO) };
   const svc = cat.servicios.find(s => s.id === svcId);
+  if (svc && svc.soloApple && sis !== 'iphone') return { error: 'servicio_no_aplica', nota: 'las tapas traseras solo aplican para iPhone; para Android ofrece pantalla, batería u otro servicio' };
   if (!svc) return { error: 'servicio_desconocido', validos: cat.servicios.map(s => s.id) };
   if (svc.gratis) return { servicio: svc.nombre, tiempo: svc.tiempo, garantia: 0, gratis: true, rango: [0, 0] };
   const tabla = cat.precios[svcId] || {};
@@ -2204,7 +2228,7 @@ function qrRaw(text, cellPx){
 }
 function qrSVG(text, size){
   const q = qrRaw(text, 4), esc = size / q.size;
-  return '<svg xmlns="http://www.w3.org/2000/svg" width="' + size + '" height="' + size + '" viewBox="0 0 ' + q.size + ' ' + q.size + '" shape-rendering="crispEdges" role="img" aria-label="Código QR de la cotización"><rect width="' + q.size + '" height="' + q.size + '" fill="#fff"/><g fill="#0B1220">' + q.rects + '</g></svg>';
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="' + size + '" height="' + size + '" viewBox="0 0 ' + q.size + ' ' + q.size + '" shape-rendering="crispEdges" role="img" aria-label="Código QR de la cotización"><rect width="' + q.size + '" height="' + q.size + '" fill="#fff"/><g fill="#111111">' + q.rects + '</g></svg>';
 }
 function fechaLarga(){
   return new Date().toLocaleString('es-MX', { timeZone: CONFIG.zonaHoraria, dateStyle:'long', timeStyle:'short' });
@@ -2225,26 +2249,26 @@ function datosBoleto(){
 }
 function boletoSVGArchivo(d){
   const q = qrRaw(d.qr, 6), F = 'system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
-  const fila = (y, k, v) => '<text x="44" y="' + y + '" font-family="' + F + '" font-size="15" fill="#6B7C75">' + k + '</text><text x="210" y="' + y + '" font-family="' + F + '" font-size="16" font-weight="700" fill="#0B1220">' + esc(v) + '</text>';
+  const fila = (y, k, v) => '<text x="44" y="' + y + '" font-family="' + F + '" font-size="15" fill="#6E6E6E">' + k + '</text><text x="210" y="' + y + '" font-family="' + F + '" font-size="16" font-weight="700" fill="#111111">' + esc(v) + '</text>';
   const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   let y = 176; const filas = [['Equipo',d.dev],['Marca / Modelo',d.brand],['Servicio',d.svc],['Calidad de pieza',d.cal],['Extras',d.extra],['Rango estimado',d.price],['Tiempo estimado',d.time],['Garantía',d.war]];
   const filasSVG = filas.map(([k,v]) => { const s = fila(y,k,v); y += 34; return s; }).join('');
   return '<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560">' +
   '<rect width="900" height="560" fill="#FFFFFF"/>' +
-  '<rect width="900" height="120" fill="#0B1220"/>' +
+  '<rect width="900" height="120" fill="#111111"/>' +
   '<path d="M52 26 30 60h16l-6 34 26-40H50l8-28Z" fill="currentColor"/>' +
   '<text x="76" y="56" font-family="' + F + '" font-size="27" font-weight="800" fill="#FFFFFF">TAPATECH</text>' +
-  '<text x="76" y="82" font-family="' + F + '" font-size="15" fill="#8190A8">Tapachula, Chiapas · ' + esc(CONFIG.telefonoTxt) + '</text>' +
-  '<text x="856" y="52" text-anchor="end" font-family="' + F + '" font-size="14" fill="#8190A8">BOLETO DE COTIZACIÓN</text>' +
+  '<text x="76" y="82" font-family="' + F + '" font-size="15" fill="#6E6E6E">Tapachula, Chiapas · ' + esc(CONFIG.telefonoTxt) + '</text>' +
+  '<text x="856" y="52" text-anchor="end" font-family="' + F + '" font-size="14" fill="#6E6E6E">BOLETO DE COTIZACIÓN</text>' +
   '<text x="856" y="82" text-anchor="end" font-family="' + F + '" font-size="24" font-weight="800" fill="currentColor">' + esc(d.folio) + '</text>' +
-  '<text x="44" y="152" font-family="' + F + '" font-size="14" fill="#6B7C75">Emitido: ' + esc(d.fecha) + ' · Válido 7 días · No es comprobante de pago</text>' +
+  '<text x="44" y="152" font-family="' + F + '" font-size="14" fill="#6E6E6E">Emitido: ' + esc(d.fecha) + ' · Válido 7 días · No es comprobante de pago</text>' +
   filasSVG +
-  '<rect x="600" y="164" width="' + q.size + '" height="' + q.size + '" fill="#FFFFFF" stroke="#E6EAF0"/>' +
-  '<g transform="translate(600,164)" fill="#0B1220" shape-rendering="crispEdges">' + q.rects + '</g>' +
-  '<text x="600" y="' + (180 + q.size) + '" font-family="' + F + '" font-size="13" fill="#6B7C75">Escanea para confirmar por WhatsApp</text>' +
-  '<rect x="44" y="470" width="812" height="56" rx="12" fill="#F5F8FD"/>' +
-  '<text x="64" y="496" font-family="' + F + '" font-size="14" font-weight="700" fill="#0B1220">Diagnóstico gratuito · Precio cerrado antes de reparar · Garantía escrita</text>' +
-  '<text x="64" y="516" font-family="' + F + '" font-size="13" fill="#6B7C75">Presenta este folio en el local o entrégalo al mensajero de recolección a domicilio.</text>' +
+  '<rect x="600" y="164" width="' + q.size + '" height="' + q.size + '" fill="#FFFFFF" stroke="#EBDDD6"/>' +
+  '<g transform="translate(600,164)" fill="#111111" shape-rendering="crispEdges">' + q.rects + '</g>' +
+  '<text x="600" y="' + (180 + q.size) + '" font-family="' + F + '" font-size="13" fill="#6E6E6E">Escanea para confirmar por WhatsApp</text>' +
+  '<rect x="44" y="470" width="812" height="56" rx="12" fill="#FDF5F2"/>' +
+  '<text x="64" y="496" font-family="' + F + '" font-size="14" font-weight="700" fill="#111111">Diagnóstico gratuito · Precio cerrado antes de reparar · Garantía escrita</text>' +
+  '<text x="64" y="516" font-family="' + F + '" font-size="13" fill="#6E6E6E">Presenta este folio en el local o entrégalo al mensajero de recolección a domicilio.</text>' +
   '</svg>';
 }
 $('#btnBoleto').addEventListener('click', () => {
@@ -2285,11 +2309,11 @@ function toast(txt, err){
   if (!toastEl){
     toastEl = document.createElement('div');
     toastEl.setAttribute('role','status'); toastEl.setAttribute('aria-live','polite');
-    toastEl.style.cssText = 'position:fixed;left:50%;bottom:96px;transform:translate(-50%,20px);z-index:200;background:#0B1220;color:#fff;padding:12px 18px;border-radius:999px;font-size:.86rem;font-weight:600;box-shadow:0 12px 30px rgba(0,0,0,.28);opacity:0;transition:.25s;max-width:88vw;text-align:center';
+    toastEl.style.cssText = 'position:fixed;left:50%;bottom:96px;transform:translate(-50%,20px);z-index:200;background:#111111;color:#fff;padding:12px 18px;border-radius:999px;font-size:.86rem;font-weight:600;box-shadow:0 12px 30px rgba(0,0,0,.28);opacity:0;transition:.25s;max-width:88vw;text-align:center';
     document.body.appendChild(toastEl);
   }
   toastEl.textContent = txt;
-  toastEl.style.background = err ? '#B3261E' : '#0B1220';
+  toastEl.style.background = err ? '#111111' : '#111111';
   requestAnimationFrame(() => { toastEl.style.opacity = '1'; toastEl.style.transform = 'translate(-50%,0)'; });
   clearTimeout(toastEl._t);
   toastEl._t = setTimeout(() => { toastEl.style.opacity = '0'; toastEl.style.transform = 'translate(-50%,20px)'; }, 2600);
@@ -2811,7 +2835,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   <circle cx="32" cy="34" r="21" fill="#FA8072"/>
   <circle cx="32" cy="34" r="21" fill="url(#lupS3)" opacity=".9"/>
   <defs><radialGradient id="lupS3" cx=".34" cy=".26" r=".9">
-    <stop offset="0" stop-color="#FFCABF"/><stop offset=".55" stop-color="#FA8072"/><stop offset="1" stop-color="#E2665A"/>
+    <stop offset="0" stop-color="#FFE3DD"/><stop offset=".55" stop-color="#FA8072"/><stop offset="1" stop-color="#C1493C"/>
   </radialGradient></defs>
   <!-- mechón/cabello -->
   <path d="M13.5 29c1.5-11 10.5-17.5 19-17.5 8 0 16 5.5 18 15.5-3.5-5.5-9-8.5-15-8.5-3 4-8.5 6.5-14.5 6.5-2.5 1-3.8 2.4-4.5 4h-3Z" fill="#7A2B22"/>
@@ -2819,18 +2843,18 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   <circle cx="10.5" cy="35" r="4.5" fill="#FA8072"/><circle cx="10.5" cy="35" r="2.1" fill="#C1493C"/>
   <circle cx="53.5" cy="35" r="4.5" fill="#FA8072"/><circle cx="53.5" cy="35" r="2.1" fill="#C1493C"/>
   <!-- mejillas -->
-  <ellipse cx="20.5" cy="40" rx="4" ry="2.6" fill="#FF6B5E" opacity=".45"/>
-  <ellipse cx="43.5" cy="40" rx="4" ry="2.6" fill="#FF6B5E" opacity=".45"/>
+  <ellipse cx="20.5" cy="40" rx="4" ry="2.6" fill="#FA8072" opacity=".45"/>
+  <ellipse cx="43.5" cy="40" rx="4" ry="2.6" fill="#FA8072" opacity=".45"/>
   <!-- ojos (parpadean) -->
   <g class="lup-eyes">
-    <circle cx="25" cy="33" r="2.7" fill="#42100B"/>
-    <circle cx="39" cy="33" r="2.7" fill="#42100B"/>
+    <circle cx="25" cy="33" r="2.7" fill="#7A2B22"/>
+    <circle cx="39" cy="33" r="2.7" fill="#7A2B22"/>
     <circle cx="25.9" cy="32" r=".95" fill="#fff"/>
     <circle cx="39.9" cy="32" r=".95" fill="#fff"/>
   </g>
   <!-- boquita sonriente (se mueve al hablar) -->
-  <path class="lup-mouth" d="M25.5 41.5c1.8 3.6 4.3 5.2 6.5 5.2s4.7-1.6 6.5-5.2c-2 .9-4.2 1.3-6.5 1.3s-4.5-.4-6.5-1.3Z" fill="#42100B"/>
-  <path d="M29.5 46c1.6.8 3.4.8 5 0-.5 1.6-1.6 2.6-2.5 2.6S30 47.6 29.5 46Z" fill="#FF9E91"/>
+  <path class="lup-mouth" d="M25.5 41.5c1.8 3.6 4.3 5.2 6.5 5.2s4.7-1.6 6.5-5.2c-2 .9-4.2 1.3-6.5 1.3s-4.5-.4-6.5-1.3Z" fill="#7A2B22"/>
+  <path d="M29.5 46c1.6.8 3.4.8 5 0-.5 1.6-1.6 2.6-2.5 2.6S30 47.6 29.5 46Z" fill="#FA8072"/>
 </svg>
     </span>
     <span><b id="vozNombre">Lupita · TapaTech</b><small id="vozEstadoHd">Toca el micrófono para hablar</small></span>
@@ -2873,21 +2897,21 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   <circle cx="32" cy="34" r="21" fill="#FA8072"/>
   <circle cx="32" cy="34" r="21" fill="url(#lupS4)" opacity=".9"/>
   <defs><radialGradient id="lupS4" cx=".34" cy=".26" r=".9">
-    <stop offset="0" stop-color="#FFCABF"/><stop offset=".55" stop-color="#FA8072"/><stop offset="1" stop-color="#E2665A"/>
+    <stop offset="0" stop-color="#FFE3DD"/><stop offset=".55" stop-color="#FA8072"/><stop offset="1" stop-color="#C1493C"/>
   </radialGradient></defs>
   <path d="M13.5 29c1.5-11 10.5-17.5 19-17.5 8 0 16 5.5 18 15.5-3.5-5.5-9-8.5-15-8.5-3 4-8.5 6.5-14.5 6.5-2.5 1-3.8 2.4-4.5 4h-3Z" fill="#7A2B22"/>
   <circle cx="10.5" cy="35" r="4.5" fill="#FA8072"/><circle cx="10.5" cy="35" r="2.1" fill="#C1493C"/>
   <circle cx="53.5" cy="35" r="4.5" fill="#FA8072"/><circle cx="53.5" cy="35" r="2.1" fill="#C1493C"/>
-  <ellipse cx="20.5" cy="40" rx="4" ry="2.6" fill="#FF6B5E" opacity=".45"/>
-  <ellipse cx="43.5" cy="40" rx="4" ry="2.6" fill="#FF6B5E" opacity=".45"/>
+  <ellipse cx="20.5" cy="40" rx="4" ry="2.6" fill="#FA8072" opacity=".45"/>
+  <ellipse cx="43.5" cy="40" rx="4" ry="2.6" fill="#FA8072" opacity=".45"/>
   <g class="lup-eyes">
-    <circle cx="25" cy="33" r="2.7" fill="#42100B"/>
-    <circle cx="39" cy="33" r="2.7" fill="#42100B"/>
+    <circle cx="25" cy="33" r="2.7" fill="#7A2B22"/>
+    <circle cx="39" cy="33" r="2.7" fill="#7A2B22"/>
     <circle cx="25.9" cy="32" r=".95" fill="#fff"/>
     <circle cx="39.9" cy="32" r=".95" fill="#fff"/>
   </g>
-  <path class="lup-mouth" d="M25.5 41.5c1.8 3.6 4.3 5.2 6.5 5.2s4.7-1.6 6.5-5.2c-2 .9-4.2 1.3-6.5 1.3s-4.5-.4-6.5-1.3Z" fill="#42100B"/>
-  <path d="M29.5 46c1.6.8 3.4.8 5 0-.5 1.6-1.6 2.6-2.5 2.6S30 47.6 29.5 46Z" fill="#FF9E91"/>
+  <path class="lup-mouth" d="M25.5 41.5c1.8 3.6 4.3 5.2 6.5 5.2s4.7-1.6 6.5-5.2c-2 .9-4.2 1.3-6.5 1.3s-4.5-.4-6.5-1.3Z" fill="#7A2B22"/>
+  <path d="M29.5 46c1.6.8 3.4.8 5 0-.5 1.6-1.6 2.6-2.5 2.6S30 47.6 29.5 46Z" fill="#FA8072"/>
 </svg></span>
     <b>¡Hola! Soy Lupita 👋</b>
   </div>
@@ -2973,8 +2997,18 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if(!V){ trk('voz_sorp_error',{motivo:'sin_libreria'}); return; }
       V.saludoPrevio(SALUDO).then(function(){
         esconder();
-        /* Notificaciones: segundo permiso, justo después del micrófono */
-        try{ if(window.Notification && Notification.permission==='default') Notification.requestPermission(); }catch(e){}
+        /* Notificaciones: segundo permiso, justo después del micrófono.
+           Al concederlas se activa el remarketing discreto de Lupita (aviso 1x/día
+           o 1x/3 días cuando el visitante vuelve sin convertir). */
+        try{
+          if(window.Notification && Notification.permission==='default'){
+            Notification.requestPermission().then(function(p){
+              try{ if(window.LupitaRemarketing) window.LupitaRemarketing.iniciar(p==='granted'); }catch(e){}
+            });
+          } else if(window.Notification && Notification.permission==='granted'){
+            try{ if(window.LupitaRemarketing) window.LupitaRemarketing.iniciar(true); }catch(e){}
+          }
+        }catch(e){}
       });
     });
   }
@@ -3011,6 +3045,174 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     btn.setAttribute('aria-expanded','true');
     try{ window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event:'voice_cargar' }); }catch(e){}
   });
+})();
+</script>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   LUPITA · REMARKETING DISCRETO (asociación por huella de IP+UA)
+   ──────────────────────────────────────────────────────────────────
+   1) En cada visita se registra una huella anónima en /api/visitas
+      (SHA-256 de IP+User-Agent — nunca guardamos el dato en claro).
+   2) Si la persona ya vino antes y SE FUE SIN CONVERTIR (sin lead),
+      Lupita ofrece un aviso discreto al volver. El servidor decide la
+      frecuencia: máx 1 por día, o 1 cada 3 días con LUPITA_FREQ=3dias.
+   3) La notificación real solo puede salir CON permiso otorgado.
+      Sin permiso → fallback elegante: Lupita aparece saludando al
+      segundo regreso ("Te extrañé… tu cotización sigue guardada").
+   Tipos de mensajes (rotan, tono útil nunca agresivo):
+     🛠️ recordatorio de reparación · ⏳ oferta pendiente · 💡 tips
+   ══════════════════════════════════════════════════════════════════ */
+(function(){
+  var KEY_H='lupita_huella_v1', KEY_TS='lupita_ultimo_aviso_ts';
+  function trk(ev,d){ try{ window.dataLayer=window.dataLayer||[]; window.dataLayer.push(Object.assign({event:ev},d||{})); }catch(e){} }
+  async function hash(str){
+    if(window.crypto && crypto.subtle && location.protocol==='https:'){
+      try{
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+        return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,32);
+      }catch(e){}
+    }
+    /* fallback no-crypto (http local): djb2 — suficiente para asociar sesiones */
+    let h=5381; for(let i=0;i<str.length;i++){ h=((h<<5)+h+str.charCodeAt(i))>>>0; }
+    return 'f'+h.toString(16);
+  }
+  async function huella(){
+    let saved=null; try{ saved=sessionStorage.getItem(KEY_H)||localStorage.getItem(KEY_H); }catch(e){}
+    if(saved) return saved;
+    const h = await hash((navigator.userAgent||'')+'|'+(navigator.language||'')+'|'+screen.width+'x'+screen.height);
+    try{ sessionStorage.setItem(KEY_H,h); localStorage.setItem(KEY_H,h); }catch(e){}
+    return h;
+  }
+  const MS_DIA=864e5;
+  function avisoRecienteLocal(){ try{ return Date.now()-Number(localStorage.getItem(KEY_TS)||0) < MS_DIA; }catch(e){ return false; } }
+  function marcarAvisoLocal(){ try{ localStorage.setItem(KEY_TS,String(Date.now())); }catch(e){} }
+
+  const MSGS=[
+    /* El NOMBRE visible (título) y COLOR de la notificación los decide el SO:
+       Android/Chrome muestra el nombre de la app del navegador + nuestro título;
+       iOS solo permite "TapaTech" si la PWA está instalada. Lo que sí controlamos:
+       título, cuerpo, icono y silencio. */
+    { t:'Lupita 💛 TapaTech', c:'Hola, soy Lupita 👋 Tu cotización sigue guardada. ¿Reparamos tu celular hoy? Diagnóstico gratis y garantía escrita.' },
+    { t:'Lupita 💛 TapaTech', c:'Tu pantalla puede quedar como nueva en 40 min aquí en Tapachula. Escríbenos y te la cotizamos al instante.' },
+    { t:'Lupita 💛 TapaTech', c:'¿Sigues con ese detalle del celular? Mientras más esperes, peor se pone. Te esperamos con diagnóstico sin costo.' },
+    { t:'Tip de Lupita 💡', c:'Si tu batería dura poco, evita cargar el celular toda la noche. ¿Te revisamos el equipo? Es gratis.' },
+    { t:'Lupita 🏠 TapaTech', c:'Servicio a domicilio en Tapachula: recogemos tu equipo, lo reparamos y lo devolvemos garantizado. Pregunta por Lupita.' }
+  ];
+  function elegirMsg(){
+    /* contexto de la última sesión: falla que el visitante llegó a seleccionar */
+    let ctx = window.LUPITA_CTX || {};
+    try{ if(!ctx.falla){ const g = JSON.parse(localStorage.getItem('lupita_ctx_v1')||'{}'); if(g && g.falla) ctx = { falla:g.falla }; } }catch(e){}
+    if(ctx.falla){
+      return { t:'Lupita 💛 TapaTech', c:'Hola, soy Lupita 👋 Me quedé pensando en tu "'+ctx.falla+'". Ya tienes cotización lista — ¿la confirmamos?' };
+    }
+    return MSGS[Math.floor(Math.random()*MSGS.length)];
+  }
+
+  /* ── Barra del navegador "viva" (Android/Chrome respeta theme-color dinámico) ──
+     Regla de marca: barra blanca por defecto; se tiñe SALMÓN solo mientras
+     Lupita acompaña al visitante (consola abierta o sorpresa activa), y vuelve
+     a blanco cuando Lupita termina. El resto lo maneja el SO. */
+  const tcMeta = document.getElementById('tcLupita');
+  let lupitaViva = false, tcTimer = null;
+  function barraLupita(on){
+    if(!tcMeta) return;
+    clearTimeout(tcTimer);
+    if(on){ lupitaViva = true; tcMeta.setAttribute('content', '#FA8072'); }
+    else {
+      tcMeta.setAttribute('content', '#FFD9CF');           /* destello salmón suave al salir */
+      tcTimer = setTimeout(function(){
+        if(!lupitaViva) tcMeta.setAttribute('content', '#FFFFFF');
+      }, 1400);
+    }
+  }
+  window.LupitaBarra = { entrar:function(){ barraLupita(true); }, salir:function(){ lupitaViva=false; barraLupita(false); } };
+  try{
+    const mo = new MutationObserver(function(){
+      const consola = document.getElementById('vozApp');
+      const sorp    = document.getElementById('vozSorp');
+      const activa  = !!(consola && !consola.hidden) || !!(sorp && !sorp.hidden);
+      if(activa !== lupitaViva) barraLupita(activa);
+    });
+    mo.observe(document.body, { childList:true, subtree:true, attributes:true, attributeFilter:['hidden','class'] });
+  }catch(e){}
+
+  async function registrarYEvaluar(){
+    if(!window.Notification) return;
+    const h = await huella();
+    let r; try{
+      r = await fetch('/api/visitas',{ method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ accion:'visita', hash:h, datos:{ pagina:location.pathname, origen:document.referrer?document.referrer.split('/')[2]:'', falla:(window.LUPITA_CTX&&window.LUPITA_CTX.falla)||'' } }) });
+    }catch(e){ return; }
+    if(!r.ok) return;
+    const j = await r.json().catch(()=>null); if(!j||!j.notificar) return;
+    if(avisoRecienteLocal()) return;                       /* doble candado local anti-spam */
+    const permiso = Notification.permission;
+    if(permiso==='granted'){
+      const m = elegirMsg();
+      try{
+        const n = new Notification(m.t,{ body:m.c, tag:'lupita-remarketing', icon:'/assets/lupita-mascota.svg', badge:'/assets/icon-192.png', silent:true });
+        n.onclick = function(){ window.focus(); this.close(); fetch('/api/visitas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accion:'clic_notif',hash:h})}).catch(()=>{}); };
+        fetch('/api/visitas',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ accion:'avisado', hash:h, contexto:m.c.slice(0,120) }) }).catch(()=>{});
+        marcarAvisoLocal();
+        trk('lupita_remarketing_enviada',{ canal:'notif', freq:j.freq||'dia' });
+      }catch(e){}
+    } else if(permiso==='default'){
+      /* sin permiso no hay notificación: Lupita misma ofrece el aviso discreto */
+      trk('lupita_remarketing_sin_permiso');
+      setTimeout(presentarseLupita, 2500);
+    }
+  }
+
+  /* Fallback amable: reaparece la tarjeta de Lupita con mensaje de retorno
+     (solo si el usuario aceptó conversar alguna vez → sessionStorage flag) */
+  function presentarseLupita(){
+    const card=document.getElementById('vozSorp'), txt=document.getElementById('vozSorpTxt');
+    if(!card||!txt) return;
+    let opto=false; try{ opto=sessionStorage.getItem('lupita_opto')==='1'||localStorage.getItem('lupita_opto')==='1'; }catch(e){}
+    if(!opto) return;                                    /* jamás insistir a quien no quiso */
+    const m=elegirMsg();
+    card.hidden=false; card.classList.remove('is-out');
+    txt.textContent=m.c; txt.classList.add('done');
+    const chips=document.getElementById('vozSorpChips'), cta=document.getElementById('vozSorpCta');
+    if(chips) chips.hidden=false; if(cta) cta.hidden=false;
+    fetch('/api/visitas',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ accion:'avisado', hash:'', contexto:'fallback_tarjeta' }) }).catch(()=>{});
+    marcarAvisoLocal();
+    trk('lupita_remarketing_fallback');
+  }
+
+  window.LupitaRemarketing = {
+    iniciar: function(conPermisos){
+      try{ sessionStorage.setItem('lupita_opto','1'); localStorage.setItem('lupita_opto','1'); }catch(e){}
+      if(conPermisos===false){ trk('lupita_remarketing_denego_notifs'); }
+    },
+    test: function(){ try{ if(Notification.permission==='granted'){ const m=MSGS[0]; new Notification(m.t,{body:m.c,tag:'lupita-test',icon:'/assets/lupita-mascota.svg',silent:true}); } }catch(e){} }
+  };
+
+  /* Service worker: habilita notificaciones aun con la pestaña cerrada (push VAPID futuro)
+     y registro de suscripción si el navegador lo soporta. */
+  if('serviceWorker' in navigator && location.protocol==='https:'){
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('/sw.js').then(function(reg){
+        return reg.ready;
+      }).then(function(reg){
+        try{ reg.active && reg.active.postMessage({ type:'lupita:registrar' }); }catch(e){}
+      }).catch(function(){});
+    });
+  }
+
+  /* guardar contexto (falla seleccionada en el cotizador) para mensajes personalizados */
+  function guardarCtx(){
+    try{
+      const sel = document.getElementById('l-falla');
+      if(sel && sel.value){ localStorage.setItem('lupita_ctx_v1', JSON.stringify({ falla:String(sel.value).slice(0,90), ts:Date.now() })); }
+    }catch(e){}
+  }
+  document.addEventListener('change', function(ev){ if(ev.target && ev.target.id==='l-falla') guardarCtx(); });
+
+  /* ejecutar al cargar (el candado local + el del servidor evitan duplicados) */
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', registrarYEvaluar);
+  else registrarYEvaluar();
 })();
 </script>
 

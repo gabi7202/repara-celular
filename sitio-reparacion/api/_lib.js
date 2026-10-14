@@ -5,6 +5,7 @@
    Si defines SUPABASE_URL + SUPABASE_SERVICE_KEY como variables de entorno,
    este mismo código cambia automáticamente a Supabase (opcional, no obligatorio). */
 const fs = require('fs');
+const crypto = require('crypto');
 const ESTADOS = ['nuevo','contactado','cotizado','autorizado','en_reparacion','entregado','perdido'];
 const TIPOS   = ['diagnostico','cotizacion','callback','cita','oferta','boleto','otro'];
 
@@ -12,6 +13,7 @@ const TIPOS   = ['diagnostico','cotizacion','callback','cita','oferta','boleto',
 const DATA_DIR = process.env.DATA_DIR || '/tmp/tapatech';
 const LEADS_F  = () => DATA_DIR + '/leads.jsonl';
 const EVENTOS_F = () => DATA_DIR + '/eventos.jsonl';
+const VISITAS_F = () => DATA_DIR + '/visitas.jsonl';
 function ensureDir(){ try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch(e){} }
 function leerJsonl(f){ try { return fs.readFileSync(f, 'utf8').split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch(e){ return null; } }).filter(Boolean); } catch(e){ return []; } }
 function anexarJsonl(f, obj){ ensureDir(); fs.appendFileSync(f, JSON.stringify(obj) + '\n'); }
@@ -33,6 +35,9 @@ async function sb(path, opts = {}){
 const json = (res, code, obj) => { res.status(code); res.setHeader('Cache-Control','no-store'); return res.json(obj); };
 const pinOk = req => (req.query && req.query.pin) === (process.env.ADMIN_PIN || 'cambia-este-pin');
 const ip = req => (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'desconocida';
+/* Huella anónima del visitante: SHA-256(sal + IP + UA recortado). Misma fórmula
+   en _lib y visitas.js para poder cruzar leads ↔ visitantes sin guardar el IP de más. */
+function huella(ipAddr, ua){ return crypto.createHash('sha256').update((process.env.LUPITA_SAL || 'tapatech-lupita-v1') + '|' + ipAddr + '|' + String(ua||'').slice(0,120)).digest('hex').slice(0,32); }
 
 function normalizar(b, ipAddr){
   const s = (v, n) => (v === undefined || v === null ? null : String(v).slice(0, n));
@@ -49,7 +54,7 @@ function normalizar(b, ipAddr){
     origen: s(b.origen, 300), referrer: s(b.referrer, 300), pagina: s(b.pagina, 160), idioma: s(b.idioma, 12),
     pantalla: s(b.pantalla, 16), online: b.online === undefined ? null : !!b.online,
     utm: typeof b.utm === 'object' ? JSON.stringify(b.utm).slice(0,500) : s(b.utm, 500),
-    ua: s(b.ua, 260), ip: ipAddr, created_at: b.created_at || new Date().toISOString()
+    ua: s(b.ua, 260), ip: ipAddr, ip_hash: huella(ipAddr, b.ua), created_at: b.created_at || new Date().toISOString()
   };
   if (out.telefono && out.telefono.length === 12 && out.telefono.startsWith('52')) out.telefono = out.telefono.slice(2);
   return out;
@@ -61,7 +66,7 @@ async function webhook(lead){
     await fetch(url, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ text: texto, lead }) });
   } catch(e){ console.error('webhook:', e.message); }
 }
-module.exports = { sb, tieneSupabase, json, pinOk, ip, normalizar, webhook, ESTADOS, TIPOS, DATA_DIR, LEADS_F, EVENTOS_F, leerJsonl, anexarJsonl, escribirJsonl };
+module.exports = { sb, tieneSupabase, json, pinOk, ip, huella, normalizar, webhook, ESTADOS, TIPOS, DATA_DIR, LEADS_F, EVENTOS_F, VISITAS_F, leerJsonl, anexarJsonl, escribirJsonl };
 
 /* ── Groq: clave solo en el servidor ─────────────────────────────────── */
 const GROQ = 'https://api.groq.com/openai/v1';
