@@ -8,7 +8,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/doc.css">
 <style>
-  :root{--ok:#2563EB}
+  :root{--ok:#0891B2}
   body{background:var(--paper-2)}
   .gate{min-height:80vh;display:grid;place-items:center;padding:24px}
   .gate-card{width:100%;max-width:380px;background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:0 18px 50px rgba(11,15,18,.10)}
@@ -52,7 +52,7 @@
 
 <header class="hdr">
   <div class="wrap">
-    <a class="logo" href="./"><span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M13.5 2 5 13.2h5.2L9.6 22 19 10.4h-5.6L13.5 2Z" fill="#2563EB"/></svg></span><span>TapaTech<small>Panel de leads</small></span></a>
+    <a class="logo" href="./"><span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M13.5 2 5 13.2h5.2L9.6 22 19 10.4h-5.6L13.5 2Z" fill="#0891B2"/></svg></span><span>TapaTech<small>Panel de leads</small></span></a>
     <nav aria-label="Navegación">
       <a href="./">Ver sitio</a>
       <a href="./#cotizador">Cotizador</a>
@@ -77,7 +77,7 @@
       <div class="help" style="margin-top:18px">
         <b>¿Aún no tienes servidor?</b><br>
         1) Local o VPS: <code>ADMIN_PIN=tupin node server.js</code> y abre <code>/admin.html</code>.<br>
-        2) Vercel + Supabase: define <code>SUPABASE_URL</code>, <code>SUPABASE_SERVICE_KEY</code> y <code>ADMIN_PIN</code> como variables de entorno y despliega <code>api/leads.js</code>.<br>
+        2) Vercel (sin Supabase): define <code>ADMIN_PIN</code> (y opcionalmente <code>GROQ_API_KEY</code> / <code>LEAD_WEBHOOK</code>) como variables de entorno y despliega <code>api/leads.js</code>; los leads se guardan en el almacenamiento local de la función.<br>
         3) Solo WhatsApp: el sitio funciona igual sin API (los leads llegan por WhatsApp y quedan en cola en el dispositivo del cliente).
       </div>
     </div>
@@ -212,7 +212,7 @@ async function cargar(){
     const [l, s] = await Promise.all([api('/leads'), api('/stats')]);
     datos = l.leads || []; kpis(s.stats || {}); pintar();
     $('#liveTxt').textContent = 'Conectado · ' + new Date().toLocaleTimeString('es-MX');
-    $('#liveDot').style.background = '#2563EB';
+    $('#liveDot').style.background = '#0891B2';
     $('#gate').hidden = true; $('#panel').hidden = false; $('#btnOut').hidden = false;
     $('#lnkCsv').href = API + '/leads.csv?pin=' + encodeURIComponent(PIN);
     sessionStorage.setItem('tt-pin', PIN);
