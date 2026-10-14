@@ -327,26 +327,135 @@ async function pensar(textoUsuario) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   5. STT — reconocimiento de voz
+   5. STT — reconocimiento de voz con blindaje anti-ruido
+   ──────────────────────────────────────────────────────────────────
+   El taller, la calle o un TV cercano pueden llenar el ambiente de ruido.
+   Para que la respuesta no sea un desastre, aplicamos varias capas:
+   a) Filtro hardware del micrófono: echoCancellation + noiseSuppression + AGC.
+   b) Calibración: medimos el ruido ambiente los primeros ~700 ms y fijamos
+      un umbral adaptativo por encima de él.
+   c) Puerta de ruido (noise gate): solo mandamos al motor de STT el audio
+      donde realmente hay voz (RMS por encima del umbral), recortando
+      silencios y rachas de ruido puro.
+   d) VAD con histéresis para detectar cuándo terminaste de hablar.
+   e) En Web Speech API: confianza mínima + rechazo de frases fantasma
+      ("ok google", dictados en inglés, palabras sueltas sin contexto).
+   f) Si el navegador falla o sospecha de ruido, fallback automático a
+      Whisper (mucho más robusto con ruido de fondo).
+   g) Reintento inteligente: si la captura fue pobre, Lupita lo dice y da
+      consejos concretos en vez de responder cualquier cosa.
    ══════════════════════════════════════════════════════════════════ */
 function sttNativo() { return W.SpeechRecognition || W.webkitSpeechRecognition || null; }
 async function pedirMicrofono() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('sin_mic');
-  return await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+  var s = (CFG.stt) || {};
+  return await navigator.mediaDevices.getUserMedia({ audio: {
+    echoCancellation: s.echoCancellation !== false,
+    noiseSuppression: s.noiseSuppression !== false,
+    autoGainControl: s.autoGainControl !== false
+  }});
 }
+
+/* Medidor de RMS reutilizable sobre un MediaStream */
+function crearMedidor(stream) {
+  var ctx = new (W.AudioContext || W.webkitAudioContext)();
+  var src = ctx.createMediaStreamSource(stream);
+  var an = ctx.createAnalyser();
+  an.fftSize = 1024; an.smoothingTimeConstant = 0.6;
+  src.connect(an);
+  var buf = new Float32Array(an.fftSize);
+  return {
+    ctx: ctx,
+    rms: function () {
+      an.getFloatTimeDomainData(buf);
+      var s = 0; for (var i = 0; i < buf.length; i++) s += buf[i] * buf[i];
+      return Math.sqrt(s / buf.length);
+    },
+    cerrar: function () { try { ctx.close(); } catch (e) {} }
+  };
+}
+
+/* Calibración de ruido ambiente: mide durante `ms` y devuelve estadísticas.
+   Devuelve { base, p90, max } — "base" es el ruido de fondo típico. */
+function calibrarRuido(medidor, ms) {
+  return new Promise(function (resolve) {
+    var muestras = [], t0 = Date.now();
+    var iv = setInterval(function () {
+      muestras.push(medidor.rms());
+      if (Date.now() - t0 >= (ms || 700)) {
+        clearInterval(iv);
+        muestras.sort(function (a, b) { return a - b; });
+        var n = muestras.length;
+        resolve({
+          base: muestras[Math.floor(n * 0.5)] || 0,       /* mediana */
+          p90:  muestras[Math.floor(n * 0.9)] || 0,       /* picos frecuentes */
+          max:  muestras[n - 1] || 0
+        });
+      }
+    }, 60);
+  });
+}
+
+/* Construye un stream filtrado por puerta de ruido: pasa solo cuando hay voz.
+   Con ruido alto sube el corte; con silencio lo baja (adaptativo). */
+function aplicarPuerta(stream, umbralFn) {
+  var ctx = new (W.AudioContext || W.webkitAudioContext)();
+  var src = ctx.createMediaStreamSource(stream);
+  var proc = ctx.createScriptProcessor(2048, 1, 1);
+  var gateAbierto = false, holdFrames = 0;
+  var SILENCIO_BLANCO = new Float32Array(2048);
+  proc.onaudioprocess = function (e) {
+    var inp = e.inputBuffer.getChannelData(0), out = e.outputBuffer.getChannelData(0);
+    var rms = 0; for (var i = 0; i < inp.length; i++) rms += inp[i] * inp[i];
+    rms = Math.sqrt(rms / inp.length);
+    var u = umbralFn();
+    if (rms > u) { gateAbierto = true; holdFrames = 12; } /* ~250 ms de cola para no cortar finales */
+    else if (holdFrames > 0) holdFrames--; else gateAbierto = false;
+    if (gateAbierto) out.set(inp); else out.set(SILENCIO_BLANCO);
+  };
+  src.connect(proc); proc.connect(ctx.destination);
+  return {
+    stream: new MediaStream(ctx.destination.stream.getAudioTracks()),
+    cerrar: function () { try { proc.disconnect(); src.disconnect(); ctx.close(); } catch (e) {} }
+  };
+}
+
+/* ¿Sospechamos que el texto recibido es basura por ruido? */
+API.textoSospechoso = function (t) {
+  var s = String(t || '').trim();
+  if (!s) return true;
+  var pal = s.toLowerCase().split(/\s+/);
+  /* frases fantasma típicas del motor cuando come ruido ambiente */
+  if (/^(ok\s?google|hey\s?google|hola\??$|gracias\.?|hello\.?|hi\.?|hey\.?)$/i.test(s)) return true;
+  if (/noisy conditions|please|\[.*?\]|silence|thank you/i.test(s)) return true;
+  /* una sola palabra suelta sin contexto suele ser residuo de ruido */
+  if (pal.length === 1 && /^(ok|okay|go|the|and|a|i|you|yeah|yes|no|hmm|hum|uh|eh)$/i.test(pal[0])) return true;
+  /* repetición de la misma palabra ("the the the") = dictado fantasma */
+  var unicos = {}; pal.forEach(function (w) { unicos[w] = 1; });
+  if (pal.length >= 2 && Object.keys(unicos).length === 1) return true;
+  /* dictado en inglés = casi siempre ruido (el usuario habla español) */
+  if (/^(hello|hi|hey|thank you|thanks|good morning|what'?s up|can you|the)\b/i.test(s) && !/[áéíóúñ¿¡]/i.test(s)) return true;
+  return false;
+};
 
 function escucharNavegador() {
   var SR = sttNativo();
+  var cfg = CFG.stt || {};
+  var minConfianza = cfg.confianzaMinima || 0.5;
   return new Promise(function (resolve, reject) {
-    var r = new SR(), final = '', inter = '', listo = false;
-    r.lang = (CFG.stt && CFG.stt.idioma) || 'es-MX';
-    r.continuous = false; r.interimResults = true; r.maxAlternatives = 1;
-    var tope = setTimeout(function () { try { r.stop(); } catch (e) {} }, ((CFG.stt && CFG.stt.grabacionMaximaSeg) || 25) * 1000);
+    var r = new SR(), final = '', mejorConf = 0, listo = false;
+    r.lang = cfg.idioma || 'es-MX';
+    r.continuous = false; r.interimResults = true;
+    r.maxAlternatives = Math.max(3, cfg.alternativas || 3); /* elegimos la alternativa más creíble */
+    var tope = setTimeout(function () { try { r.stop(); } catch (e) {} }, ((cfg.grabacionMaximaSeg) || 25) * 1000);
     r.onresult = function (e) {
-      inter = '';
+      var inter = '';
       for (var i = e.resultIndex; i < e.results.length; i++) {
-        var t = e.results[i][0].transcript;
-        if (e.results[i].isFinal) final += t; else inter += t;
+        var res = e.results[i], alt = res[0];
+        if (res.isFinal) {
+          mejorConf = Math.max(mejorConf, alt.confidence || 0);
+          final += ' ' + alt.transcript;
+        } else inter += alt.transcript;
       }
       pintarInterim((final + ' ' + inter).trim());
       /* barge-in: si Lupita está hablando y la persona ya dijo algo, la callamos */
@@ -356,7 +465,11 @@ function escucharNavegador() {
     r.onend = function () {
       if (listo) return; listo = true; clearTimeout(tope); pintarInterim('');
       var t = final.trim();
-      t ? resolve(t) : reject(new Error('stt_sin_audio'));
+      if (!t) return reject(new Error('stt_sin_audio'));
+      /* Confianza muy baja = probablemente nos comió el ruido → usar Whisper */
+      if (mejorConf && mejorConf < minConfianza) return reject(new Error('stt_ruido_baja_confianza'));
+      if (API.textoSospechoso(t)) return reject(new Error('stt_ruido_sospechoso'));
+      resolve(t);
     };
     recogn = r;
     try { r.start(); } catch (e) { reject(new Error('stt_no_inicio')); }
@@ -365,31 +478,56 @@ function escucharNavegador() {
 
 async function escucharWhisper() {
   var stream = await pedirMicrofono();
+  var cfg = CFG.stt || {};
+
+  /* ── Calibración de ruido ambiente (~700 ms) ─────────────────── */
+  var medidor = crearMedidor(stream);
+  var ruido = await calibrarRuido(medidor, cfg.calibracionMs || 700);
+  medidor.cerrar();
+  var baseUmbral = cfg.umbralVolumen || 0.012;
+  /* Umbral adaptativo: por encima del ruido de fondo detectado (con piso y techo) */
+  var umbralCal = Math.min(0.08, Math.max(baseUmbral, ruido.p90 * 2.2));
+  log('ruido ambiente', ruido, 'umbral→', umbralCal.toFixed(4));
+  track('voz_calibracion', { base: +ruido.base.toFixed(4), p90: +ruido.p90.toFixed(4), umbral: +umbralCal.toFixed(4) });
+  if (ruido.p90 > (cfg.ruidoAlerta || 0.05)) setEstado('Ambiente ruidoso · acércate y habla fuerte y claro');
+
+  /* ── Puerta de ruido: solo pasa audio con voz ─────────────────── */
+  var puerta = null, grabStream = stream;
+  if (cfg.puertaRuido !== false && W.AudioContext && typeof AudioContext.prototype.createScriptProcessor === 'function') {
+    try {
+      var umbralDin = umbralCal;
+      puerta = aplicarPuerta(stream, function () { return umbralDin; });
+      grabStream = puerta.stream;
+    } catch (e) { log('puerta indisponible', e.message); }
+  }
+
   var tipos = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'];
   var mime = tipos.filter(function (t) { return W.MediaRecorder && MediaRecorder.isTypeSupported(t); })[0] || '';
-  var rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+  var rec = new MediaRecorder(grabStream, mime ? { mimeType: mime } : undefined);
   var chunks = [];
   rec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
   var fin = new Promise(function (res) { rec.onstop = function () { res(new Blob(chunks, { type: rec.mimeType || 'audio/webm' })); }; });
 
   var ctx = new (W.AudioContext || W.webkitAudioContext)();
-  var src = ctx.createMediaStreamSource(stream), an = ctx.createAnalyser();
+  var src = ctx.createMediaStreamSource(grabStream), an = ctx.createAnalyser();
   an.fftSize = 1024; src.connect(an);
   var buf = new Float32Array(an.fftSize), hablando = false, silencio = 0, t0 = Date.now();
-  var umbral = (CFG.stt && CFG.stt.umbralVolumen) || 0.012;
-  var silencioMax = (CFG.stt && CFG.stt.silencioMs) || 900;
-  var maxMs = ((CFG.stt && CFG.stt.grabacionMaximaSeg) || 25) * 1000;
+  var umbral = umbralCal;
+  var silencioMax = (cfg.silencioMs) || 900;
+  var maxMs = ((cfg.grabacionMaximaSeg) || 25) * 1000;
+  /* histéresis: abrir es más difícil que mantenerse abierto */
   var tick = setInterval(function () {
     an.getFloatTimeDomainData(buf);
     var rms = 0; for (var i = 0; i < buf.length; i++) rms += buf[i] * buf[i];
     rms = Math.sqrt(rms / buf.length);
     pintarViz(rms);
-    if (rms > umbral) { hablando = true; silencio = 0; } else if (hablando) { silencio += 120; }
+    if (rms > (hablando ? umbral * 0.6 : umbral)) { hablando = true; silencio = 0; } else if (hablando) { silencio += 120; }
     if ((hablando && silencio >= silencioMax) || Date.now() - t0 > maxMs) { clearInterval(tick); if (rec.state !== 'inactive') rec.stop(); }
   }, 120);
   rec.start();
   var blob = await fin;
   clearInterval(tick); pintarViz(0);
+  if (puerta) puerta.cerrar();
   stream.getTracks().forEach(function (t) { t.stop(); });
   try { ctx.close(); } catch (e) {}
   if (blob.size < 1200) throw new Error('stt_sin_audio');
@@ -404,14 +542,29 @@ async function escucharWhisper() {
   if (!r.ok) throw new Error('stt_http_' + r.status);
   var j = await r.json();
   if (!j.text || !j.text.trim()) throw new Error('stt_vacio');
-  return j.text.trim();
+  var txt = j.text.trim();
+  /* Whisper alucina con ruido ("¡Gracias!", subtítulos) — lo filtramos aquí también */
+  if (API.textoSospechoso(txt)) throw new Error('stt_ruido_sospechoso');
+  return txt;
 }
 
 function escuchar() {
   var pref = (CFG.stt && CFG.stt.motorPreferido) || 'auto';
   if (pref === 'whisper') return escucharWhisper();
   if (pref === 'navegador' || (pref === 'auto' && sttNativo())) {
-    if (sttNativo()) return escucharNavegador();
+    if (sttNativo()) {
+      return escucharNavegador().catch(function (e) {
+        var m = String(e && e.message || '');
+        /* Si el motor del navegador se confundió por ruido o no hay red para su
+           servicio, caemos a Whisper que maneja mejor esos casos. */
+        if (/stt_(network|no-speech|sin_audio|ruido_baja_confianza|ruido_sospechoso|aborted)/.test(m)) {
+          log('fallback a Whisper por', m);
+          track('voz_fallback_whisper', { motivo: m.slice(0, 60) });
+          return escucharWhisper();
+        }
+        throw e;
+      });
+    }
   }
   return escucharWhisper();
 }
@@ -578,7 +731,9 @@ API.fusionarSegmentos = function (segs) {
 async function hablar(texto) {
   var plano = API.aTextoPlano(texto);
   if (!plano) return;
-  pintarBurbuja('bot', plano);
+  var burbBot = pintarBurbuja('bot', plano);
+  /* Lupita "escribe" su respuesta: punteado vivo hasta que empieza a sonar */
+  if (burbBot) { burbBot.classList.add('typing'); setTimeout(function(){ burbBot.classList.remove('typing'); }, Math.min(2600, plano.length * 24)); }
   if (muted) { notificar('Lupita respondió', plano); return; }
   var segs = API.fusionarSegmentos(API.parsearProsodia(texto, CFG));
   detenerTodo = false;
@@ -614,6 +769,13 @@ function setEstado(t) {
   API.estado = t;
   var e = $('#vozEstado'), h = $('#vozEstadoHd');
   if (e) e.textContent = t; if (h) h.textContent = t;
+  /* Lupita (mascota salmón): el botón "Hablar con Lupita" refleja si escucha o habla */
+  var vb = $('#voiceBtn'), vl = $('#voiceBtnLbl');
+  if (vb) vb.classList.toggle('voice-live', !!(t && /escuchando|hablando/i.test(t)));
+  if (vl) vl.textContent = !t ? '🎙️ Hablar con Lupita (asistente de voz)'
+    : /escuchando/i.test(t) ? '🎙️ Lupita te está escuchando…'
+    : /hablando/i.test(t) ? '🗣️ Lupita está hablando…'
+    : '🎙️ Hablar con Lupita (asistente de voz)';
 }
 function pintarBurbuja(tipo, texto) {
   var log2 = $('#vozLog'); if (!log2 || !texto) return;
@@ -666,6 +828,8 @@ async function ciclo() {
     var texto = await escuchar();
     micActivo(false); pintarViz(0);
     if (!texto) { cicloActivo = false; return reintentar('No escuché nada. ¿Me lo repites?'); }
+    /* Confirmación visual inmediata: la persona ve que Lupita entendió bien */
+    setEstado('Entendí: «' + String(texto).slice(0, 60) + '»');
     pintarBurbuja('user', texto);
     track('voz_usuario', { palabras: texto.split(/\s+/).length });
     setEstado('Pensando…');
@@ -690,9 +854,21 @@ async function ciclo() {
   cicloActivo = false;
 }
 
+var reintentosRuido = 0;
 async function reintentar(mensaje) {
   pintarBurbuja('sys', mensaje);
   if (manosLibres) { await dormir(500); ciclo(); }
+}
+
+/* Mensajes anti-ruido: si falló la captura, Lupita da consejos concretos
+   y ofrece cambiar de canal en vez de responder basura. */
+function consejoRuido() {
+  var tips = [
+    'Hay ruido alrededor y no te escuché bien. [[e:empatico]]Acércate al micrófono[[/]][[p:200]] y repíteme, por favor.',
+    'El ambiente está ruidoso. Habla un poco más fuerte y cerca del teléfono, o escríbelo aquí abajo en el chat.',
+    'No logré captarte bien con tanto ruido. ¿Me lo repices? Si prefieres, te abro WhatsApp y seguimos por texto.'
+  ];
+  return tips[Math.min(reintentosRuido, tips.length - 1)];
 }
 
 async function manejarError(e) {
@@ -701,7 +877,18 @@ async function manejarError(e) {
   track('voz_error', { error: m.slice(0, 80) });
   var msg = 'No pudimos completar la conversación.';
   if (/stt_(not-allowed|service-not-allowed|permission)/.test(m)) msg = 'Sin permiso de micrófono no puedo escucharte. Actívalo en el candado de la barra de direcciones, o escríbenos por WhatsApp.';
-  else if (/stt_(no-speech|sin_audio|audio-capture)/.test(m)) msg = 'No capté audio. Acerca el teléfono, revisa que no esté en silencio y vuelve a tocar el micrófono.';
+  else if (/stt_ruido/.test(m)) {
+    reintentosRuido++;
+    msg = consejoRuido();
+    if (reintentosRuido >= 3) {
+      msg = 'Con tanto ruido me es difícil ayudarte por voz. [[e:alegre]]Te propongo continuar por WhatsApp[[/]][[p:300]] y te atiendo de inmediato.';
+      abrirWhatsApp('conversación por voz interrumpida por ruido');
+      reintentosRuido = 0;
+    } else if (manosLibres) {
+      setTimeout(function () { if (API.estado !== 'fin') ciclo(); }, 400);
+    }
+  }
+  else if (/stt_(no-speech|sin_audio|audio-capture|vacio)/.test(m)) { reintentosRuido++; msg = consejoRuido(); if (manosLibres) setTimeout(function () { if (API.estado !== 'fin') ciclo(); }, 400); }
   else if (/stt_(network|language-not-supported)/.test(m)) msg = 'El reconocimiento de voz del navegador falló. Puedes escribirnos por WhatsApp.';
   else if (/sin_mic/.test(m)) msg = 'Este navegador no da acceso al micrófono. Usa Chrome o Safari, o escríbenos por WhatsApp.';
   else if (/llm_(401|403|503)|sin_clave/.test(m)) msg = 'El asistente aún no tiene conectada la IA en este servidor. Mientras tanto, cotiza en el sitio o escríbenos por WhatsApp.';
@@ -748,6 +935,32 @@ async function saludar() {
   turnosSinAccion = 0;
   await hablar(saludo);
 }
+
+/* ── Saludo PREVIO desde la tarjeta de sorpresa (voz-sorp en index.html).
+   Pide SOLO permiso de micrófono (el gesto ya lo hizo el botón "Sí, quiero
+   conversar"). Las notificaciones se piden después, dentro de la consola. ── */
+API.saludoPrevio = async function (texto) {
+  abrir();
+  setEstado('Lupita te está hablando…');
+  try {
+    if (!iniciado) { await cargarConfig(); enlazarControles(); iniciado = true; API.listo = true; }
+    var t = texto || ((CFG.asistente && CFG.asistente.saludoSorpresa) ||
+      '¡Hola! Bienvenido a TapaTech, la mejor opción para reparar tu celular en Tapachula. Dime, ¿en qué te puedo ayudar?');
+    historial = [{ role: 'assistant', content: t }];
+    pintarBurbuja('sys', 'Saludo de bienvenida 🐾 — cuando quieras, activa el micrófono para platicar conmigo.');
+    track('voz_sorp_iniciar');
+    await hablar(t);
+    var micOk = false;
+    try { await pedirMicrofono(); micOk = true; } catch (e) { log('mic no concedido', e && e.message); }
+    setEstado(micOk ? 'Micrófono listo · toca el botón y cuéntame tu falla' : 'Toca el micrófono para hablar (permiso pendiente)');
+    track('voz_sorp_mic', { concedido: micOk });
+    return micOk;
+  } catch (e) {
+    log('fallo en saludo previo', e);
+    setEstado('Toca el micrófono para hablar');
+    return false;
+  }
+};
 
 async function pedirPermisoNotificaciones() {
   try { if (W.Notification && Notification.permission === 'default') await Notification.requestPermission(); } catch (e) {}
@@ -798,6 +1011,8 @@ function cerrar() {
 }
 API.alternar = function () { var app = $('#vozApp'); if (!app) return API.iniciar(); app.classList.contains('is-on') ? cerrar() : abrir(); };
 API.abrir = abrir; API.cerrar = cerrar;
+/* El saludo de la sorpresa ya cargó controles: solo abre/oculta la consola. */
+if (iniciado) API.iniciar = function () { abrir(); };
 API.cancelarVoz = cancelarVoz;
 /* introspección para pruebas y depuración en consola */
 API._debug = function () { return { cicloActivo: cicloActivo, reproduciendo: reproduciendo, pendienteEscucha: pendienteEscucha, detenerTodo: detenerTodo,

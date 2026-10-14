@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lupita · Asistente de voz IA para tu negocio — TapaTech / Cubatel</title>
+<meta name="description" content="Sistema avanzado de atención por voz con IA para negocios en Tapachula. Setup $3,500 + $350/mes. Escríbenos por WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#0d9488; --cyan:#06b6d4; --dark:#0f172a; --slate:#475569;
+    --salmon:#fa8072; --bg:#f0fdfa; --gold:#f59e0b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',system-ui,sans-serif;background:#e2e8f0;color:var(--dark);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{max-width:520px;width:100%;background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 24px 64px rgba(15,23,42,.18)}
+  /* Header */
+  .head{background:linear-gradient(135deg,var(--dark) 0%,#134e4a 60%,var(--teal) 100%);color:#fff;padding:32px 32px 88px;position:relative}
+  .head .tag{display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:6px 14px;border-radius:999px;font-size:.78rem;font-weight:600;letter-spacing:.04em;margin-bottom:16px}
+  .head h1{font-size:1.9rem;line-height:1.15;font-weight:800}
+  .head h1 em{font-style:normal;color:#7dd3fc}
+  .mascota{position:absolute;right:28px;top:26px;width:74px;height:74px;filter:drop-shadow(0 6px 14px rgba(250,128,114,.45));animation:flotar 5s ease-in-out infinite}
+  @keyframes flotar{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  /* Price ribbon overlapping header */
+  .ribbon{margin:-64px 24px 0;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:18px 22px;display:flex;align-items:center;gap:16px;box-shadow:0 10px 28px rgba(15,23,42,.10)}
+  .price-main{text-align:center;flex-shrink:0}
+  .price-main .big{font-size:1.7rem;font-weight:800;color:var(--teal);line-height:1}
+  .price-main .lbl{font-size:.72rem;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+  .plus{font-size:1.3rem;font-weight:800;color:#cbd5e1}
+  .price-sub{text-align:center;flex-shrink:0}
+  .price-sub .big{font-size:1.7rem;font-weight:800;color:var(--salmon);line-height:1}
+  .price-sub .lbl{font-size:.72rem;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+  .price-note{font-size:.82rem;color:var(--slate);line-height:1.45;margin-left:auto;text-align:right}
+  /* Body */
+  .body{padding:26px 32px 30px}
+  .hook{font-size:1.02rem;line-height:1.55;color:var(--dark);margin-bottom:20px}
+  .hook strong{color:var(--teal)}
+  ul.perks{list-style:none;display:grid;gap:11px;margin-bottom:22px}
+  ul.perks li{display:flex;gap:11px;align-items:flex-start;font-size:.93rem;line-height:1.45;color:#334155}
+  ul.perks li .ic{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--bg);color:var(--teal);display:grid;place-items:center;font-size:.8rem;font-weight:800}
+  .quote{background:var(--bg);border-left:4px solid var(--salmon);border-radius:0 12px 12px 0;padding:14px 18px;font-size:.92rem;line-height:1.5;color:#134e4a;margin-bottom:24px}
+  .cta{display:block;text-align:center;background:#25d366;color:#fff;text-decoration:none;font-weight:800;font-size:1.05rem;padding:16px;border-radius:14px;box-shadow:0 8px 22px rgba(37,211,102,.35);transition:transform .15s ease}
+  .cta:hover{transform:translateY(-2px)}
+  .cta small{display:block;font-weight:600;font-size:.78rem;opacity:.9;margin-top:3px}
+  /* Footer */
+  .foot{background:var(--dark);color:#94a3b8;padding:16px 32px;display:flex;justify-content:space-between;align-items:center;font-size:.8rem;flex-wrap:wrap;gap:8px}
+  .foot b{color:#fff;font-weight:700}
+  .foot a{color:#7dd3fc;text-decoration:none;font-weight:600}
+  @media (max-width:480px){
+    .ribbon{flex-wrap:wrap;justify-content:center}
+    .price-note{margin-left:0;text-align:center;width:100%}
+    .mascota{width:56px;height:56px;top:20px;right:20px}
+    .head h1{font-size:1.5rem;padding-right:60px}
+  }
+  @media print{
+    body{background:#fff;padding:0}
+    .card{box-shadow:none;max-width:100%}
+    .cta{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="head">
+    <!-- Mascota Lupita (salmon, sin nube/auricular) -->
+    <svg class="mascota" viewBox="0 0 100 100" aria-label="Lupita, asistente de voz">
+      <circle cx="50" cy="50" r="44" fill="#FA8072"/>
+      <circle cx="50" cy="50" r="44" fill="none" stroke="#e2635a" stroke-width="3"/>
+      <ellipse cx="36" cy="42" rx="7" ry="8" fill="#fff"/><ellipse cx="64" cy="42" rx="7" ry="8" fill="#fff"/>
+      <circle cx="37" cy="44" r="3.6" fill="#0f172a"/><circle cx="65" cy="44" r="3.6" fill="#0f172a"/>
+      <circle cx="38.5" cy="42.5" r="1.2" fill="#fff"/><circle cx="66.5" cy="42.5" r="1.2" fill="#fff"/>
+      <path d="M34 62 Q50 76 66 62" stroke="#7c2d12" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <circle cx="26" cy="56" r="5" fill="#ffb4ab" opacity=".7"/><circle cx="74" cy="56" r="5" fill="#ffb4ab" opacity=".7"/>
+    </svg>
+    <span class="tag">⚡ NUEVO EN TAPACHULA</span>
+    <h1>Tu negocio contesta <em>solo, por voz</em>, las 24 horas</h1>
+  </div>
+
+  <div class="ribbon">
+    <div class="price-main">
+      <div class="big">$3,500</div>
+      <div class="lbl">Pago único setup</div>
+    </div>
+    <div class="plus">+</div>
+    <div class="price-sub">
+      <div class="big">$350<span style="font-size:.9rem">/mes</span></div>
+      <div class="lbl">Mantenimiento</div>
+    </div>
+    <p class="price-note">Sin contratos forzosos.<br>Menos que una empleada de medio tiempo.</p>
+  </div>
+
+  <div class="body">
+    <p class="hook">Se llama <strong>Lupita</strong>. Es un asistente de voz con Inteligencia Artificial que <strong>atiende a tus clientes, cotiza, resuelve dudas y toma pedidos</strong> cuando tú estás ocupado… o dormido.</p>
+    <ul class="perks">
+      <li><span class="ic">✓</span>Contesta por voz en tu sitio web o WhatsApp — nunca más pierdas un cliente por no poder atender el teléfono.</li>
+      <li><span class="ic">✓</span>Entiende aunque haya ruido alrededor (local, música, tráfico): tiene filtro anti-ruido profesional.</li>
+      <li><span class="ic">✓</span>Cotiza, agenda y guía al cliente directo a tu WhatsApp con el pedido completo.</li>
+      <li><span class="ic">✓</span>Lo instalamos y configuramos nosotros: tú solo recibes clientes.</li>
+      <li><span class="ic">✓</span>Sirve para cualquier giro: talleres, dentistas, restaurantes, tiendas, servicios.</li>
+    </ul>
+    <p class="quote">💬 <b>"Mientras tus competidores pierden llamadas, tu negocio ya está cerrando ventas."</b><br>Emprendedores que lo integraron lo ven como su mejor inversión del año — y una fuente extra de ingreso si lo recomiendas.</p>
+    <a class="cta" href="https://wa.me/529622889585?text=Hola%2C%20vi%20la%20tarjeta%20de%20Lupita%20y%20quiero%20el%20sistema%20de%20voz%20para%20mi%20negocio.%20%C2%BFPodr%C3%ADan%20darme%20m%C3%A1s%20informaci%C3%B3n%3F" target="_blank" rel="noopener">
+      📲 Preguntar por WhatsApp
+      <small>Escribe "QUIERO LUPITA" y te respondemos hoy mismo</small>
+    </a>
+  </div>
+
+  <div class="foot">
+    <span>Creado por <b>Rafael Ortiz "Cubatel"</b> · +15 años reparando equipos móviles</span>
+    <a href="https://wa.me/529622889585">962 288 9585</a>
+  </div>
+
+</div>
+</body>
+</html>
