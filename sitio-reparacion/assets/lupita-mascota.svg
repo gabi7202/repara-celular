@@ -1,0 +1,27 @@
+<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lupita, la mascota de TapaTech">
+  <title>Lupita</title>
+  <!-- carita redonda salmón de Lupita (mascota) -->
+  <circle cx="32" cy="34" r="21" fill="#FA8072"/>
+  <circle cx="32" cy="34" r="21" fill="url(#lupS)" opacity=".9"/>
+  <defs><radialGradient id="lupS" cx=".34" cy=".26" r=".9">
+    <stop offset="0" stop-color="#FFCABF"/><stop offset=".55" stop-color="#FA8072"/><stop offset="1" stop-color="#E2665A"/>
+  </radialGradient></defs>
+  <!-- mechón/cabello -->
+  <path d="M13.5 29c1.5-11 10.5-17.5 19-17.5 8 0 16 5.5 18 15.5-3.5-5.5-9-8.5-15-8.5-3 4-8.5 6.5-14.5 6.5-2.5 1-3.8 2.4-4.5 4h-3Z" fill="#7A2B22"/>
+  <!-- orejitas con aro de luz (habla por voz, sin nube) -->
+  <circle cx="10.5" cy="35" r="4.5" fill="#FA8072"/><circle cx="10.5" cy="35" r="2.1" fill="#C1493C"/>
+  <circle cx="53.5" cy="35" r="4.5" fill="#FA8072"/><circle cx="53.5" cy="35" r="2.1" fill="#C1493C"/>
+  <!-- mejillas -->
+  <ellipse cx="20.5" cy="40" rx="4" ry="2.6" fill="#FF6B5E" opacity=".45"/>
+  <ellipse cx="43.5" cy="40" rx="4" ry="2.6" fill="#FF6B5E" opacity=".45"/>
+  <!-- ojos (parpadean) -->
+  <g class="lup-eyes">
+    <circle cx="25" cy="33" r="2.7" fill="#42100B"/>
+    <circle cx="39" cy="33" r="2.7" fill="#42100B"/>
+    <circle cx="25.9" cy="32" r=".95" fill="#fff"/>
+    <circle cx="39.9" cy="32" r=".95" fill="#fff"/>
+  </g>
+  <!-- boquita sonriente (se mueve al hablar) -->
+  <path class="lup-mouth" d="M25.5 41.5c1.8 3.6 4.3 5.2 6.5 5.2s4.7-1.6 6.5-5.2c-2 .9-4.2 1.3-6.5 1.3s-4.5-.4-6.5-1.3Z" fill="#42100B"/>
+  <path d="M29.5 46c1.6.8 3.4.8 5 0-.5 1.6-1.6 2.6-2.5 2.6S30 47.6 29.5 46Z" fill="#FF9E91"/>
+</svg>

@@ -1,0 +1,26 @@
+# ── Secretos: NUNCA subir claves al repositorio ──────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.vercel
+.vercel-tmp/
+
+# ── Datos locales (leads/eventos reales de pruebas) ──────────────────────
+data/*.jsonl
+data/backup-*.jsonl
+
+# ── Basura de Node/SO ────────────────────────────────────────────────────
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+
+# ── NO ignorar: son parte del sitio que Vercel debe desplegar ────────────
+# (si alguna vez agregas reglas generales como "data/" o "*.json",
+#  estas líneas las mantienen visibles en el repositorio/deploy)
+!supabase/
+!datos/
+!sitemap.xml
+!robots.txt

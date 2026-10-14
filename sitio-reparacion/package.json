@@ -1,0 +1,13 @@
+{
+  "name": "tapatech-sitio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TapaTech — reparación de celulares en Tapachula. Sitio estático + funciones serverless (Vercel) + servidor local sin dependencias.",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "check": "python3 tools/check.py",
+    "vercel-build": "echo 'Sitio estático + api/ (CommonJS): sin paso de compilación; Vercel solo despliega y enruta.'"
+  }
+}

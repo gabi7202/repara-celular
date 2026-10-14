@@ -26,6 +26,26 @@ const path = require('path');
 const zlib = require('zlib');
 const { URL } = require('url');
 
+/* Carga .env sin dependencias (dotenv-style): claves → process.env.
+   Las variables que ya existan en el entorno tienen prioridad sobre .env,
+   y si no hay archivo .env el servidor arranca igual (producción usa las
+   Environment Variables de Vercel, no un .env). */
+(function cargarEnv(){
+  try {
+    const txt = fs.readFileSync(path.join(__dirname, '.env'), 'utf8');
+    for (const linea of txt.split(/\r?\n/)) {
+      const l = linea.trim();
+      if (!l || l.startsWith('#')) continue;
+      const eq = l.indexOf('=');
+      if (eq < 1) continue;
+      const k = l.slice(0, eq).trim();
+      let v = l.slice(eq + 1).trim();
+      if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
+      if (!(k in process.env)) process.env[k] = v;
+    }
+  } catch (e) { /* .env opcional */ }
+})();
+
 const ROOT = __dirname;
 const DATA = path.join(ROOT, 'data');
 const PORT = process.env.PORT || 3000;

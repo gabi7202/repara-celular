@@ -1,15 +1,14 @@
 {
   "_comentario": "Configuración del agente de voz. Todo lo editable sin tocar código: nombre, voz, modelos, motores y límites. Las claves de API NUNCA van aquí: van en el servidor (ADMIN/GROQ_API_KEY en env).",
-
   "asistente": {
     "nombre": "Lupita",
     "perfilVoz": "Mujer mexicana de 45 a 55 años, tono medio-agudo (nunca grave), carácter simpático y alegre, ritmo natural con pausas claras",
     "idioma": "es-MX",
     "saludo": "¡Hola! Soy Lupita, del taller TapaTech en Tapachula. ¿Qué le pasó a tu equipo?",
     "despedida": "¡Gracias por llamar a TapaTech! Que tengas bonito día.",
-    "respuestaSinAudio": "No pude hablar en voz alta, pero aquí te dejo la respuesta escrita."
+    "respuestaSinAudio": "No pude hablar en voz alta, pero aquí te dejo la respuesta escrita.",
+    "saludoSorpresa": "¡Hola! Bienvenido a TapaTech, la mejor opción para reparar tu celular en Tapachula. Dime, ¿en qué te puedo apoyar hoy?"
   },
-
   "llm": {
     "proveedor": "groq",
     "modelo": "llama-3.3-70b-versatile",
@@ -22,7 +21,6 @@
     "historialMaximo": 12,
     "endpoint": "/api/chat"
   },
-
   "stt": {
     "motorPreferido": "auto",
     "_motores": "auto = Web Speech API del navegador (gratis, tiempo real) y si no existe, grabación + Groq Whisper",
@@ -35,9 +33,12 @@
     "echoCancellation": true,
     "noiseSuppression": true
   },
-
   "tts": {
-    "ordenMotores": ["webhook", "groq", "navegador"],
+    "ordenMotores": [
+      "webhook",
+      "groq",
+      "navegador"
+    ],
     "_ordenMotores": "Prueba el webhook gratuito (Edge neuronal es-MX), luego PlayAI vía Groq y al final la voz del navegador. Cambia el orden si quieres forzar uno.",
     "webhook": {
       "url": "",
@@ -48,14 +49,39 @@
     "groq": {
       "modelo": "playai-tts",
       "voz": "Jennifer",
-      "_vocesAlternativas": ["Deedee", "Jennifer", "Wendy", "Judy", "Eleanor"],
+      "_vocesAlternativas": [
+        "Deedee",
+        "Jennifer",
+        "Wendy",
+        "Judy",
+        "Eleanor"
+      ],
       "estilo": "Cheerful",
       "velocidad": 1.0,
       "endpoint": "/api/tts"
     },
     "navegador": {
-      "preferirVoces": ["Dalia", "es-MX", "es_MX", "Paulina", "Sabina", "Ximena", "Esmeralda", "Monica", "Helena", "Laura", "es-US", "Google español de México"],
-      "evitarVoces": ["Jorge", "Raul", "Diego", "Miguel", "Carlos"],
+      "preferirVoces": [
+        "Dalia",
+        "es-MX",
+        "es_MX",
+        "Paulina",
+        "Sabina",
+        "Ximena",
+        "Esmeralda",
+        "Monica",
+        "Helena",
+        "Laura",
+        "es-US",
+        "Google español de México"
+      ],
+      "evitarVoces": [
+        "Jorge",
+        "Raul",
+        "Diego",
+        "Miguel",
+        "Carlos"
+      ],
       "_evitarVoces": "Se evitan voces masculinas graves para respetar el perfil pedido",
       "velocidad": 1.0,
       "tono": 1.06
@@ -66,7 +92,6 @@
     "pitchPorDefecto": "+4Hz",
     "volumePorDefecto": "100"
   },
-
   "prosodia": {
     "pausaCortaMs": 200,
     "pausaMediaMs": 500,
@@ -76,12 +101,23 @@
     "pitchSubir": 1.1,
     "pitchBajar": 0.92,
     "presets": {
-      "alegre":   { "rate": 1.06, "pitch": 1.1,  "volume": 1.0 },
-      "serio":    { "rate": 0.94, "pitch": 0.94, "volume": 0.95 },
-      "empatico": { "rate": 0.88, "pitch": 0.98, "volume": 0.9 }
+      "alegre": {
+        "rate": 1.06,
+        "pitch": 1.1,
+        "volume": 1.0
+      },
+      "serio": {
+        "rate": 0.94,
+        "pitch": 0.94,
+        "volume": 0.95
+      },
+      "empatico": {
+        "rate": 0.88,
+        "pitch": 0.98,
+        "volume": 0.9
+      }
     }
   },
-
   "conversacion": {
     "manosLibres": true,
     "_manosLibres": "true = el micrófono se reabre solo cuando Lupita termina de hablar (con interrupción permitida)",
@@ -92,13 +128,19 @@
     "notificarSiPestanaOculta": true,
     "guardarTranscripcion": true
   },
-
   "escalado": {
     "whatsapp": "529622889585",
     "telefono": "+529622889585",
-    "motivos": ["reclamo de garantía", "equipo con reporte", "desbloqueo de cuenta", "cliente molesto", "fuera de horario", "no entiende el audio", "solicita humano"]
+    "motivos": [
+      "reclamo de garantía",
+      "equipo con reporte",
+      "desbloqueo de cuenta",
+      "cliente molesto",
+      "fuera de horario",
+      "no entiende el audio",
+      "solicita humano"
+    ]
   },
-
   "permisos": {
     "explicacionAntesDePedir": "Para hablar contigo necesitamos usar el micrófono de este dispositivo. El audio se transcribe y se envía al asistente; no se guarda en el sitio.",
     "negado": "Sin permiso de micrófono no puedo escucharte, pero puedes escribirnos por WhatsApp o usar el cotizador.",
