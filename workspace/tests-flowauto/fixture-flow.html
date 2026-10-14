@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="utf-8"><title>Flow (clon de prueba)</title></head>
+<body>
+  <header>
+    <button aria-label="Menú principal">Menú</button>
+    <img class="avatar" src="https://example.com/avatar.png" width="32" height="32" style="width:32px;height:32px">
+    <button aria-label="Compartir escena">Compartir</button>
+  </header>
+
+  <nav>
+    <button aria-label="Nueva conversación">Nueva conversación</button>
+    <input type="text" aria-label="Buscar en tus escenas" placeholder="Buscar">
+  </nav>
+
+  <main id="escenario">
+    <div id="galeria"></div>
+    <div id="zonaSpinner" hidden><div class="loading-spinner" style="width:40px;height:40px"></div></div>
+  </main>
+
+  <footer id="compositor">
+    <textarea id="prompt" aria-label="Escribe un prompt para generar una imagen" placeholder="Describe lo que quieres crear"
+      style="width:600px;height:80px"></textarea>
+    <button id="btnGenerar" aria-label="Generar imagen" disabled style="width:44px;height:44px">
+      <svg width="20" height="20"><path d="M0 0h20v20H0z"/></svg>
+    </button>
+    <button aria-label="Borrar prompt">Borrar</button>
+  </footer>
+
+<script>
+  // Comportamiento simulado de Flow: el botón se habilita al escribir,
+  // muestra un spinner y luego inserta la imagen (con "lazy-load" en 2 pasos).
+  const ta = document.getElementById('prompt');
+  const btn = document.getElementById('btnGenerar');
+  const zona = document.getElementById('zonaSpinner');
+  const galeria = document.getElementById('galeria');
+  window.__historial = [];
+
+  ta.addEventListener('input', () => {
+    btn.disabled = ta.value.trim().length === 0;
+    window.__historial.push({ tipo: 'input', valor: ta.value });
+  });
+
+  btn.addEventListener('click', () => {
+    if (btn.disabled) return;
+    const prompt = ta.value;
+    window.__historial.push({ tipo: 'click-generar', prompt });
+    btn.disabled = true;
+    zona.hidden = false;
+    ta.value = '';
+    ta.dispatchEvent(new Event('input', { bubbles: true }));
+
+    const n = window.__historial.filter(h => h.tipo === 'click-generar').length;
+    setTimeout(() => {
+      zona.hidden = true;
+      const img = document.createElement('img');
+      img.src = 'https://lh3.googleusercontent.com/generated/imagen' + n + '=w512';
+      img.style.width = '120px'; img.style.height = '90px';   // primero pequeña (placeholder)
+      img.width = 120; img.height = 90;
+      img.setAttribute('data-prompt', prompt);
+      galeria.appendChild(img);
+      window.__imagenCreada = img;
+      setTimeout(() => {                                       // luego a tamaño real
+        img.style.width = '640px'; img.style.height = '480px';
+        img.width = 640; img.height = 480;
+        const barra = document.createElement('div');
+        barra.className = 'controles-imagen';
+        const dl = document.createElement('button');
+        dl.setAttribute('aria-label', 'Descargar imagen');
+        dl.textContent = 'Descargar';
+        dl.addEventListener('click', () => { window.__descargaNativa = (window.__descargaNativa || 0) + 1; });
+        barra.appendChild(dl);
+        galeria.appendChild(barra);
+      }, 1200);
+    }, 1500);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,2658 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gemelos Cell — Reparación Premium en Tapachula</title>
+  <meta name="description" content="Reparación profesional de celulares, laptops, consolas y drones en Tapachula. 15 años de experiencia. Diagnóstico gratis." />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://gemeloscell.com" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="apple-touch-icon" href="logo.png" />
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://gemeloscell.com" />
+  <meta property="og:title"       content="Gemelos Cell — Reparación Premium en Tapachula" />
+  <meta property="og:description" content="Reparación profesional de celulares, laptops, consolas y drones en Tapachula. 15 años de experiencia. Diagnóstico siempre gratis." />
+  <meta property="og:image"       content="https://gemeloscell.com/ogcard.png" />
+  <meta property="og:image:width"  content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale"      content="es_MX" />
+  <meta property="og:site_name"   content="Gemelos Cell" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Gemelos Cell — Reparación Premium en Tapachula" />
+  <meta name="twitter:description" content="Reparación profesional de celulares, laptops, consolas y drones en Tapachula. Diagnóstico siempre gratis." />
+  <meta name="twitter:image"       content="https://gemeloscell.com/ogcard.png" />
+
+  <!-- Vercel Web Analytics -->
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+
+  <!-- Schema.org LocalBusiness -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Gemelos Cell",
+    "description": "Reparación profesional de celulares, laptops, consolas y drones en Tapachula, Chiapas. 15 años de experiencia. Diagnóstico gratis.",
+    "url": "https://gemeloscell.com",
+    "logo": "https://gemeloscell.com/logo.png",
+    "image": "https://gemeloscell.com/ogcard.png",
+    "telephone": "+52-962-291-8040",
+    "priceRange": "$$",
+    "currenciesAccepted": "MXN",
+    "paymentAccepted": "Cash, Credit Card",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Tapachula",
+      "addressRegion": "Chiapas",
+      "addressCountry": "MX"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 14.9029857,
+      "longitude": -92.2684456
+    },
+    "sameAs": [
+      "https://www.instagram.com/gemeloscell/",
+      "https://www.facebook.com/gemeloscell",
+      "https://www.tiktok.com/@gemelos.cell",
+      "https://www.youtube.com/channel/UC0p7E59D3CmOFkOCCjZpUvA"
+    ],
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+        "opens": "09:00",
+        "closes": "19:00"
+      }
+    ],
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Servicios de reparación",
+      "itemListElement": [
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Reparación de celulares" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Reparación de laptops" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Reparación de consolas" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Reparación de drones" } }
+      ]
+    }
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,600;1,400;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─────────────────────────────────────────────────────────────
+       TOKENS
+    ───────────────────────────────────────────────────────────── */
+    :root {
+      --black:      #0C0A09;
+      --black-2:    #141210;
+      --black-3:    #1C1917;
+      --black-4:    #292524;
+      --black-5:    #44403C;
+      --gold:       #E8720C;
+      --gold-light: #F28320;
+      --gold-pale:  #FFA94D;
+      --gold-dim:   rgba(232,114,12,.15);
+      --gold-glow:  rgba(232,114,12,.28);
+      --green:      #22c55e;
+      --green-dim:  rgba(34,197,94,.15);
+      --white:      #FAFAF9;
+      --gray-200:   #E7E5E4;
+      --gray-400:   #A8A29E;
+      --gray-600:   #78716C;
+
+      --ease-out:     cubic-bezier(0.23, 1, 0.32, 1);
+      --ease-in-out:  cubic-bezier(0.77, 0, 0.175, 1);
+      --ease-luxe:    cubic-bezier(0.16, 1, 0.3, 1);
+
+      --font-serif: 'Cormorant', Georgia, serif;
+      --font-sans:  'Montserrat', system-ui, sans-serif;
+
+      --r-sm: 6px;
+      --r-md: 12px;
+      --r-lg: 20px;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       RESET
+    ───────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--black);
+      color: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    img { display: block; max-width: 100%; }
+    a  { color: inherit; text-decoration: none; }
+    button { font-family: inherit; }
+
+    /* ─────────────────────────────────────────────────────────────
+       SCROLL PROGRESS BAR (top)
+    ───────────────────────────────────────────────────────────── */
+    #progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 0%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-pale));
+      z-index: 999;
+      transition: width 100ms linear;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       CURSOR GLOW (desktop decorative)
+    ───────────────────────────────────────────────────────────── */
+    #cursor-glow {
+      position: fixed;
+      pointer-events: none;
+      z-index: 998;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(202,138,4,.07) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: opacity 400ms ease;
+      opacity: 0;
+    }
+    @media (hover: none) { #cursor-glow { display: none; } }
+
+    /* ─────────────────────────────────────────────────────────────
+       CONTAINER & LAYOUT
+    ───────────────────────────────────────────────────────────── */
+    .container {
+      width: 100%;
+      max-width: 1140px;
+      margin-inline: auto;
+      padding-inline: clamp(20px, 5vw, 60px);
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       REVEAL ANIMATIONS
+    ───────────────────────────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 700ms var(--ease-luxe), transform 700ms var(--ease-luxe);
+    }
+    .reveal.up { transform: translateY(28px); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 100ms; }
+    .d2 { transition-delay: 200ms; }
+    .d3 { transition-delay: 300ms; }
+    .d4 { transition-delay: 400ms; }
+    .d5 { transition-delay: 500ms; }
+
+    /* Line reveal (clip-path) */
+    .line-reveal {
+      overflow: hidden;
+      display: block;
+    }
+    .line-reveal-inner {
+      display: block;
+      transform: translateY(105%);
+      transition: transform 800ms var(--ease-luxe);
+    }
+    .line-reveal.visible .line-reveal-inner { transform: translateY(0); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .line-reveal-inner { transition: opacity 200ms ease; transform: none !important; }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       DIVIDER
+    ───────────────────────────────────────────────────────────── */
+    .gold-line {
+      width: 48px;
+      height: 1px;
+      background: var(--gold);
+      margin-bottom: 20px;
+    }
+    .section-eyebrow {
+      font-family: var(--font-sans);
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       BUTTONS
+    ───────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      font-family: var(--font-sans);
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      border-radius: 40px;
+      transition: transform 160ms var(--ease-out),
+                  background 200ms ease,
+                  box-shadow 200ms ease,
+                  color 200ms ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,.04);
+      opacity: 0;
+      transition: opacity 200ms ease;
+    }
+    .btn:hover::after { opacity: 1; }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-gold {
+      background: var(--gold);
+      color: var(--black);
+    }
+    .btn-gold:hover { background: var(--gold-light); box-shadow: 0 4px 24px rgba(202,138,4,.35); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border: 1px solid rgba(255,255,255,.25);
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid var(--gold-dim);
+      padding: 12px 24px;
+    }
+    .btn-ghost:hover { background: var(--gold-dim); border-color: var(--gold); }
+
+    /* ─────────────────────────────────────────────────────────────
+       NAV
+    ───────────────────────────────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0;
+      transition: background 400ms ease, border-color 400ms ease;
+      border-bottom: 1px solid transparent;
+    }
+    .nav.scrolled {
+      background: rgba(12,10,9,.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom-color: rgba(255,255,255,.06);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: .02em;
+      color: var(--white);
+    }
+    .nav-logo span {
+      color: var(--gold);
+      font-style: italic;
+    }
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.55);
+      transition: color 200ms ease;
+    }
+    .nav-links a:hover { color: var(--white); }
+    @media (max-width: 768px) { .nav-links { display: none; } }
+    .nav-cta { display: flex; align-items: center; gap: 12px; }
+
+    /* Hamburger button */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      width: 40px;
+      height: 40px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      z-index: 200;
+    }
+    @media (max-width: 768px) { .nav-hamburger { display: flex; } }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: var(--white);
+      border-radius: 2px;
+      transition: transform 300ms var(--ease-luxe), opacity 200ms ease, width 300ms ease;
+      transform-origin: center;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; width: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* Mobile drawer */
+    .nav-drawer {
+      display: none;
+      position: fixed;
+      top: 72px; left: 0; right: 0;
+      background: rgba(12,10,9,.97);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      padding: 24px 0 32px;
+      z-index: 99;
+      transform: translateY(-8px);
+      opacity: 0;
+      transition: transform 300ms var(--ease-luxe), opacity 250ms ease;
+      pointer-events: none;
+    }
+    .nav-drawer.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    @media (max-width: 768px) { .nav-drawer { display: block; } }
+    .nav-drawer ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+    }
+    .nav-drawer ul li a {
+      display: block;
+      padding: 14px clamp(20px, 5vw, 60px);
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.55);
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      transition: color 200ms ease, background 200ms ease;
+    }
+    .nav-drawer ul li a:hover { color: var(--gold); background: rgba(232,114,12,.04); }
+    .nav-drawer-cta {
+      padding: 20px clamp(20px, 5vw, 60px) 0;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       HERO
+    ───────────────────────────────────────────────────────────── */
+    #hero {
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      padding-top: 72px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Noise grain overlay */
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity: .4;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Ambient light */
+    .hero-ambient {
+      position: absolute;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero-ambient-1 {
+      top: -20%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(202,138,4,.10) 0%, transparent 65%);
+    }
+    .hero-ambient-2 {
+      bottom: -10%;
+      left: -5%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(ellipse, rgba(202,138,4,.05) 0%, transparent 65%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    @media (max-width: 900px) { .hero-content { grid-template-columns: 1fr; gap: 48px; } }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .hero-eyebrow-line {
+      width: 32px;
+      height: 1px;
+      background: var(--gold);
+    }
+    .hero-eyebrow-text {
+      font-size: .7rem;
+      font-weight: 500;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -.01em;
+      color: var(--white);
+      margin-bottom: 28px;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .hero-title .thin { font-weight: 400; }
+
+    .hero-desc {
+      font-size: .95rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.55);
+      line-height: 1.8;
+      max-width: 420px;
+      margin-bottom: 40px;
+    }
+
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    /* Right side: stacked info cards */
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    @media (max-width: 900px) { .hero-right { display: none; } }
+
+    .hero-card {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: var(--r-md);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: border-color 300ms ease, background 300ms ease;
+    }
+    .hero-card:hover {
+      border-color: rgba(202,138,4,.25);
+      background: rgba(202,138,4,.04);
+    }
+    .hero-card-icon {
+      width: 44px; height: 44px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(202,138,4,.2);
+      border-radius: var(--r-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--gold);
+    }
+    .hero-card-icon svg { width: 20px; height: 20px; }
+    .hero-card-label {
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--gray-600);
+      margin-bottom: 2px;
+    }
+    .hero-card-value {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    /* Photo placeholder */
+    .hero-photo-placeholder {
+      width: 100%;
+      aspect-ratio: 3/2;
+      background: var(--black-3);
+      border: 1px dashed rgba(255,255,255,.12);
+      border-radius: var(--r-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--gray-600);
+      font-size: .8rem;
+      margin-bottom: 16px;
+      text-align: center;
+      padding: 24px;
+    }
+    .hero-photo-placeholder svg { color: var(--black-5); width: 36px; height: 36px; }
+
+    /* ─────────────────────────────────────────────────────────────
+       HERO SCENE — iPhone + dispositivos flotantes
+    ───────────────────────────────────────────────────────────── */
+    .hero-scene-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-scene {
+      position: relative;
+      width: clamp(280px, 46vw, 500px);
+      flex-shrink: 0;
+    }
+
+    .scene-glow {
+      position: absolute;
+      width: 70%; height: 70%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,113,227,.20) 0%, transparent 70%);
+      top: 40%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+      filter: blur(60px);
+      pointer-events: none;
+    }
+
+    .scene-devices {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: auto;
+      display: block;
+      animation: deviceUp 1s var(--ease-luxe) 0.2s both,
+                 sceneFloat 5s ease-in-out 1.4s infinite;
+      filter: drop-shadow(0 30px 60px rgba(0,0,0,.65))
+              drop-shadow(0 12px 28px rgba(0,113,227,.22))
+              drop-shadow(0  6px 14px rgba(0,0,0,.30));
+    }
+
+    @keyframes deviceUp {
+      from { opacity: 0; transform: translateY(50px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes sceneFloat {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-14px); }
+    }
+
+    @media (max-width: 900px) and (min-width: 769px) {
+      .hero-scene { width: clamp(240px, 42vw, 380px); }
+    }
+
+    @media (max-width: 768px) {
+      .hero-content { grid-template-columns: 1fr; gap: 36px; }
+      .hero-scene   { width: clamp(260px, 80vw, 360px); }
+    }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 1;
+    }
+    .scroll-hint-text {
+      font-size: .65rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.25);
+    }
+    .scroll-hint-mouse {
+      width: 22px; height: 34px;
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 11px;
+      position: relative;
+    }
+    .scroll-hint-wheel {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 3px; height: 7px;
+      background: var(--gold);
+      border-radius: 2px;
+      animation: scrollWheel 1.8s var(--ease-in-out) infinite;
+    }
+    @keyframes scrollWheel {
+      0%   { opacity: 1; transform: translateX(-50%) translateY(0); }
+      80%  { opacity: 0; transform: translateX(-50%) translateY(10px); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       STATS BAR
+    ───────────────────────────────────────────────────────────── */
+    #stats {
+      padding: 0;
+      border-top: 1px solid rgba(255,255,255,.05);
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    @media (max-width: 600px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+    .stat-cell {
+      padding: 36px 28px;
+      border-right: 1px solid rgba(255,255,255,.05);
+      position: relative;
+    }
+    .stat-cell:last-child { border-right: none; }
+    .stat-cell::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 28px; right: 28px;
+      height: 1px;
+      background: transparent;
+      transition: background 400ms ease;
+    }
+    .stat-cell:hover::after { background: var(--gold); }
+    .stat-number {
+      font-family: var(--font-serif);
+      font-size: 2.75rem;
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-number .unit { color: var(--gold); font-size: 1.75rem; }
+    .stat-label {
+      font-size: .7rem;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gray-600);
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       PROBLEMA
+    ───────────────────────────────────────────────────────────── */
+    #problema {
+      padding-block: 120px;
+      position: relative;
+    }
+    #problema::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(202,138,4,.3), transparent);
+    }
+
+    .problema-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: end;
+      margin-bottom: 64px;
+    }
+    @media (max-width: 768px) { .problema-header { grid-template-columns: 1fr; gap: 24px; } }
+    .problema-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.25rem, 5vw, 3.75rem);
+      font-weight: 600;
+      line-height: 1.1;
+      color: var(--white);
+    }
+    .problema-title em { font-style: italic; color: var(--gold); }
+    .problema-desc {
+      font-size: .9375rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.5);
+      line-height: 1.8;
+    }
+
+    .problema-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+    @media (max-width: 768px) { .problema-grid { grid-template-columns: 1fr; } }
+
+    .problema-cell {
+      background: var(--black);
+      padding: 40px 36px;
+      position: relative;
+      cursor: default;
+      transition: background 300ms ease;
+    }
+    .problema-cell:hover { background: var(--black-2); }
+    .problema-cell-num {
+      font-family: var(--font-serif);
+      font-size: 4rem;
+      font-weight: 600;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 20px;
+      transition: color 300ms ease;
+    }
+    .problema-cell:hover .problema-cell-num { color: var(--gold); }
+    .problema-cell h3 {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+    .problema-cell p {
+      font-size: .875rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.45);
+      line-height: 1.8;
+    }
+    .problema-cell-line {
+      position: absolute;
+      bottom: 0; left: 36px; right: 36px;
+      height: 1px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 400ms var(--ease-out);
+    }
+    .problema-cell:hover .problema-cell-line { transform: scaleX(1); }
+
+    /* ─────────────────────────────────────────────────────────────
+       SERVICIOS
+    ───────────────────────────────────────────────────────────── */
+    #servicios {
+      padding-block: 120px;
+      background: var(--black-2);
+      position: relative;
+    }
+    #servicios::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(202,138,4,.2), transparent);
+    }
+
+    .servicios-header { text-align: center; margin-bottom: 72px; }
+    .servicios-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.25rem, 5vw, 3.5rem);
+      font-weight: 600;
+      line-height: 1.1;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+    .servicios-sub {
+      font-size: .9rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.45);
+      max-width: 480px;
+      margin-inline: auto;
+      line-height: 1.8;
+    }
+
+    .servicios-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    @media (max-width: 1024px) { .servicios-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 540px)  { .servicios-grid { grid-template-columns: 1fr; } }
+
+    .servicio-card {
+      background: var(--black-3);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: var(--r-md);
+      padding: 36px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 300ms ease, transform 300ms var(--ease-out);
+      cursor: default;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .servicio-card:hover {
+        border-color: rgba(202,138,4,.35);
+        transform: translateY(-4px);
+      }
+    }
+    .servicio-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 80% at 50% 120%, rgba(202,138,4,.08) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 400ms ease;
+    }
+    .servicio-card:hover::before { opacity: 1; }
+
+    .servicio-icon {
+      width: 48px; height: 48px;
+      margin-bottom: 24px;
+      color: var(--gold);
+    }
+    .servicio-icon svg { width: 100%; height: 100%; }
+    .servicio-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+    .servicio-card p {
+      font-size: .825rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.45);
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+    .servicio-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .servicio-list li {
+      font-size: .75rem;
+      font-weight: 400;
+      color: rgba(255,255,255,.5);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .servicio-list li::before {
+      content: '';
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       PROCESO
+    ───────────────────────────────────────────────────────────── */
+    #proceso {
+      padding-block: 120px;
+    }
+    .proceso-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 72px;
+      align-items: end;
+    }
+    @media (max-width: 768px) { .proceso-header { grid-template-columns: 1fr; gap: 24px; } }
+    .proceso-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.25rem, 5vw, 3.5rem);
+      font-weight: 600;
+      line-height: 1.1;
+      color: var(--white);
+    }
+    .proceso-title em { font-style: italic; color: var(--gold); }
+    .proceso-desc {
+      font-size: .9375rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.5);
+      line-height: 1.8;
+    }
+
+    .proceso-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    @media (max-width: 768px) { .proceso-steps { grid-template-columns: 1fr; } }
+
+    .proceso-step {
+      padding: 0 24px 0 0;
+      position: relative;
+    }
+    @media (max-width: 768px) {
+      .proceso-step {
+        padding: 0 0 40px 60px;
+        display: grid;
+        grid-template-columns: 1fr;
+        position: relative;
+      }
+      /* vertical timeline line */
+      .proceso-step::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 6px;
+        bottom: 0;
+        width: 1px;
+        background: rgba(202,138,4,.25);
+      }
+      .proceso-steps .proceso-step:last-child::before { display: none; }
+      /* number circle on the line */
+      .paso-top {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 40px;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 0;
+      }
+      .paso-num {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--black-1);
+        border: 1px solid rgba(202,138,4,.35);
+        font-size: .85rem;
+        z-index: 1;
+      }
+    }
+
+    .paso-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .paso-num {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--gold);
+      min-width: 28px;
+    }
+    .paso-connector {
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,.1);
+      position: relative;
+      overflow: hidden;
+    }
+    .paso-connector::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--gold);
+      transition: left 600ms var(--ease-luxe);
+    }
+    .proceso-step.visible .paso-connector::after { left: 0; }
+    .proceso-steps .proceso-step:last-child .paso-connector { display: none; }
+    @media (max-width: 768px) { .paso-connector { display: none; } }
+
+    .paso-body {}
+    .paso-body h3 {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+    .paso-body p {
+      font-size: .825rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.45);
+      line-height: 1.8;
+    }
+    .paso-tag {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid rgba(202,138,4,.3);
+      padding: 3px 10px;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       PRECIOS
+    ───────────────────────────────────────────────────────────── */
+    #precios {
+      padding-block: 120px;
+      background: var(--black-2);
+      position: relative;
+    }
+    #precios::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(202,138,4,.2), transparent);
+    }
+
+    .precios-header { text-align: center; margin-bottom: 64px; }
+    .precios-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.25rem, 5vw, 3.5rem);
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 14px;
+    }
+    .precios-sub {
+      font-size: .9rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.45);
+      max-width: 440px;
+      margin-inline: auto;
+    }
+
+    .precios-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      border: 1px solid rgba(255,255,255,.07);
+    }
+    @media (max-width: 1024px) { .precios-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 640px)  { .precios-grid { grid-template-columns: 1fr; } }
+
+    .precio-cell {
+      padding: 36px 28px;
+      border-right: 1px solid rgba(255,255,255,.07);
+      position: relative;
+      transition: background 250ms ease;
+    }
+    .precio-cell:last-child { border-right: none; }
+    .precio-cell:hover { background: rgba(202,138,4,.04); }
+    .precio-cell-icon {
+      width: 36px; height: 36px;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+    .precio-cell-icon svg { width: 100%; height: 100%; }
+    .precio-cell h3 {
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--gray-600);
+      margin-bottom: 10px;
+    }
+    .precio-amount {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .precio-amount.free { color: var(--gold); }
+    .precio-note {
+      font-size: .75rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.35);
+      line-height: 1.6;
+    }
+
+    .precios-disclaimer {
+      margin-top: 28px;
+      padding: 20px 28px;
+      border: 1px solid rgba(202,138,4,.2);
+      background: rgba(202,138,4,.04);
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .precios-disclaimer-icon {
+      width: 20px; height: 20px;
+      color: var(--gold);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .precios-disclaimer p {
+      font-size: .85rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.55);
+      line-height: 1.7;
+    }
+    .precios-cta { text-align: center; margin-top: 48px; }
+
+    /* ─────────────────────────────────────────────────────────────
+       TESTIMONIOS
+    ───────────────────────────────────────────────────────────── */
+    #testimonios {
+      padding-block: 120px;
+      position: relative;
+      overflow: hidden;
+    }
+    .testimonios-bg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px; height: 400px;
+      background: radial-gradient(ellipse, rgba(202,138,4,.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .testimonios-header { text-align: center; margin-bottom: 64px; position: relative; }
+    .testimonios-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.25rem, 5vw, 3.5rem);
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 14px;
+    }
+    .testimonios-sub {
+      font-size: .9rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.45);
+    }
+
+    .testimonios-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      position: relative;
+    }
+    @media (max-width: 768px) { .testimonios-grid { grid-template-columns: 1fr; } }
+
+    .testimonio {
+      background: var(--black-3);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: var(--r-md);
+      padding: 36px 32px;
+      position: relative;
+      transition: border-color 300ms ease;
+    }
+    .testimonio:hover { border-color: rgba(202,138,4,.25); }
+    .testimonio-quote {
+      font-family: var(--font-serif);
+      font-size: 3rem;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 16px;
+      opacity: .4;
+    }
+    .testimonio-stars {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 16px;
+    }
+    .testimonio-stars svg {
+      width: 14px; height: 14px;
+      fill: var(--gold);
+    }
+    .testimonio-text {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-style: italic;
+      color: rgba(255,255,255,.75);
+      line-height: 1.8;
+      margin-bottom: 28px;
+    }
+    .testimonio-author { display: flex; align-items: center; gap: 14px; }
+    .testimonio-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--black-4);
+      border: 1px dashed rgba(255,255,255,.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .6rem;
+      color: var(--gray-600);
+      font-weight: 600;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .testimonio-name {
+      font-size: .875rem;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .testimonio-role {
+      font-size: .75rem;
+      font-weight: 300;
+      color: var(--gray-600);
+    }
+    .testimonio-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .testimonio-date {
+      font-size: .68rem;
+      color: rgba(255,255,255,.25);
+      font-weight: 300;
+    }
+    .testimonio-google-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .05em;
+      color: rgba(255,255,255,.35);
+    }
+    .testimonio-google-badge svg { flex-shrink: 0; }
+    .testimonios-cta {
+      text-align: center;
+      margin-top: 48px;
+    }
+    .testimonios-cta a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.45);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 40px;
+      padding: 12px 28px;
+      transition: color 200ms ease, border-color 200ms ease, background 200ms ease;
+    }
+    .testimonios-cta a:hover {
+      color: var(--white);
+      border-color: rgba(255,255,255,.3);
+      background: rgba(255,255,255,.04);
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       FAQ
+    ───────────────────────────────────────────────────────────── */
+    #faq {
+      padding-block: 120px;
+      background: var(--black-2);
+      position: relative;
+    }
+    #faq::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(202,138,4,.2), transparent);
+    }
+    .faq-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 80px;
+      align-items: start;
+    }
+    @media (max-width: 768px) { .faq-layout { grid-template-columns: 1fr; gap: 40px; } }
+    .faq-sidebar-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4.5vw, 3rem);
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+    .faq-sidebar-title em { font-style: italic; color: var(--gold); }
+    .faq-sidebar-desc {
+      font-size: .875rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.45);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+
+    .faq-list { display: flex; flex-direction: column; }
+    .faq-item {
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 22px 0;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--white);
+      cursor: pointer;
+      transition: color 200ms ease;
+    }
+    .faq-q:hover { color: var(--gold); }
+    .faq-chevron {
+      width: 18px; height: 18px;
+      color: var(--gold);
+      flex-shrink: 0;
+      transition: transform 300ms var(--ease-out);
+    }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+    .faq-a {
+      font-size: .875rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.5);
+      line-height: 1.8;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 380ms var(--ease-luxe), padding 380ms var(--ease-luxe);
+    }
+    .faq-item.open .faq-a { max-height: 200px; padding-bottom: 20px; }
+
+    /* ─────────────────────────────────────────────────────────────
+       CONTACTO
+    ───────────────────────────────────────────────────────────── */
+    #contacto {
+      padding-block: 120px;
+      position: relative;
+      overflow: hidden;
+    }
+    .contacto-ambient {
+      position: absolute;
+      bottom: -200px;
+      right: -100px;
+      width: 600px; height: 600px;
+      background: radial-gradient(ellipse, rgba(202,138,4,.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .contacto-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+      position: relative;
+    }
+    @media (max-width: 900px) { .contacto-layout { grid-template-columns: 1fr; gap: 48px; } }
+
+    .contacto-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 600;
+      line-height: 1.1;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+    .contacto-title em { font-style: italic; color: var(--gold); }
+    .contacto-desc {
+      font-size: .9375rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.5);
+      line-height: 1.8;
+      margin-bottom: 40px;
+    }
+    .contacto-channels { display: flex; flex-direction: column; gap: 12px; }
+    .channel-link {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.02);
+      transition: border-color 200ms ease, background 200ms ease, transform 160ms var(--ease-out);
+      cursor: pointer;
+    }
+    .channel-link:hover {
+      border-color: rgba(202,138,4,.3);
+      background: rgba(202,138,4,.04);
+    }
+    .channel-link:active { transform: scale(0.99); }
+    .channel-icon {
+      width: 40px; height: 40px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(202,138,4,.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--gold);
+    }
+    .channel-icon svg { width: 18px; height: 18px; }
+    .channel-label {
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--gray-600);
+      margin-bottom: 2px;
+    }
+    .channel-value {
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--white);
+    }
+    .channel-arrow {
+      margin-left: auto;
+      width: 16px; height: 16px;
+      color: rgba(255,255,255,.2);
+      transition: color 200ms ease, transform 200ms var(--ease-out);
+    }
+    .channel-link:hover .channel-arrow { color: var(--gold); transform: translateX(3px); }
+
+    /* Form */
+    .contacto-form {
+      background: var(--black-3);
+      border: 1px solid rgba(255,255,255,.07);
+      padding: 40px;
+    }
+    @media (max-width: 480px) { .contacto-form { padding: 28px 20px; } }
+    .form-title {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 28px;
+    }
+    .form-row { margin-bottom: 18px; }
+    .form-label {
+      display: block;
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gray-600);
+      margin-bottom: 8px;
+    }
+    .form-control {
+      width: 100%;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.1);
+      color: var(--white);
+      font-family: var(--font-sans);
+      font-size: .875rem;
+      font-weight: 300;
+      padding: 13px 16px;
+      outline: none;
+      transition: border-color 200ms ease, background 200ms ease;
+      border-radius: 0;
+      -webkit-appearance: none;
+    }
+    .form-control::placeholder { color: rgba(255,255,255,.2); }
+    .form-control:focus {
+      border-color: var(--gold);
+      background: rgba(202,138,4,.04);
+    }
+    .form-control option { background: var(--black-3); }
+    textarea.form-control { resize: vertical; min-height: 90px; }
+    .form-submit {
+      width: 100%;
+      margin-top: 6px;
+      padding: 16px;
+      font-size: .75rem;
+      letter-spacing: .15em;
+    }
+    .form-success-msg {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 18px;
+      border: 1px solid rgba(202,138,4,.3);
+      background: rgba(202,138,4,.06);
+      font-size: .85rem;
+      font-weight: 300;
+      color: var(--gold-pale);
+      text-align: center;
+    }
+    .form-success-msg.show { display: block; }
+
+    /* ─────────────────────────────────────────────────────────────
+       UBICACIÓN
+    ───────────────────────────────────────────────────────────── */
+    /* ── Redes Sociales ─────────────────────────────────────── */
+    .redes-sociales { margin-top: 32px; }
+    .redes-label {
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gray-600);
+      margin-bottom: 14px;
+    }
+    .redes-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+    .red-link {
+      width: 46px; height: 46px;
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: var(--r-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-400);
+      transition: border-color 200ms ease, color 200ms ease, background 200ms ease, transform 160ms var(--ease-out);
+    }
+    .red-link:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); transform: translateY(-2px); }
+    .red-link svg { width: 20px; height: 20px; fill: currentColor; }
+
+    #ubicacion {
+      padding-block: 80px;
+      border-top: 1px solid rgba(255,255,255,.05);
+    }
+    .ubicacion-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 60px;
+      align-items: center;
+    }
+    @media (max-width: 768px) { .ubicacion-layout { grid-template-columns: 1fr; } }
+    .ubicacion-title {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 28px;
+    }
+    .ubicacion-item {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .ubicacion-icon {
+      width: 36px; height: 36px;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+    .ubicacion-icon svg { width: 100%; height: 100%; }
+    .ubicacion-item-label {
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--gray-600);
+      margin-bottom: 3px;
+    }
+    .ubicacion-item-value {
+      font-size: .9rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.65);
+      line-height: 1.6;
+    }
+    .mapa-box {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: var(--black-3);
+      border: 1px dashed rgba(255,255,255,.12);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      color: var(--black-5);
+      font-size: .8rem;
+      text-align: center;
+      padding: 24px;
+    }
+    .mapa-box svg { width: 36px; height: 36px; }
+    .mapa-box a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--gold);
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      border: 1px solid rgba(202,138,4,.3);
+      padding: 10px 20px;
+      transition: background 200ms ease, transform 160ms var(--ease-out);
+    }
+    .mapa-box a:hover { background: var(--gold-dim); }
+    .mapa-box a:active { transform: scale(0.97); }
+
+    /* ─────────────────────────────────────────────────────────────
+       FOOTER
+    ───────────────────────────────────────────────────────────── */
+    footer {
+      background: var(--black-2);
+      border-top: 1px solid rgba(255,255,255,.05);
+      padding: 48px 0 28px;
+    }
+    .footer-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 40px;
+      flex-wrap: wrap;
+      padding-bottom: 40px;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      margin-bottom: 28px;
+    }
+    .footer-brand {}
+    .footer-logo {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .footer-logo span { font-style: italic; color: var(--gold); }
+    .footer-tagline {
+      font-size: .75rem;
+      font-weight: 300;
+      color: var(--gray-600);
+      letter-spacing: .06em;
+    }
+    .footer-nav {
+      display: flex;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+    .footer-nav a {
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--gray-600);
+      transition: color 200ms ease;
+    }
+    .footer-nav a:hover { color: var(--white); }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .footer-copy { font-size: .75rem; font-weight: 300; color: var(--black-5); }
+    .footer-legal { display: flex; gap: 20px; }
+    .footer-legal a {
+      font-size: .72rem;
+      color: var(--black-5);
+      transition: color 200ms ease;
+    }
+    .footer-legal a:hover { color: var(--gray-600); }
+
+    /* ─────────────────────────────────────────────────────────────
+       WhatsApp FAB
+    ───────────────────────────────────────────────────────────── */
+    .fab {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      overflow: hidden;
+      background: #25D366;
+      border-radius: 40px;
+      box-shadow: 0 4px 24px rgba(37,211,102,.35);
+      cursor: pointer;
+      text-decoration: none;
+      transition: box-shadow 200ms ease, transform 160ms var(--ease-out);
+      max-width: 56px;
+    }
+    .fab:hover {
+      max-width: 220px;
+      box-shadow: 0 6px 32px rgba(37,211,102,.45);
+    }
+    .fab:active { transform: scale(0.96); }
+    .fab-icon {
+      width: 56px; height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .fab-icon svg { width: 26px; height: 26px; fill: white; }
+    .fab-label {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: white;
+      white-space: nowrap;
+      padding-right: 18px;
+      opacity: 0;
+      transition: opacity 200ms ease 100ms;
+    }
+    .fab:hover .fab-label { opacity: 1; }
+    /* Transition fix */
+    .fab {
+      transition: max-width 350ms var(--ease-out),
+                  box-shadow 200ms ease,
+                  transform 160ms var(--ease-out);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Scroll progress bar -->
+  <div id="progress-bar"></div>
+
+  <!-- Cursor glow (desktop) -->
+  <div id="cursor-glow"></div>
+
+  <!-- ── NAV ─────────────────────────────────────────────────── -->
+  <nav class="nav" id="navbar">
+    <div class="container nav-inner">
+      <a href="#hero" class="nav-logo">
+        <img src="logo.png" alt="Gemelos Cell" style="height:36px;width:auto;object-fit:contain;vertical-align:middle;"
+             onerror="this.outerHTML='Gemelos <span style=\'color:var(--gold);font-style:italic\'>Cell</span>'" />
+      </a>
+      <ul class="nav-links">
+        <li><a href="#servicios">Servicios</a></li>
+        <li><a href="#proceso">Proceso</a></li>
+        <li><a href="#precios">Precios</a></li>
+        <li><a href="#faq">Preguntas</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="tel:+529622918040" class="btn btn-ghost" style="padding:10px 20px;font-size:.7rem;">
+          <!-- Phone icon -->
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.68 12a19.79 19.79 0 0 1-3-8.59A2 2 0 0 1 3.62 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg>
+          Llamar
+        </a>
+        <a href="#contacto" class="btn btn-gold" style="padding:10px 20px;font-size:.7rem;">Agendar</a>
+        <!-- Hamburger (mobile only) -->
+        <button class="nav-hamburger" id="navHamburger" aria-label="Abrir menú" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile drawer -->
+  <div class="nav-drawer" id="navDrawer" aria-hidden="true">
+    <ul>
+      <li><a href="#servicios" class="drawer-link">Servicios</a></li>
+      <li><a href="#proceso"   class="drawer-link">Proceso</a></li>
+      <li><a href="#precios"   class="drawer-link">Precios</a></li>
+      <li><a href="#faq"       class="drawer-link">Preguntas</a></li>
+    </ul>
+    <div class="nav-drawer-cta">
+      <a href="tel:+529622918040" class="btn btn-ghost" style="padding:12px 24px;font-size:.75rem;">Llamar</a>
+      <a href="#contacto" class="btn btn-gold drawer-link" style="padding:12px 24px;font-size:.75rem;">Agendar</a>
+    </div>
+  </div>
+
+  <!-- ── HERO ────────────────────────────────────────────────── -->
+  <section id="hero">
+    <div class="hero-ambient hero-ambient-1"></div>
+    <div class="hero-ambient hero-ambient-2"></div>
+    <div class="container">
+      <div class="hero-content">
+        <!-- LEFT -->
+        <div>
+          <!-- Logo hero (se oculta si no hay archivo) -->
+          <div class="reveal" style="margin-bottom:20px;">
+            <img src="logo.png" alt="Gemelos Cell" style="height:52px;width:auto;object-fit:contain;"
+                 onerror="this.style.display='none'" />
+          </div>
+          <div class="hero-eyebrow reveal">
+            <span class="hero-eyebrow-line"></span>
+            <span class="hero-eyebrow-text">Tapachula, Chiapas · Desde 2009</span>
+          </div>
+
+          <h1 class="hero-title">
+            <span class="line-reveal d1">
+              <span class="line-reveal-inner">Tu dispositivo</span>
+            </span>
+            <span class="line-reveal d2">
+              <span class="line-reveal-inner"><em>vuelve a</em></span>
+            </span>
+            <span class="line-reveal d3">
+              <span class="line-reveal-inner">la vida.</span>
+            </span>
+          </h1>
+
+          <p class="hero-desc reveal d4">
+            Reparación profesional de celulares, laptops, consolas y drones. 15 años siendo la referencia en Tapachula. Diagnóstico siempre gratis.
+          </p>
+
+          <div class="hero-actions reveal d5">
+            <a href="#contacto" class="btn btn-gold btn-lg">Agendar Revisión Gratis</a>
+            <a href="https://wa.me/529622918040" target="_blank" class="btn btn-outline btn-lg">
+              WhatsApp
+              <!-- Arrow icon -->
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- RIGHT — Device scene -->
+        <div class="hero-scene-wrap">
+          <div class="hero-scene">
+            <div class="scene-glow"></div>
+            <img class="scene-devices" src="dispositivos.png" alt="Dispositivos que reparamos" width="1000" height="1000" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll hint -->
+    <div class="scroll-hint">
+      <div class="scroll-hint-mouse"><div class="scroll-hint-wheel"></div></div>
+      <span class="scroll-hint-text">Desplaza</span>
+    </div>
+  </section>
+
+  <!-- ── STATS ────────────────────────────────────────────────── -->
+  <div id="stats">
+    <div class="container" style="padding-inline:0;">
+      <div class="stats-row">
+        <div class="stat-cell reveal">
+          <div class="stat-number"><span class="count" data-target="15">0</span><span class="unit">+</span></div>
+          <div class="stat-label">Años en Tapachula</div>
+        </div>
+        <div class="stat-cell reveal d1">
+          <div class="stat-number"><span class="count" data-target="4">0</span></div>
+          <div class="stat-label">Tipos de dispositivo</div>
+        </div>
+        <div class="stat-cell reveal d2">
+          <div class="stat-number"><span class="count" data-target="1">0</span><span class="unit">–2</span></div>
+          <div class="stat-label">Días de reparación</div>
+        </div>
+        <div class="stat-cell reveal d3">
+          <div class="stat-number"><span style="color:var(--gold)">$0</span></div>
+          <div class="stat-label">Costo del diagnóstico</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PROBLEMA ─────────────────────────────────────────────── -->
+  <section id="problema">
+    <div class="container">
+      <div class="problema-header">
+        <div>
+          <p class="section-eyebrow reveal">¿Te suena familiar?</p>
+          <h2 class="problema-title">
+            <span class="line-reveal"><span class="line-reveal-inner">El problema</span></span>
+            <span class="line-reveal d1"><span class="line-reveal-inner">que te <em>frena</em>.</span></span>
+          </h2>
+        </div>
+        <p class="problema-desc reveal">
+          Tu dispositivo no es solo un aparato. Es tu trabajo, tu comunicación, tu vida diaria. Cuando falla, lo notamos todos.
+        </p>
+      </div>
+      <div class="problema-grid">
+        <div class="problema-cell reveal">
+          <div class="problema-cell-num">01</div>
+          <h3>Pantalla rota o negra</h3>
+          <p>No ves nada, pero en la mayoría de casos la pantalla se cambia y el dispositivo vuelve a funcionar perfectamente.</p>
+          <div class="problema-cell-line"></div>
+        </div>
+        <div class="problema-cell reveal d1">
+          <div class="problema-cell-num">02</div>
+          <h3>Batería que no carga</h3>
+          <p>Tu dispositivo muere rápido o no enciende. Un cambio de batería puede ser todo lo que necesita para volver a la normalidad.</p>
+          <div class="problema-cell-line"></div>
+        </div>
+        <div class="problema-cell reveal d2">
+          <div class="problema-cell-num">03</div>
+          <h3>Laptop lenta o sobrecalentada</h3>
+          <p>La frustración de trabajar con una máquina que no responde. Limpiamos, optimizamos y la aceleramos en 1–2 días.</p>
+          <div class="problema-cell-line"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SERVICIOS ────────────────────────────────────────────── -->
+  <section id="servicios">
+    <div class="container">
+      <div class="servicios-header">
+        <p class="section-eyebrow reveal">Todo en un solo lugar</p>
+        <h2 class="servicios-title reveal d1">Lo que reparamos.</h2>
+        <p class="servicios-sub reveal d2">No tienes que ir a 4 lugares distintos. Aquí se arregla todo, con garantía.</p>
+      </div>
+      <div class="servicios-grid">
+        <!-- Celulares -->
+        <div class="servicio-card reveal d1">
+          <div class="servicio-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Celulares</h3>
+          <p>Todas las marcas y modelos. Pantalla, batería, puerto de carga, cámara, software y más.</p>
+          <ul class="servicio-list">
+            <li>iPhone · Samsung · Motorola</li>
+            <li>Pantalla rota o negra</li>
+            <li>Batería defectuosa</li>
+            <li>Puerto de carga dañado</li>
+          </ul>
+        </div>
+        <!-- Laptops -->
+        <div class="servicio-card reveal d2">
+          <div class="servicio-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <h3>Laptops</h3>
+          <p>Windows, Mac y Linux. Desde problemas de arranque hasta daño por agua o sobrecalentamiento.</p>
+          <ul class="servicio-list">
+            <li>Windows · Mac · Linux</li>
+            <li>Formateo y reinstalación</li>
+            <li>Limpieza de polvo y pasta térmica</li>
+            <li>Pantalla y teclado</li>
+          </ul>
+        </div>
+        <!-- Consolas -->
+        <div class="servicio-card reveal d3">
+          <div class="servicio-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M6 7V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/><circle cx="8" cy="14" r="1"/><circle cx="16" cy="14" r="1"/><path d="M12 11v3M10.5 12.5h3"/></svg>
+          </div>
+          <h3>Consolas</h3>
+          <p>PlayStation, Xbox, Nintendo y más. No prende, no lee discos, error de sistema — lo revisamos.</p>
+          <ul class="servicio-list">
+            <li>PlayStation · Xbox · Nintendo</li>
+            <li>No enciende</li>
+            <li>HDMI y lectores</li>
+            <li>Joysticks y botones</li>
+          </ul>
+        </div>
+        <!-- Drones -->
+        <div class="servicio-card reveal d4">
+          <div class="servicio-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M4 4l2 2m12-2l-2 2M4 20l2-2m12 2l-2-2"/><circle cx="5" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/></svg>
+          </div>
+          <h3>Drones</h3>
+          <p>Motores, ESC, cámara, estructura. Reparación técnica para drones de consumo y profesionales.</p>
+          <ul class="servicio-list">
+            <li>DJI y otras marcas</li>
+            <li>Motores y hélices</li>
+            <li>Cámara y gimbal</li>
+            <li>Daño por caída</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROCESO ──────────────────────────────────────────────── -->
+  <section id="proceso">
+    <div class="container">
+      <div class="proceso-header">
+        <div>
+          <p class="section-eyebrow reveal">Sin complicaciones</p>
+          <h2 class="proceso-title">
+            <span class="line-reveal"><span class="line-reveal-inner">Así de</span></span>
+            <span class="line-reveal d1"><span class="line-reveal-inner"><em>simple</em>.</span></span>
+          </h2>
+        </div>
+        <p class="proceso-desc reveal d2">
+          Sin sorpresas de precio, sin tecnicismos, sin estrés. Cuatro pasos y tu dispositivo está de vuelta contigo.
+        </p>
+      </div>
+      <div class="proceso-steps">
+        <div class="proceso-step reveal d1">
+          <div class="paso-top">
+            <span class="paso-num">01</span>
+            <div class="paso-connector"></div>
+          </div>
+          <div class="paso-body">
+            <h3>Contáctanos</h3>
+            <p>Llama, escribe por WhatsApp o visítanos directamente. Sin cita obligatoria.</p>
+          </div>
+        </div>
+        <div class="proceso-step reveal d2">
+          <div class="paso-top">
+            <span class="paso-num">02</span>
+            <div class="paso-connector"></div>
+          </div>
+          <div class="paso-body">
+            <h3>Diagnóstico Gratis</h3>
+            <p>Revisamos tu dispositivo y te decimos qué tiene y cuánto cuesta. Sin compromiso.</p>
+            <span class="paso-tag">Siempre Gratis</span>
+          </div>
+        </div>
+        <div class="proceso-step reveal d3">
+          <div class="paso-top">
+            <span class="paso-num">03</span>
+            <div class="paso-connector"></div>
+          </div>
+          <div class="paso-body">
+            <h3>Apruebas y Reparamos</h3>
+            <p>Si estás de acuerdo, comenzamos. Promedio de entrega: 1–2 días hábiles.</p>
+          </div>
+        </div>
+        <div class="proceso-step reveal d4">
+          <div class="paso-top">
+            <span class="paso-num">04</span>
+          </div>
+          <div class="paso-body">
+            <h3>Entrega con Garantía</h3>
+            <p>Tu dispositivo listo. Garantía incluida y disponibles por WhatsApp para cualquier duda.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PRECIOS ──────────────────────────────────────────────── -->
+  <section id="precios">
+    <div class="container">
+      <div class="precios-header">
+        <p class="section-eyebrow reveal">Sin letra chica</p>
+        <h2 class="precios-title reveal d1">Precios claros.</h2>
+        <p class="precios-sub reveal d2">Rangos orientativos. El diagnóstico gratuito te da el precio exacto para tu caso.</p>
+      </div>
+      <div class="precios-grid">
+        <div class="precio-cell reveal">
+          <div class="precio-cell-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2"/></svg>
+          </div>
+          <h3>Pantalla / Cristal</h3>
+          <div class="precio-amount">$800–$1,500</div>
+          <p class="precio-note">Depende del dispositivo y modelo</p>
+        </div>
+        <div class="precio-cell reveal d1">
+          <div class="precio-cell-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="2" width="12" height="20" rx="1"/><line x1="10" y1="7" x2="14" y2="7"/></svg>
+          </div>
+          <h3>Batería</h3>
+          <div class="precio-amount">$400–$800</div>
+          <p class="precio-note">Depende del modelo del dispositivo</p>
+        </div>
+        <div class="precio-cell reveal d2">
+          <div class="precio-cell-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <h3>Formateo / Limpieza</h3>
+          <div class="precio-amount">$300–$600</div>
+          <p class="precio-note">Laptop o computadora de escritorio</p>
+        </div>
+        <div class="precio-cell reveal d3">
+          <div class="precio-cell-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 11v3M10.5 12.5h3M16 11v3"/></svg>
+          </div>
+          <h3>Consola</h3>
+          <div class="precio-amount">$600–$2,000</div>
+          <p class="precio-note">Depende del daño y modelo</p>
+        </div>
+        <div class="precio-cell reveal d4">
+          <div class="precio-cell-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h3>Diagnóstico</h3>
+          <div class="precio-amount free">GRATIS</div>
+          <p class="precio-note">Se descuenta del total si realizas la reparación</p>
+        </div>
+      </div>
+      <div class="precios-disclaimer reveal">
+        <div class="precios-disclaimer-icon">
+          <!-- Info icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16" stroke-width="2.5"/></svg>
+        </div>
+        <p>Estos son rangos orientativos. Algunos trabajos son más baratos, otros más caros según la complejidad. El <strong style="color:rgba(255,255,255,.75)">diagnóstico gratuito</strong> te da el precio exacto para tu dispositivo sin ningún compromiso.</p>
+      </div>
+      <div class="precios-cta reveal">
+        <a href="#contacto" class="btn btn-gold btn-lg">Solicitar Cotización Gratis</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TESTIMONIOS ──────────────────────────────────────────── -->
+  <section id="testimonios">
+    <div class="testimonios-bg"></div>
+    <div class="container">
+      <div class="testimonios-header">
+        <p class="section-eyebrow reveal">Comunidad</p>
+        <h2 class="testimonios-title reveal d1">Lo que dicen.</h2>
+        <p class="testimonios-sub reveal d2">15 años de clientes satisfechos en Tapachula.</p>
+      </div>
+      <div class="testimonios-grid">
+        <!-- Reseña 1: Noe -->
+        <div class="testimonio reveal d1">
+          <div class="testimonio-quote">"</div>
+          <div class="testimonio-stars">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="testimonio-text">"Exelente servicio y trato personalizado. Muy profesional y explicacion a detalle. Reparacion d señal por rsim sin detalle hasta el momento. Recomendado."</p>
+          <div class="testimonio-author">
+            <div class="testimonio-avatar" style="background:#7B4FD9;font-family:'Montserrat',sans-serif;font-size:.95rem;font-weight:700;color:#fff;">N</div>
+            <div>
+              <div class="testimonio-name">Noe</div>
+              <div class="testimonio-role">Local Guide · 121 reseñas</div>
+            </div>
+          </div>
+          <div class="testimonio-meta">
+            <span class="testimonio-date">Hace 5 meses</span>
+            <span class="testimonio-google-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+              Reseña de Google
+            </span>
+          </div>
+        </div>
+        <!-- Reseña 2: David Hernandez -->
+        <div class="testimonio reveal d2">
+          <div class="testimonio-quote">"</div>
+          <div class="testimonio-stars">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="testimonio-text">"Es un buen lugar, cómodo y limpio para esperar tu teléfono mientras lo reparan o compras algún accesorio. El personal técnico te explica muy bien lo que van a hacer. El precio es justo por la buena calidad del servicio."</p>
+          <div class="testimonio-author">
+            <div class="testimonio-avatar" style="background:#1E8A6E;font-family:'Montserrat',sans-serif;font-size:.95rem;font-weight:700;color:#fff;">D</div>
+            <div>
+              <div class="testimonio-name">David Hernandez</div>
+              <div class="testimonio-role">Local Guide · 49 reseñas</div>
+            </div>
+          </div>
+          <div class="testimonio-meta">
+            <span class="testimonio-date">Hace un año</span>
+            <span class="testimonio-google-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+              Reseña de Google
+            </span>
+          </div>
+        </div>
+        <!-- Reseña 3: Sathia Balam Be -->
+        <div class="testimonio reveal d3">
+          <div class="testimonio-quote">"</div>
+          <div class="testimonio-stars">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="testimonio-text">"Dos laps que me arreglan y funcionan bien. Buen servicio pero sobretodo valoro la honestidad y que se toman el tiempo en explicarte."</p>
+          <div class="testimonio-author">
+            <div class="testimonio-avatar" style="background:#C2410C;font-family:'Montserrat',sans-serif;font-size:.95rem;font-weight:700;color:#fff;">S</div>
+            <div>
+              <div class="testimonio-name">Sathia Balam Be</div>
+              <div class="testimonio-role">Local Guide · 147 reseñas</div>
+            </div>
+          </div>
+          <div class="testimonio-meta">
+            <span class="testimonio-date">Hace 5 años</span>
+            <span class="testimonio-google-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+              Reseña de Google
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonios-cta reveal">
+        <a href="https://maps.app.goo.gl/X2vprqhm4RWiUxZT7" target="_blank" rel="noopener">
+          <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Ver todas las reseñas en Google
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAQ ──────────────────────────────────────────────────── -->
+  <section id="faq">
+    <div class="container">
+      <div class="faq-layout">
+        <div>
+          <p class="section-eyebrow reveal">Resolvemos tus dudas</p>
+          <h2 class="faq-sidebar-title">
+            <span class="line-reveal"><span class="line-reveal-inner">Preguntas</span></span>
+            <span class="line-reveal d1"><span class="line-reveal-inner">frecuentes.</span></span>
+          </h2>
+          <p class="faq-sidebar-desc reveal d2">
+            Antes de que lo preguntes, ya lo respondemos. Si tienes algo más, escríbenos.
+          </p>
+          <a href="#contacto" class="btn btn-ghost reveal d3">Hacer una pregunta</a>
+        </div>
+        <div class="faq-list reveal d1">
+          <div class="faq-item">
+            <button class="faq-q">
+              ¿Tienen garantía en las reparaciones?
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-a">Sí. Toda reparación incluye <strong>garantía de 30 días</strong>. Si algo falla por error nuestro, lo arreglamos de nuevo sin costo adicional.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              ¿Usan piezas originales o genéricas?
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-a">Usamos piezas de calidad certificada. Para algunos dispositivos tenemos originales; para otros, alternativas confiables de igual rendimiento. En el diagnóstico te mostramos exactamente qué vamos a usar, antes de proceder.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              ¿En cuánto tiempo queda listo?
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-a">El promedio es 1–2 días hábiles. Casos más complejos pueden tomar más tiempo, te avisamos en el diagnóstico. Si tienes urgencia, consulta si podemos atenderte el mismo día.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              ¿Necesito hacer cita?
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-a">No es obligatorio. Puedes llegar sin cita. Pero si nos escribes por WhatsApp antes, te agendamos para que llegues y te atendamos de inmediato sin espera.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              ¿Qué pasa si no pueden repararlo?
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-a">Es poco frecuente, pero ocurre. En ese caso no te cobramos nada. Te decimos honestamente si es reparable o no y te orientamos sobre las alternativas disponibles.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTACTO ─────────────────────────────────────────────── -->
+  <section id="contacto">
+    <div class="contacto-ambient"></div>
+    <div class="container">
+      <div class="contacto-layout">
+        <div>
+          <p class="section-eyebrow reveal">Estamos aquí</p>
+          <h2 class="contacto-title">
+            <span class="line-reveal"><span class="line-reveal-inner">¿Listo para</span></span>
+            <span class="line-reveal d1"><span class="line-reveal-inner"><em>repararlo?</em></span></span>
+          </h2>
+          <p class="contacto-desc reveal d2">
+            Cuéntanos qué pasó. En menos de 2 horas te respondemos con diagnóstico y cotización, sin compromiso.
+          </p>
+          <div class="contacto-channels reveal d3">
+            <a href="https://wa.me/529622918040" target="_blank" class="channel-link">
+              <div class="channel-icon">
+                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" fill="currentColor"/></svg>
+              </div>
+              <div>
+                <div class="channel-label">WhatsApp</div>
+                <div class="channel-value">962 291 8040</div>
+              </div>
+              <svg class="channel-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+            <a href="tel:+529622918040" class="channel-link">
+              <div class="channel-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.68 12a19.79 19.79 0 0 1-3-8.59A2 2 0 0 1 3.62 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg>
+              </div>
+              <div>
+                <div class="channel-label">Teléfono</div>
+                <div class="channel-value">962 291 8040</div>
+              </div>
+              <svg class="channel-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+            <a href="#ubicacion" class="channel-link">
+              <div class="channel-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div>
+                <div class="channel-label">Ubicación</div>
+                <div class="channel-value">8va. Poniente Entre 4ta y 6ta Sur, Centro</div>
+              </div>
+              <svg class="channel-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="contacto-form reveal d2">
+          <h3 class="form-title">Envía tu consulta</h3>
+          <form id="mainForm" novalidate>
+            <div class="form-row">
+              <label class="form-label" for="f-nombre">Nombre</label>
+              <input class="form-control" type="text" id="f-nombre" name="nombre" placeholder="¿Cómo te llamas?" required />
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="f-tel">Teléfono / WhatsApp</label>
+              <input class="form-control" type="tel" id="f-tel" name="telefono" placeholder="Ej. 961 123 4567" required />
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="f-dispositivo">Dispositivo</label>
+              <select class="form-control" id="f-dispositivo" name="dispositivo" required>
+                <option value="" disabled selected>Selecciona el dispositivo</option>
+                <option value="celular">Celular / Smartphone</option>
+                <option value="laptop">Laptop / Computadora</option>
+                <option value="consola">Consola de videojuegos</option>
+                <option value="drone">Drone</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="f-problema">Describe el problema</label>
+              <textarea class="form-control" id="f-problema" name="problema" placeholder="Pantalla negra, no carga, se apaga solo…"></textarea>
+            </div>
+            <button type="submit" class="btn btn-gold form-submit">Enviar Consulta</button>
+          </form>
+          <div class="form-success-msg" id="successMsg">
+            Recibimos tu mensaje. Te contactamos en menos de 2 horas por WhatsApp.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── UBICACIÓN ─────────────────────────────────────────────── -->
+  <section id="ubicacion">
+    <div class="container">
+      <div class="ubicacion-layout">
+        <div class="reveal">
+          <h2 class="ubicacion-title">¿Dónde estamos?</h2>
+          <div class="ubicacion-item">
+            <div class="ubicacion-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <div class="ubicacion-item-label">Dirección</div>
+              <div class="ubicacion-item-value">8va. Poniente Entre 4ta y 6ta Sur<br>Centro, C.P. 30700, Tapachula, Chiapas</div>
+            </div>
+          </div>
+          <div class="ubicacion-item">
+            <div class="ubicacion-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div>
+              <div class="ubicacion-item-label">Horario</div>
+              <div class="ubicacion-item-value">Lunes – Sábado: 9:00 am – 7:00 pm<br>Domingos: Cerrado</div>
+            </div>
+          </div>
+          <div class="ubicacion-item">
+            <div class="ubicacion-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.68 12a19.79 19.79 0 0 1-3-8.59A2 2 0 0 1 3.62 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg>
+            </div>
+            <div>
+              <div class="ubicacion-item-label">Teléfono / WhatsApp</div>
+              <div class="ubicacion-item-value">962 291 8040</div>
+            </div>
+          </div>
+
+          <!-- Redes sociales -->
+          <div class="redes-sociales reveal">
+            <p class="redes-label">Síguenos</p>
+            <div class="redes-grid">
+              <!-- Instagram -->
+              <a href="https://www.instagram.com/gemeloscell/" class="red-link" aria-label="Instagram" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+              </a>
+              <!-- Facebook -->
+              <a href="https://www.facebook.com/gemeloscell" class="red-link" aria-label="Facebook" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              </a>
+              <!-- TikTok -->
+              <a href="https://www.tiktok.com/@gemelos.cell" class="red-link" aria-label="TikTok" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+              </a>
+              <!-- YouTube -->
+              <a href="https://www.youtube.com/channel/UC0p7E59D3CmOFkOCCjZpUvA" class="red-link" aria-label="YouTube" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="reveal d1">
+          <div class="mapa-box" style="padding:0;overflow:hidden;border-radius:var(--r-md);">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15422.44607898549!2d-92.2684456!3d14.9029857!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x858e0f247b37a1ab%3A0xf30e47d0c9e4ada0!2sGemelos%20cell!5e0!3m2!1ses!2smx!4v1776291453148!5m2!1ses!2smx" width="100%" height="100%" style="border:0;display:block;min-height:320px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ────────────────────────────────────────────────── -->
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-logo">Gemelos <span>Cell</span></div>
+          <div class="footer-tagline">8va. Poniente Entre 4ta y 6ta Sur, Centro · Tapachula, Chis.<br>Lun–Sáb 9:00 am – 7:00 pm · 962 291 8040</div>
+        </div>
+        <nav class="footer-nav">
+          <a href="#servicios">Servicios</a>
+          <a href="#proceso">Proceso</a>
+          <a href="#precios">Precios</a>
+          <a href="#testimonios">Clientes</a>
+          <a href="#faq">Preguntas</a>
+          <a href="#contacto">Contacto</a>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2025 Gemelos Cell. Todos los derechos reservados.</span>
+        <div class="footer-legal">
+          <a href="#" id="openPrivacidad">Privacidad</a>
+          <a href="#" id="openTerminos">Términos</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── WhatsApp FAB ──────────────────────────────────────────── -->
+  <a href="https://wa.me/529622918040" target="_blank" class="fab" aria-label="Contactar por WhatsApp">
+    <div class="fab-icon">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    </div>
+    <span class="fab-label">WhatsApp</span>
+  </a>
+
+  <!-- ── MODALES LEGALES ──────────────────────────────────────── -->
+  <div id="legalModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);padding:20px;overflow-y:auto;" role="dialog" aria-modal="true">
+    <div style="max-width:600px;margin:40px auto;background:#1C1917;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:40px 36px;position:relative;">
+      <button id="closeLegalModal" aria-label="Cerrar" style="position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,.4);font-size:1.4rem;cursor:pointer;line-height:1;">×</button>
+      <div id="legalContent"></div>
+    </div>
+  </div>
+
+  <!-- ── SCRIPTS ───────────────────────────────────────────────── -->
+  <script>
+    // ── Cursor glow ────────────────────────────────────────────
+    const glow = document.getElementById('cursor-glow');
+    let glowVisible = false;
+    document.addEventListener('mousemove', e => {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top  = e.clientY + 'px';
+      if (!glowVisible) { glow.style.opacity = '1'; glowVisible = true; }
+    });
+    document.addEventListener('mouseleave', () => {
+      glow.style.opacity = '0'; glowVisible = false;
+    });
+
+    // ── Scroll progress bar ─────────────────────────────────────
+    const bar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY;
+      const total    = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (scrolled / total * 100) + '%';
+    }, { passive: true });
+
+    // ── Nav scroll state ────────────────────────────────────────
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    // ── Scroll reveal ───────────────────────────────────────────
+    const revealEls = document.querySelectorAll('.reveal, .line-reveal');
+    const observer  = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    revealEls.forEach(el => observer.observe(el));
+
+    // Trigger hero immediately
+    document.querySelectorAll('#hero .reveal, #hero .line-reveal').forEach(el => {
+      setTimeout(() => el.classList.add('visible'), 100);
+    });
+
+    // ── Counter animation ───────────────────────────────────────
+    function animateCount(el) {
+      const target   = parseInt(el.dataset.target);
+      const duration = 1400;
+      const start    = performance.now();
+      function step(now) {
+        const t = Math.min((now - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - t, 4);
+        el.textContent = Math.round(ease * target);
+        if (t < 1) requestAnimationFrame(step);
+        else el.textContent = target;
+      }
+      requestAnimationFrame(step);
+    }
+    const countObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          animateCount(e.target);
+          countObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: .5 });
+    document.querySelectorAll('.count').forEach(el => countObs.observe(el));
+
+    // ── FAQ accordion ───────────────────────────────────────────
+    document.querySelectorAll('.faq-q').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item   = btn.closest('.faq-item');
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+        if (!isOpen) item.classList.add('open');
+      });
+    });
+
+    // ── Contact form → WhatsApp ─────────────────────────────────
+    document.getElementById('mainForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const nombre     = this.querySelector('#f-nombre').value.trim();
+      const telefono   = this.querySelector('#f-tel').value.trim();
+      const dispositivo = this.querySelector('#f-dispositivo').value;
+      const problema   = this.querySelector('#f-problema').value.trim();
+      const msg = `Hola Gemelos Cell! 👋\n\nNombre: ${nombre}\nTeléfono: ${telefono}\nDispositivo: ${dispositivo}\nProblema: ${problema}\n\nMe gustaría una revisión.`;
+      window.open('https://wa.me/529622918040?text=' + encodeURIComponent(msg), '_blank');
+      this.style.display = 'none';
+      document.getElementById('successMsg').classList.add('show');
+    });
+
+    // ── Hamburger menu ──────────────────────────────────────────
+    const hamburger = document.getElementById('navHamburger');
+    const drawer    = document.getElementById('navDrawer');
+    function closeDrawer() {
+      hamburger.classList.remove('open');
+      drawer.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      drawer.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+    hamburger.addEventListener('click', () => {
+      const isOpen = drawer.classList.contains('open');
+      if (isOpen) { closeDrawer(); }
+      else {
+        hamburger.classList.add('open');
+        drawer.classList.add('open');
+        hamburger.setAttribute('aria-expanded', 'true');
+        drawer.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+    document.querySelectorAll('.drawer-link').forEach(link => {
+      link.addEventListener('click', closeDrawer);
+    });
+
+    // ── Smooth anchor scroll ────────────────────────────────────
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+    });
+
+    // ── Proceso step connectors trigger ─────────────────────────
+    const pasoObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+        }
+      });
+    }, { threshold: .3 });
+    document.querySelectorAll('.proceso-step').forEach(el => pasoObs.observe(el));
+
+    // ── Modales legales ─────────────────────────────────────────
+    const legalModal   = document.getElementById('legalModal');
+    const legalContent = document.getElementById('legalContent');
+    const privacidadHTML = `
+      <h2 style="font-family:'Cormorant',serif;font-size:1.8rem;color:#FAFAF9;margin-bottom:20px;">Política de Privacidad</h2>
+      <p style="color:rgba(255,255,255,.55);font-size:.875rem;line-height:1.8;margin-bottom:14px;">En <strong style="color:#FAFAF9;">Gemelos Cell</strong> respetamos tu privacidad. Los datos personales que nos proporciones (nombre, teléfono, descripción del problema) se utilizan exclusivamente para contactarte y brindar el servicio de reparación solicitado.</p>
+      <p style="color:rgba(255,255,255,.55);font-size:.875rem;line-height:1.8;margin-bottom:14px;">No compartimos, vendemos ni cedemos tu información a terceros. La comunicación se realiza a través de WhatsApp y llamadas telefónicas únicamente con fines de atención al cliente.</p>
+      <p style="color:rgba(255,255,255,.55);font-size:.875rem;line-height:1.8;">Para cualquier consulta sobre tus datos, contáctanos al <strong style="color:#FAFAF9;">962 291 8040</strong>.</p>
+    `;
+    const terminosHTML = `
+      <h2 style="font-family:'Cormorant',serif;font-size:1.8rem;color:#FAFAF9;margin-bottom:20px;">Términos y Condiciones</h2>
+      <p style="color:rgba(255,255,255,.55);font-size:.875rem;line-height:1.8;margin-bottom:14px;"><strong style="color:#FAFAF9;">Diagnóstico:</strong> El diagnóstico es siempre gratuito y sin compromiso. Si decides no proceder con la reparación, no hay costo alguno.</p>
+      <p style="color:rgba(255,255,255,.55);font-size:.875rem;line-height:1.8;margin-bottom:14px;"><strong style="color:#FAFAF9;">Garantía:</strong> Todas las reparaciones cuentan con garantía sobre la pieza sustituida. El tiempo de garantía varía según el tipo de reparación y se informa al momento de la entrega.</p>
+      <p style="color:rgba(255,255,255,.55);font-size:.875rem;line-height:1.8;margin-bottom:14px;"><strong style="color:#FAFAF9;">Precios:</strong> Los rangos de precios mostrados son orientativos. El precio definitivo se comunica tras el diagnóstico gratuito y requiere aprobación del cliente antes de iniciar cualquier trabajo.</p>
+      <p style="color:rgba(255,255,255,.55);font-size:.875rem;line-height:1.8;"><strong style="color:#FAFAF9;">Plazos:</strong> El tiempo estimado de entrega es de 1–2 días hábiles en la mayoría de los casos. Reparaciones complejas pueden requerir más tiempo, lo cual se notifica al cliente con anticipación.</p>
+    `;
+    function openLegal(html) {
+      legalContent.innerHTML = html;
+      legalModal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLegal() {
+      legalModal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+    document.getElementById('openPrivacidad').addEventListener('click', e => { e.preventDefault(); openLegal(privacidadHTML); });
+    document.getElementById('openTerminos').addEventListener('click',   e => { e.preventDefault(); openLegal(terminosHTML); });
+    document.getElementById('closeLegalModal').addEventListener('click', closeLegal);
+    legalModal.addEventListener('click', e => { if (e.target === legalModal) closeLegal(); });
+  </script>
+
+  <!-- Vercel Speed Insights -->
+  <script>
+    window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>

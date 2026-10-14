@@ -1,0 +1,350 @@
+{
+  "_comentario": "FUENTE DE VERDAD para el sitio y para el futuro agente de voz IA. Edita aquí precios y horarios y luego refleja los cambios en el bloque CONFIG/CATALOGO de index.html (o viceversa). Formato: [min, max] en MXN, pieza + mano de obra.",
+  "negocio": {
+    "nombre": "TapaTech Tapachula",
+    "telefono": "+529622889585",
+    "whatsapp": "529622889585",
+    "direccion": "Quinceava Avenida Sur & 18ª C. Ote., Los Naranjos, 16 de Septiembre, C.P. 30705, Tapachula de Córdova y Ordóñez, Chiapas, México",
+    "mapsUrl": "https://www.google.com/maps/search/?api=1&query=TapaTech%20Quinceava%20Avenida%20Sur%2018a%20Calle%20Oriente%20Tapachula",
+    "email": "taptTech.tapachula@gmail.com",
+    "zonaHoraria": "America/Mexico_City",
+    "horarios": {
+      "domingo": null,
+      "lunes": [
+        9,
+        19
+      ],
+      "martes": [
+        9,
+        19
+      ],
+      "miercoles": [
+        9,
+        19
+      ],
+      "jueves": [
+        9,
+        19
+      ],
+      "viernes": [
+        9,
+        19
+      ],
+      "sabado": [
+        9,
+        19
+      ]
+    },
+    "garantiaDias": 30,
+    "diagnostico": "Gratis, sin compromiso. Se descuenta del total si autorizas la reparación.",
+    "pago": [
+      "efectivo",
+      "tarjeta de débito",
+      "tarjeta de crédito",
+      "transferencia"
+    ],
+    "horarioTexto": "Lunes a sábado 9:00–19:00 (corrido). Domingo cerrado en local; urgencias por WhatsApp."
+  },
+  "servicioDomicilio": {
+    "costo": 120,
+    "cobertura": "Zona urbana de Tapachula",
+    "zonas": [
+      "Centro",
+      "Las Flores",
+      "Los Naranjos",
+      "Bonanza",
+      "San José",
+      "Linda Vista",
+      "Cumbres",
+      "Benito Juárez",
+      "16 de Septiembre",
+      "Periférico"
+    ],
+    "proceso": [
+      "Agendar franja por WhatsApp",
+      "Mensajero recoge y emite boleto con folio",
+      "Diagnóstico y precio cerrado por WhatsApp",
+      "Reparación autorizada",
+      "Entrega y pago contra recepción"
+    ]
+  },
+  "extras": {
+    "domicilio": 120,
+    "express": 180,
+    "respaldo": 150
+  },
+  "servicios": {
+    "celular": {
+      "pantalla": {
+        "nombre": "Cambio de pantalla / display",
+        "tiempo": "40–60 min",
+        "garantia": 30,
+        "calidades": {
+          "incell": [
+            600,
+            1700
+          ],
+          "premium": [
+            1500,
+            5200
+          ]
+        }
+      },
+      "bateria": {
+        "nombre": "Cambio de batería",
+        "tiempo": "30–50 min",
+        "garantia": 30,
+        "precio": [
+          400,
+          1100
+        ]
+      },
+      "puerto": {
+        "nombre": "Puerto / pin de carga",
+        "tiempo": "40–70 min",
+        "garantia": 30,
+        "precio": [
+          350,
+          800
+        ]
+      },
+      "camara": {
+        "nombre": "Cámara, bocina o micrófono",
+        "tiempo": "40–80 min",
+        "garantia": 30,
+        "precio": [
+          350,
+          1400
+        ]
+      },
+      "mojado": {
+        "nombre": "Equipo mojado (limpieza ultrasónica)",
+        "tiempo": "24–48 h",
+        "garantia": 15,
+        "precio": [
+          500,
+          1800
+        ]
+      },
+      "software": {
+        "nombre": "Software, formateo o liberación",
+        "tiempo": "1–3 h",
+        "garantia": 15,
+        "precio": [
+          250,
+          900
+        ]
+      },
+      "placa": {
+        "nombre": "Microsoldadura / no enciende",
+        "tiempo": "24–72 h",
+        "garantia": 30,
+        "precio": [
+          900,
+          3800
+        ]
+      },
+      "diag": {
+        "nombre": "Diagnóstico completo",
+        "tiempo": "15–30 min",
+        "precio": [
+          0,
+          0
+        ]
+      }
+    },
+    "laptop": {
+      "formateo": {
+        "nombre": "Formateo e instalación de sistema",
+        "tiempo": "24 h",
+        "garantia": 15,
+        "precio": [
+          450,
+          1100
+        ]
+      },
+      "ssd": {
+        "nombre": "Upgrade a SSD (incluye unidad)",
+        "tiempo": "24 h",
+        "garantia": 90,
+        "precio": [
+          900,
+          3200
+        ]
+      },
+      "ram": {
+        "nombre": "Aumento de memoria RAM",
+        "tiempo": "24 h",
+        "garantia": 90,
+        "precio": [
+          700,
+          2600
+        ]
+      },
+      "limpieza": {
+        "nombre": "Limpieza interna + pasta térmica",
+        "tiempo": "3–6 h",
+        "garantia": 30,
+        "precio": [
+          400,
+          900
+        ]
+      },
+      "pantallaL": {
+        "nombre": "Pantalla, teclado o bisagras",
+        "tiempo": "24–48 h",
+        "garantia": 30,
+        "precio": [
+          700,
+          5200
+        ]
+      },
+      "datos": {
+        "nombre": "Recuperación de información",
+        "tiempo": "24–72 h",
+        "garantia": 15,
+        "precio": [
+          800,
+          3000
+        ]
+      },
+      "placaL": {
+        "nombre": "Reparación de placa / no enciende",
+        "tiempo": "48–96 h",
+        "garantia": 30,
+        "precio": [
+          1200,
+          5500
+        ]
+      },
+      "diag": {
+        "nombre": "Diagnóstico completo",
+        "tiempo": "30–60 min",
+        "precio": [
+          0,
+          0
+        ]
+      }
+    },
+    "consola": {
+      "hdmi": {
+        "nombre": "Puerto HDMI / sin imagen",
+        "tiempo": "24–48 h",
+        "garantia": 30,
+        "precio": [
+          800,
+          1800
+        ]
+      },
+      "enciende": {
+        "nombre": "No enciende / fuente de poder",
+        "tiempo": "24–72 h",
+        "garantia": 30,
+        "precio": [
+          700,
+          2500
+        ]
+      },
+      "lector": {
+        "nombre": "Lector de discos",
+        "tiempo": "24–48 h",
+        "garantia": 30,
+        "precio": [
+          600,
+          1600
+        ]
+      },
+      "joystick": {
+        "nombre": "Joystick con drift / botones",
+        "tiempo": "1–3 h",
+        "garantia": 30,
+        "precio": [
+          400,
+          950
+        ]
+      },
+      "termica": {
+        "nombre": "Limpieza y sobrecalentamiento",
+        "tiempo": "3–6 h",
+        "garantia": 30,
+        "precio": [
+          450,
+          900
+        ]
+      },
+      "pantallaC": {
+        "nombre": "Pantalla (Switch / portátiles)",
+        "tiempo": "24–48 h",
+        "garantia": 30,
+        "precio": [
+          800,
+          2600
+        ]
+      },
+      "diag": {
+        "nombre": "Diagnóstico completo",
+        "tiempo": "30–60 min",
+        "precio": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "politicas": {
+    "contrasena": "Nunca se solicita contraseña ni patrón para reparaciones de hardware. Las pruebas se hacen desde la pantalla de bloqueo.",
+    "piezaVieja": "La pieza sustituida se devuelve al cliente.",
+    "noReparable": "Si el equipo no tiene reparación no se cobra nada.",
+    "garantiaExclusiones": [
+      "golpes o caídas posteriores",
+      "humedad o líquidos después de la entrega",
+      "manipulación por terceros",
+      "pantalla estrellada por accidente",
+      "daño por uso de cargadores no certificados"
+    ],
+    "eticasoftware": "No se retiran reportes de robo o extravío. Solo liberaciones comerciales legítimas con identificación."
+  },
+  "marcas": {
+    "celular": [
+      "Apple iPhone",
+      "Samsung",
+      "Xiaomi",
+      "Redmi",
+      "Poco",
+      "Motorola",
+      "Honor",
+      "Oppo",
+      "Realme",
+      "Vivo",
+      "Huawei",
+      "ZTE",
+      "Alcatel",
+      "Infinix",
+      "Tecno"
+    ],
+    "laptop": [
+      "HP",
+      "Lenovo",
+      "Dell",
+      "Asus",
+      "Acer",
+      "Apple MacBook",
+      "Toshiba",
+      "MSI",
+      "Samsung",
+      "Gateway",
+      "Compaq",
+      "PC armada"
+    ],
+    "consola": [
+      "Xbox One",
+      "Xbox Series S",
+      "Xbox Series X",
+      "PlayStation 4",
+      "PlayStation 5",
+      "Nintendo Switch",
+      "Nintendo Switch OLED",
+      "Steam Deck"
+    ]
+  }
+}

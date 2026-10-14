@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel de leads · TapaTech</title>
+<meta name="robots" content="noindex,nofollow,noarchive">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/doc.css">
+<style>
+  :root{--ok:#2563EB}
+  body{background:var(--paper-2)}
+  .gate{min-height:80vh;display:grid;place-items:center;padding:24px}
+  .gate-card{width:100%;max-width:380px;background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:0 18px 50px rgba(11,15,18,.10)}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:18px 0}
+  .kpi{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+  .kpi b{display:block;font-size:1.7rem;font-weight:900;letter-spacing:-.03em;line-height:1.1}
+  .kpi span{font-size:.74rem;color:var(--txt-3);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+  .kpi.acc b{color:var(--acc-ink)}
+  @media(prefers-color-scheme:dark){.kpi.acc b{color:var(--acc)}}
+  .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:14px;position:sticky;top:70px;z-index:20}
+  .bar select,.bar input{padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper);color:var(--txt);font-size:.88rem}
+  .bar input[type=search]{min-width:190px}
+  .tbl{width:100%;border-collapse:separate;border-spacing:0;background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .tbl th,.tbl td{padding:11px 12px;border-bottom:1px solid var(--line);font-size:.86rem;text-align:left;vertical-align:top}
+  .tbl thead th{background:var(--paper-2);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-3);position:sticky;top:132px;z-index:10}
+  .tbl tbody tr:hover{background:var(--paper-2)}
+  .tbl tr.leido{opacity:.62}
+  .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.8rem}
+  .badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:.68rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+  .b-diagnostico{background:#EAF1FF;color:#1D4ED8}.b-cita{background:#E6F0FF;color:#0B2A6B}
+  .b-callback{background:#FFF4DF;color:#7A4B00}.b-cotizacion{background:#F0E9FF;color:#3B1E7A}
+  .b-oferta{background:#FFE7EC;color:#8A1A32}.b-otro{background:#EEE;color:#333}
+  @media(prefers-color-scheme:dark){.b-diagnostico{background:#10214A;color:#93B7FA}.b-cita{background:#0F1E38;color:#9CC0FF}.b-callback{background:#2A2113;color:#FFD489}.b-cotizacion{background:#1E1636;color:#C9B3FF}.b-oferta{background:#33141C;color:#FFB3C4}.b-otro{background:#222;color:#bbb}}
+  select.estado{padding:7px 9px;border-radius:9px;border:1.5px solid var(--line);background:var(--paper);color:var(--txt);font-size:.8rem;font-weight:700}
+  .act{display:flex;gap:6px;flex-wrap:wrap}
+  .mini{padding:6px 10px;border-radius:9px;border:1px solid var(--line);background:var(--paper);font-size:.74rem;font-weight:700;text-decoration:none;color:var(--txt);cursor:pointer}
+  .mini:hover{border-color:var(--acc)}
+  .mini.wa{background:#25D366;border-color:#25D366;color:#04240F}
+  .mini.del:hover{border-color:#FF5A5F;color:#FF5A5F}
+  .empty{padding:40px;text-align:center;color:var(--txt-2)}
+  .help{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:12px;padding:16px;margin:14px 0;font-size:.9rem}
+  .help code{background:var(--paper-2);padding:2px 6px;border-radius:6px;font-size:.84rem}
+  .scroll{overflow-x:auto;border-radius:16px}
+  .top{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;margin-right:6px}
+  @media(max-width:900px){.bar{position:static}.tbl thead th{position:static}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Saltar al contenido</a>
+
+<header class="hdr">
+  <div class="wrap">
+    <a class="logo" href="./"><span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M13.5 2 5 13.2h5.2L9.6 22 19 10.4h-5.6L13.5 2Z" fill="#2563EB"/></svg></span><span>TapaTech<small>Panel de leads</small></span></a>
+    <nav aria-label="Navegación">
+      <a href="./">Ver sitio</a>
+      <a href="./#cotizador">Cotizador</a>
+      <button class="btn btn--ghost" type="button" id="btnRefresh" style="padding:9px 14px;font-size:.84rem">↻ Actualizar</button>
+      <button class="btn btn--ghost" type="button" id="btnOut" style="padding:9px 14px;font-size:.84rem" hidden>Salir</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+
+  <!-- Puerta de acceso -->
+  <section class="gate" id="gate">
+    <div class="gate-card">
+      <span class="eyebrow">Acceso restringido</span>
+      <h1 style="font-size:1.6rem;margin-bottom:8px">Panel del taller</h1>
+      <p style="font-size:.92rem;color:var(--txt-2);margin-bottom:18px">Escribe el PIN de administración para ver las solicitudes de tus clientes. El PIN se define en el servidor (<code class="mono">ADMIN_PIN</code>), nunca en el código del sitio.</p>
+      <label class="lbl" for="pin" style="display:block;font-size:.74rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-3);margin-bottom:8px">PIN</label>
+      <input id="pin" type="password" autocomplete="current-password" placeholder="••••••••" style="width:100%;padding:14px;border:1.5px solid var(--line);border-radius:12px;background:var(--paper);color:var(--txt);font-size:1rem">
+      <button class="btn btn--acc btn--block" type="button" id="btnIn" style="margin-top:12px;width:100%">Entrar</button>
+      <p id="pinErr" style="display:none;color:#B3261E;font-size:.86rem;margin-top:10px">PIN incorrecto o servidor no disponible.</p>
+      <div class="help" style="margin-top:18px">
+        <b>¿Aún no tienes servidor?</b><br>
+        1) Local o VPS: <code>ADMIN_PIN=tupin node server.js</code> y abre <code>/admin.html</code>.<br>
+        2) Vercel + Supabase: define <code>SUPABASE_URL</code>, <code>SUPABASE_SERVICE_KEY</code> y <code>ADMIN_PIN</code> como variables de entorno y despliega <code>api/leads.js</code>.<br>
+        3) Solo WhatsApp: el sitio funciona igual sin API (los leads llegan por WhatsApp y quedan en cola en el dispositivo del cliente).
+      </div>
+    </div>
+  </section>
+
+  <!-- Panel -->
+  <section id="panel" hidden style="padding:22px 0 60px">
+    <div class="top">
+      <div>
+        <h1 style="font-size:1.5rem">Solicitudes de clientes</h1>
+        <p style="font-size:.86rem;color:var(--txt-2)"><span class="dot" id="liveDot"></span><span id="liveTxt">Conectado</span> · actualiza cada 30 s</p>
+      </div>
+      <div class="act">
+        <a class="mini" id="lnkCsv" href="#">⬇ Exportar CSV</a>
+        <span class="mini" id="txtCount" style="cursor:default">0 registros</span>
+      </div>
+    </div>
+
+    <div class="kpis" id="kpis"></div>
+
+    <div class="bar">
+      <select id="fTipo" aria-label="Filtrar por tipo">
+        <option value="">Todos los tipos</option>
+        <option value="diagnostico">Diagnóstico</option>
+        <option value="cita">Cita agendada</option>
+        <option value="callback">Quieren llamada</option>
+        <option value="oferta">Oferta/descuento</option>
+        <option value="cotizacion">Cotización (boleto)</option>
+        <option value="otro">Otros</option>
+      </select>
+      <select id="fEstado" aria-label="Filtrar por estado">
+        <option value="">Todos los estados</option>
+        <option value="nuevo">Nuevo</option>
+        <option value="contactado">Contactado</option>
+        <option value="cotizado">Cotizado</option>
+        <option value="autorizado">Autorizado</option>
+        <option value="en_reparacion">En reparación</option>
+        <option value="entregado">Entregado</option>
+        <option value="perdido">Perdido</option>
+      </select>
+      <input type="search" id="fQ" placeholder="Buscar nombre, teléfono, modelo…" aria-label="Buscar">
+      <label style="font-size:.82rem;display:flex;gap:7px;align-items:center;color:var(--txt-2)">
+        <input type="checkbox" id="fNuevos" checked> Solo sin atender
+      </label>
+      <span style="margin-left:auto;font-size:.8rem;color:var(--txt-3)" id="fRes"></span>
+    </div>
+
+    <div class="scroll">
+      <table class="tbl" id="tbl">
+        <thead>
+          <tr>
+            <th scope="col">Fecha</th><th scope="col">Folio</th><th scope="col">Tipo</th>
+            <th scope="col">Cliente</th><th scope="col">Equipo</th><th scope="col">Falla / cita</th>
+            <th scope="col">Estado</th><th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <p class="empty" id="empty" hidden>Todavía no hay solicitudes con este filtro. Comparte el sitio o activa una campaña: los leads aparecen aquí al instante.</p>
+  </section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
+const API = '/api';
+let PIN = sessionStorage.getItem('tt-pin') || '', datos = [], timer = null;
+
+const esc = s => String(s == null ? '' : s).replace(/[<>&"]/g, c => ({ '<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;' }[c]));
+/* ⚙️ Cambia NOMBRE_TALLER y el prefijo 52 (México) si tu cliente es de otro país */
+const NOMBRE_TALLER = 'TapaTech';
+const wa = (tel, nombre, folio) => 'https://wa.me/52' + String(tel || '').replace(/\D/g,'').slice(-10) +
+  '?text=' + encodeURIComponent('¡Hola ' + (nombre || '') + '! Te escribimos de ' + NOMBRE_TALLER +
+  ' sobre tu solicitud ' + (folio || '') + '. ');
+async function api(path, opts){
+  const r = await fetch(API + path + (path.includes('?') ? '&' : '?') + 'pin=' + encodeURIComponent(PIN), opts);
+  if (r.status === 401) throw new Error('pin');
+  if (!r.ok) throw new Error('http ' + r.status);
+  return r.json();
+}
+function kpis(s){
+  const c = [
+    ['Total', s.total, 0], ['Hoy', s.hoy, 1], ['Últimos 7 días', s.ultimos7, 0],
+    ['Diagnósticos', (s.por_tipo||{}).diagnostico || 0, 1], ['Citas', (s.por_tipo||{}).cita || 0, 1],
+    ['Llamadas pedidas', (s.por_tipo||{}).callback || 0, 0], ['A domicilio', s.domicilio, 0],
+    ['Autorizados', (s.conversion||{}).autorizados || 0, 1], ['Perdidos', (s.conversion||{}).perdidos || 0, 0]
+  ];
+  $('#kpis').innerHTML = c.map(([t,v,a]) => `<div class="kpi${a?' acc':''}"><b>${v}</b><span>${t}</span></div>`).join('');
+}
+function fecha(iso){
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('es-MX', { day:'2-digit', month:'short' }) + ' ' + d.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' });
+}
+const ESTADOS = ['nuevo','contactado','cotizado','autorizado','en_reparacion','entregado','perdido'];
+function pintar(){
+  const tipo = $('#fTipo').value, estado = $('#fEstado').value, q = $('#fQ').value.toLowerCase().trim(), soloNuevos = $('#fNuevos').checked;
+  const filas = datos.filter(r =>
+    (!tipo || r.tipo === tipo) && (!estado || r.estado === estado) &&
+    (!soloNuevos || r.estado === 'nuevo') &&
+    (!q || JSON.stringify(r).toLowerCase().includes(q)));
+  $('#fRes').textContent = filas.length + ' de ' + datos.length;
+  $('#txtCount').textContent = datos.length + ' registros';
+  $('#empty').hidden = filas.length > 0;
+  $('#rows').innerHTML = filas.slice(0, 400).map(r => `
+    <tr class="${r.estado !== 'nuevo' ? 'leido' : ''}" data-id="${esc(r.id)}">
+      <td class="mono">${fecha(r.created_at)}</td>
+      <td class="mono">${esc(r.folio)}</td>
+      <td><span class="badge b-${esc(r.tipo)}">${esc(r.tipo)}</span>${r.domicilio ? '<br><small style="color:var(--txt-3)">🛵 domicilio</small>' : ''}</td>
+      <td><b>${esc(r.nombre) || '<i style="color:var(--txt-3)">sin nombre</i>'}</b><br>
+          <span class="mono">${esc(r.telefono_texto || r.telefono || '')}</span>
+          ${r.email ? '<br><small style="color:var(--txt-3)">' + esc(r.email) + '</small>' : ''}</td>
+      <td>${esc([r.equipo, r.marca, r.modelo].filter(Boolean).join(' · ')) || '—'}
+          ${r.rango_precio ? '<br><small class="mono">' + esc(r.rango_precio) + '</small>' : ''}</td>
+      <td>${esc(r.falla || '')}${r.detalle ? '<br><small style="color:var(--txt-2)">' + esc(r.detalle) + '</small>' : ''}
+          ${r.cita_fecha ? '<br><b>📅 ' + esc(r.cita_fecha) + ' ' + esc(r.cita_hora || '') + '</b>' : ''}
+          ${r.colonia ? '<br><small style="color:var(--txt-2)">📍 ' + esc(r.colonia) + '</small>' : ''}
+          ${r.notas ? '<br><small>📝 ' + esc(r.notas) + '</small>' : ''}</td>
+      <td><select class="estado" data-id="${esc(r.id)}" aria-label="Estado de ${esc(r.folio)}">
+            ${ESTADOS.map(e => `<option value="${e}"${e === r.estado ? ' selected' : ''}>${e.replace('_',' ')}</option>`).join('')}
+          </select></td>
+      <td><div class="act">
+        ${r.telefono ? `<a class="mini wa" target="_blank" rel="noopener" href="${wa(r.telefono, r.nombre, r.folio)}">WhatsApp</a>` : ''}
+        ${r.telefono ? `<a class="mini" href="tel:+52${esc(String(r.telefono).replace(/\D/g,'').slice(-10))}">Llamar</a>` : ''}
+        <button class="mini" type="button" data-nota="${esc(r.id)}">Nota</button>
+        <button class="mini del" type="button" data-del="${esc(r.id)}">Borrar</button>
+      </div></td>
+    </tr>`).join('');
+}
+async function cargar(){
+  try {
+    const [l, s] = await Promise.all([api('/leads'), api('/stats')]);
+    datos = l.leads || []; kpis(s.stats || {}); pintar();
+    $('#liveTxt').textContent = 'Conectado · ' + new Date().toLocaleTimeString('es-MX');
+    $('#liveDot').style.background = '#2563EB';
+    $('#gate').hidden = true; $('#panel').hidden = false; $('#btnOut').hidden = false;
+    $('#lnkCsv').href = API + '/leads.csv?pin=' + encodeURIComponent(PIN);
+    sessionStorage.setItem('tt-pin', PIN);
+  } catch(e){
+    $('#liveDot').style.background = '#FF5A5F';
+    if (e.message === 'pin'){ salir(); $('#pinErr').style.display = 'block'; }
+    else { $('#liveTxt').textContent = 'Sin conexión con la API (' + e.message + ')'; $('#gate').hidden = false; $('#panel').hidden = true; $('#pinErr').style.display = 'block'; }
+  }
+}
+function salir(){ PIN = ''; sessionStorage.removeItem('tt-pin'); $('#gate').hidden = false; $('#panel').hidden = true; $('#btnOut').hidden = true; clearInterval(timer); }
+$('#btnIn').addEventListener('click', async () => { PIN = $('#pin').value.trim(); $('#pinErr').style.display = 'none'; await cargar(); });
+$('#pin').addEventListener('keydown', e => { if (e.key === 'Enter') $('#btnIn').click(); });
+$('#btnOut').addEventListener('click', salir);
+$('#btnRefresh').addEventListener('click', cargar);
+['fTipo','fEstado','fQ','fNuevos'].forEach(id => $('#' + id).addEventListener('input', pintar));
+$('#rows').addEventListener('change', async e => {
+  const sel = e.target.closest('select.estado'); if (!sel) return;
+  const id = sel.dataset.id;
+  try { await api('/leads/' + id, { method:'PATCH', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ estado: sel.value }) });
+        const r = datos.find(x => x.id === id); if (r) r.estado = sel.value; pintar(); }
+  catch(err){ alert('No se pudo actualizar: ' + err.message); }
+});
+$('#rows').addEventListener('click', async e => {
+  const del = e.target.closest('[data-del]'), nota = e.target.closest('[data-nota]');
+  if (del){
+    if (!confirm('¿Borrar este registro? Esta acción no se puede deshacer.')) return;
+    try { await api('/leads/' + del.dataset.del, { method:'DELETE' }); datos = datos.filter(x => x.id !== del.dataset.del); pintar(); }
+    catch(err){ alert('No se pudo borrar: ' + err.message); }
+  }
+  if (nota){
+    const r = datos.find(x => x.id === nota.dataset.nota); const t = prompt('Nota del folio ' + (r ? r.folio : ''), (r && r.notas) || '');
+    if (t === null) return;
+    try { await api('/leads/' + nota.dataset.nota, { method:'PATCH', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ notas: t }) });
+          if (r) r.notas = t; pintar(); } catch(err){ alert('No se pudo guardar: ' + err.message); }
+  }
+});
+if (PIN) cargar();
+timer = setInterval(() => { if (PIN && !$('#panel').hidden) cargar(); }, 30000);
+</script>
+</body>
+</html>

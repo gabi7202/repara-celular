@@ -1,0 +1,349 @@
+#!/usr/bin/env node
+/**
+ * TapaTech — servidor sin dependencias (Node ≥ 18)
+ * Sirve el sitio estático + API de leads (base de datos en JSONL).
+ *
+ *   node server.js                       → http://localhost:3000
+ *   ADMIN_PIN=mipin node server.js       → panel /admin.html protegido
+ *   LEAD_WEBHOOK=https://... node server.js  → reenvía cada lead (Slack/Sheets/WhatsApp Cloud)
+ *
+ * Rutas:
+ *   POST   /api/leads            guarda un lead (público, con rate limit)
+ *   GET    /api/leads?pin=       lista leads (solo con PIN)
+ *   PATCH  /api/leads/:id        cambia estado / notas (solo con PIN)
+ *   DELETE /api/leads/:id        borra un lead (solo con PIN)
+ *   GET    /api/leads.csv?pin=   exporta CSV
+ *   GET    /api/stats?pin=       métricas agregadas
+ *   POST   /api/eventos          analítica propia (opcional)
+ *   GET    /api/health           estado del servicio
+ *
+ * Almacenamiento: data/leads.jsonl (una línea JSON por lead) + data/eventos.jsonl.
+ * Un respaldo data/backup-AAAA-MM-DD.jsonl se crea una vez al día.
+ */
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const zlib = require('zlib');
+const { URL } = require('url');
+
+const ROOT = __dirname;
+const DATA = path.join(ROOT, 'data');
+const PORT = process.env.PORT || 3000;
+const PIN = process.env.ADMIN_PIN || 'cambia-este-pin';
+const WEBHOOK = process.env.LEAD_WEBHOOK || '';
+const CORS = (process.env.CORS_ORIGINS || '').split(',').filter(Boolean);
+const LEADS = path.join(DATA, 'leads.jsonl');
+const EVENTOS = path.join(DATA, 'eventos.jsonl');
+
+const MIME = {
+  '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8', '.js':'text/javascript; charset=utf-8',
+  '.json':'application/json; charset=utf-8', '.webmanifest':'application/manifest+json; charset=utf-8',
+  '.svg':'image/svg+xml', '.webp':'image/webp', '.jpg':'image/jpeg', '.jpeg':'image/jpeg', '.png':'image/png',
+  '.ico':'image/x-icon', '.txt':'text/plain; charset=utf-8', '.xml':'application/xml; charset=utf-8',
+  '.woff2':'font/woff2', '.pdf':'application/pdf',
+  '.mp3':'audio/mpeg', '.wav':'audio/wav', '.ogg':'audio/ogg', '.m4a':'audio/mp4', '.weba':'audio/webm',
+  '.md':'text/markdown; charset=utf-8', '.avif':'image/avif', '.webmanifest':'application/manifest+json; charset=utf-8'
+};
+const CAMPOS = ['folio','tipo','estado','nombre','telefono','telefono_texto','email','equipo','marca','modelo',
+  'falla','detalle','domicilio','colonia','contacto','cita_fecha','cita_hora','servicio','calidad','rango_precio',
+  'tiempo','extras','oferta','consentimiento','notas','origen','referrer','pagina','idioma','pantalla','online',
+  'created_at','updated_at','ip','ua','utm'];
+
+fs.mkdirSync(DATA, { recursive: true });
+[LEADS, EVENTOS].forEach(f => { if (!fs.existsSync(f)) fs.writeFileSync(f, ''); });
+
+/* ── utilidades ─────────────────────────────────────────────────────── */
+const log = (...a) => console.log(new Date().toISOString(), ...a);
+function leer(f){ try { return fs.readFileSync(f, 'utf8').split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch(e){ return null; } }).filter(Boolean); } catch(e){ return []; } }
+function anexar(f, obj){
+  fs.appendFileSync(f, JSON.stringify(obj) + '\n');
+  const hoy = new Date().toISOString().slice(0, 10);
+  const bak = path.join(DATA, 'backup-' + hoy + '.jsonl');
+  if (!fs.existsSync(bak)) fs.copyFileSync(f, bak);           // respaldo diario
+}
+function escribir(f, arr){ const tmp = f + '.tmp'; fs.writeFileSync(tmp, arr.map(x => JSON.stringify(x)).join('\n') + (arr.length ? '\n' : '')); fs.renameSync(tmp, f); }
+function json(res, code, obj, req){
+  const body = JSON.stringify(obj);
+  const heads = { 'Content-Type':'application/json; charset=utf-8', 'Cache-Control':'no-store', 'X-Robots-Tag':'noindex, nofollow' };
+  if (CORS.length && req && CORS.includes(req.headers.origin || '')) { heads['Access-Control-Allow-Origin'] = req.headers.origin; heads['Vary'] = 'Origin'; }
+  res.writeHead(code, heads); res.end(body);
+}
+function limpiar(v){ return typeof v === 'string' ? v.slice(0, 2000) : v; }
+function normalizar(lead, ip){
+  const out = {};
+  CAMPOS.forEach(k => { if (lead[k] !== undefined) out[k] = limpiar(lead[k]); });
+  out.id = out.id || ('ld_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
+  out.folio = String(out.folio || ('TT-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + Math.random().toString(36).slice(2,6).toUpperCase()));
+  out.tipo = ['diagnostico','cotizacion','callback','cita','oferta','boleto','otro'].includes(out.tipo) ? out.tipo : 'otro';
+  out.estado = ['nuevo','contactado','cotizado','autorizado','en_reparacion','entregado','perdido'].includes(out.estado) ? out.estado : 'nuevo';
+  out.nombre = String(out.nombre || '').slice(0, 120);
+  out.telefono = String(out.telefono || '').replace(/\D/g,'').slice(0, 15);
+  out.email = String(out.email || '').slice(0, 160);
+  out.ip = ip; out.created_at = out.created_at || new Date().toISOString();
+  out.updated_at = new Date().toISOString();
+  if (typeof out.utm === 'object' && out.utm) out.utm = JSON.stringify(out.utm).slice(0, 500);
+  return out;
+}
+/* rate limit simple por IP (anti spam) */
+const hits = new Map();
+function permitir(ip, max = 25, ventanaMs = 60000){
+  const t = Date.now(), arr = (hits.get(ip) || []).filter(x => t - x < ventanaMs);
+  arr.push(t); hits.set(ip, arr);
+  if (hits.size > 5000) hits.clear();
+  return arr.length <= max;
+}
+async function webhook(lead){
+  if (!WEBHOOK) return;
+  try {
+    const texto = `🔔 Lead nuevo (${lead.tipo}) folio ${lead.folio}\n${lead.nombre || '—'} · ${lead.telefono || '—'}\n${lead.equipo || ''} ${lead.marca || ''} ${lead.modelo || ''}\nFalla: ${lead.falla || '—'}\n${lead.detalle || ''}\n${lead.domicilio ? 'Domicilio: ' + (lead.colonia || '') : 'Lleva al local'}${lead.cita_fecha ? '\nCita: ' + lead.cita_fecha + ' ' + (lead.cita_hora || '') : ''}`;
+    await fetch(WEBHOOK, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ text: texto, lead }) });
+  } catch(e){ log('webhook falló:', e.message); }
+}
+function csv(arr){
+  const cols = ['created_at','folio','tipo','estado','nombre','telefono','email','equipo','marca','modelo','falla','detalle','domicilio','colonia','contacto','cita_fecha','cita_hora','rango_precio','origen','utm','notas'];
+  const esc = v => { const s = v === undefined || v === null ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s; };
+  return [cols.join(',')].concat(arr.map(r => cols.map(c => esc(r[c])).join(','))).join('\n');
+}
+function stats(arr){
+  const hoy = new Date().toISOString().slice(0,10);
+  const por = (k) => arr.reduce((a, r) => (a[r[k] || '—'] = (a[r[k] || '—'] || 0) + 1, a), {});
+  const ultimos7 = arr.filter(r => (r.created_at || '').slice(0,10) >= new Date(Date.now() - 7*864e5).toISOString().slice(0,10));
+  return {
+    total: arr.length, hoy: arr.filter(r => (r.created_at||'').slice(0,10) === hoy).length,
+    ultimos7: ultimos7.length, por_tipo: por('tipo'), por_estado: por('estado'),
+    por_equipo: por('equipo'), por_falla: por('falla'),
+    domicilio: arr.filter(r => r.domicilio === true).length,
+    con_cita: arr.filter(r => r.cita_fecha).length,
+    conversion: {
+      autorizados: arr.filter(r => ['autorizado','en_reparacion','entregado'].includes(r.estado)).length,
+      perdidos: arr.filter(r => r.estado === 'perdido').length
+    }
+  };
+}
+function leerBody(req, limite = 64 * 1024){
+  return new Promise((resolve, reject) => {
+    let size = 0, buf = '';
+    req.on('data', c => { size += c.length; if (size > limite){ reject(new Error('payload_too_large')); req.destroy(); return; } buf += c; });
+    req.on('end', () => { try { resolve(buf ? JSON.parse(buf) : {}); } catch(e){ reject(new Error('json_invalido')); } });
+    req.on('error', reject);
+  });
+}
+const auth = q => q.get('pin') === PIN;
+
+/* ── servidor ───────────────────────────────────────────────────────── */
+const server = http.createServer(async (req, res) => {
+  const u = new URL(req.url, 'http://' + (req.headers.host || 'localhost'));
+  const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress || '';
+  const q = u.searchParams;
+
+  if (CORS.length && req.method === 'OPTIONS'){
+    res.writeHead(204, { 'Access-Control-Allow-Origin': req.headers.origin || '*', 'Access-Control-Allow-Methods':'GET,POST,PATCH,DELETE,OPTIONS', 'Access-Control-Allow-Headers':'Content-Type' });
+    return res.end();
+  }
+
+  /* ── API ── */
+  if (u.pathname === '/api/health') return json(res, 200, { ok:true, ts:new Date().toISOString(), leads: leer(LEADS).length }, req);
+
+  if (u.pathname === '/api/leads' && req.method === 'POST'){
+    if (!permitir(ip)) return json(res, 429, { ok:false, error:'demasiadas_solicitudes' }, req);
+    let body; try { body = await leerBody(req); } catch(e){ return json(res, 400, { ok:false, error:e.message }, req); }
+    const lead = normalizar(body, ip);
+    /* Validación mínima: sin datos útiles no se guarda (evita basura en la BD) */
+    const anonimo = ['cotizacion','boleto'].includes(lead.tipo);
+    if (!anonimo){
+      if (!lead.nombre || lead.nombre.length < 2) return json(res, 400, { ok:false, error:'nombre_requerido' }, req);
+      if (!lead.telefono || lead.telefono.length < 7) return json(res, 400, { ok:false, error:'telefono_requerido' }, req);
+    } else if (!lead.modelo && !lead.servicio){
+      return json(res, 400, { ok:false, error:'datos_insuficientes' }, req);
+    }
+    anexar(LEADS, lead); webhook(lead);
+    log('lead', lead.tipo, lead.folio, lead.nombre || '', lead.telefono || '');
+    return json(res, 201, { ok:true, id: lead.id, folio: lead.folio }, req);
+  }
+  if (u.pathname === '/api/leads' && req.method === 'GET'){
+    if (!auth(q)) return json(res, 401, { ok:false, error:'pin_invalido' }, req);
+    let arr = leer(LEADS).reverse();
+    if (q.get('tipo')) arr = arr.filter(r => r.tipo === q.get('tipo'));
+    if (q.get('estado')) arr = arr.filter(r => r.estado === q.get('estado'));
+    if (q.get('desde')) arr = arr.filter(r => (r.created_at||'') >= q.get('desde'));
+    if (q.get('q')){ const s = q.get('q').toLowerCase(); arr = arr.filter(r => JSON.stringify(r).toLowerCase().includes(s)); }
+    const limit = Math.min(parseInt(q.get('limit') || '500', 10) || 500, 5000);
+    return json(res, 200, { ok:true, total: arr.length, leads: arr.slice(0, limit) }, req);
+  }
+  if (u.pathname === '/api/leads.csv' && req.method === 'GET'){
+    if (!auth(q)) return json(res, 401, { ok:false, error:'pin_invalido' }, req);
+    res.writeHead(200, { 'Content-Type':'text/csv; charset=utf-8', 'Content-Disposition':'attachment; filename="leads.csv"', 'Cache-Control':'no-store' });
+    return res.end('\uFEFF' + csv(leer(LEADS).reverse()));
+  }
+  if (u.pathname === '/api/stats' && req.method === 'GET'){
+    if (!auth(q)) return json(res, 401, { ok:false, error:'pin_invalido' }, req);
+    return json(res, 200, { ok:true, stats: stats(leer(LEADS)) }, req);
+  }
+  const mId = u.pathname.match(/^\/api\/leads\/([\w-]+)$/);
+  if (mId && (req.method === 'PATCH' || req.method === 'DELETE')){
+    if (!auth(q)) return json(res, 401, { ok:false, error:'pin_invalido' }, req);
+    const arr = leer(LEADS), i = arr.findIndex(r => r.id === mId[1] || r.folio === mId[1]);
+    if (i < 0) return json(res, 404, { ok:false, error:'no_encontrado' }, req);
+    if (req.method === 'DELETE'){ arr.splice(i, 1); escribir(LEADS, arr); return json(res, 200, { ok:true, borrado: mId[1] }, req); }
+    let body; try { body = await leerBody(req); } catch(e){ return json(res, 400, { ok:false, error:e.message }, req); }
+    if (body.estado) arr[i].estado = normalizar({ estado: body.estado }).estado;
+    if (body.notas !== undefined) arr[i].notas = String(body.notas).slice(0, 1000);
+    arr[i].updated_at = new Date().toISOString();
+    escribir(LEADS, arr); log('actualizado', arr[i].folio, arr[i].estado);
+    return json(res, 200, { ok:true, lead: arr[i] }, req);
+  }
+  if (u.pathname === '/api/eventos' && req.method === 'POST'){
+    if (!permitir(ip, 120)) return json(res, 429, { ok:false }, req);
+    let body; try { body = await leerBody(req, 8 * 1024); } catch(e){ return json(res, 400, { ok:false }, req); }
+    anexar(EVENTOS, { ev: String(body.event || body.ev || '').slice(0, 60), d: body.data || body.payload || {}, ts: new Date().toISOString(), ip });
+    return json(res, 201, { ok:true }, req);
+  }
+
+  /* ── IA: Groq (LLM + Whisper) y TTS neuronal ─────────────────────────── */
+  if (u.pathname === '/api/chat' && req.method === 'POST'){
+    if (!permitir(ip, 40, 60000)) return json(res, 429, { ok:false, error:'demasiadas_solicitudes' }, req);
+    const key = process.env.GROQ_API_KEY;
+    if (!key) return json(res, 503, { ok:false, error:'sin_clave', detalle:'Define GROQ_API_KEY en el servidor (es gratis en console.groq.com).' }, req);
+    let body; try { body = await leerBody(req, 256 * 1024); } catch(e){ return json(res, 400, { ok:false, error:e.message }, req); }
+    const mensajes = Array.isArray(body.mensajes) ? body.mensajes.slice(-20).map(m => ({
+      role: ['system','user','assistant','tool'].includes(m.role) ? m.role : 'user',
+      content: typeof m.content === 'string' ? m.content.slice(0, 8000) : (m.content || null),
+      ...(m.tool_calls ? { tool_calls: m.tool_calls } : {}),
+      ...(m.tool_call_id ? { tool_call_id: m.tool_call_id } : {}),
+      ...(m.name ? { name: m.name } : {})
+    })) : [];
+    if (!mensajes.length) return json(res, 400, { ok:false, error:'mensajes_vacios' }, req);
+    const sistema = String(body.sistema || '').slice(0, 24000);
+    const contexto = String(body.contexto || '').slice(0, 12000);
+    mensajes.unshift({ role:'system', content: sistema + (contexto ? '\n\n' + contexto : '') });
+    const tools = Array.isArray(body.herramientas) ? body.herramientas.filter(t => t && t.type === 'function' && t.function && t.function.name).slice(0, 12) : undefined;
+    try {
+      const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + key },
+        body: JSON.stringify({
+          model: String(body.modelo || 'llama-3.3-70b-versatile').slice(0, 60),
+          messages: mensajes,
+          temperature: Number.isFinite(body.temperature) ? Math.min(1.2, Math.max(0, body.temperature)) : 0.45,
+          max_tokens: Math.min(700, parseInt(body.max_tokens || 260, 10) || 260),
+          top_p: Number.isFinite(body.top_p) ? body.top_p : 0.9,
+          stream: false,
+          ...(tools && tools.length ? { tools, tool_choice:'auto' } : {})
+        })
+      });
+      const txt = await r.text();
+      if (!r.ok){ log('groq chat', r.status, txt.slice(0,160)); return json(res, r.status >= 500 ? 502 : r.status, { ok:false, error:'groq_' + r.status, detalle: txt.slice(0, 200) }, req); }
+      const d = JSON.parse(txt);
+      const msg = (d.choices && d.choices[0] && d.choices[0].message) || {};
+      log('chat', msg.tool_calls ? 'tool_calls:' + msg.tool_calls.map(t=>t.function.name).join(',') : (msg.content||'').slice(0,60).replace(/\n/g,' '));
+      return json(res, 200, { ok:true, content: msg.content || '', tool_calls: msg.tool_calls || null,
+        uso: d.usage || null, modelo: d.model || '' }, req);
+    } catch(e){ return json(res, 502, { ok:false, error:'groq_no_disponible', detalle:String(e.message).slice(0,160) }, req); }
+  }
+
+  if (u.pathname === '/api/stt' && req.method === 'POST'){
+    if (!permitir(ip, 40, 60000)) return json(res, 429, { ok:false, error:'demasiadas_solicitudes' }, req);
+    const key = process.env.GROQ_API_KEY;
+    if (!key) return json(res, 503, { ok:false, error:'sin_clave' }, req);
+    let body; try { body = await leerBody(req, 6 * 1024 * 1024); } catch(e){ return json(res, 413, { ok:false, error:'audio_demasiado_grande' }, req); }
+    if (!body.audio_base64) return json(res, 400, { ok:false, error:'audio_faltante' }, req);
+    let buf; try { buf = Buffer.from(String(body.audio_base64).slice(0, 5.5 * 1024 * 1024), 'base64'); } catch(e){ return json(res, 400, { ok:false, error:'audio_invalido' }, req); }
+    const ext = String(body.mime || '').includes('mp4') ? 'm4a' : String(body.mime || '').includes('ogg') ? 'ogg' : String(body.mime || '').includes('wav') ? 'wav' : 'webm';
+    const fd = new FormData();
+    fd.append('file', new Blob([buf], { type: body.mime || 'audio/webm' }), 'audio.' + ext);
+    fd.append('model', String(body.modelo || 'whisper-large-v3-turbo').slice(0, 60));
+    fd.append('language', String(body.idioma || 'es').slice(0, 8));
+    fd.append('response_format', 'json');
+    fd.append('temperature', '0');
+    try {
+      const r = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', { method:'POST', headers:{ Authorization:'Bearer ' + key }, body: fd });
+      const txt = await r.text();
+      if (!r.ok){ log('groq stt', r.status, txt.slice(0,160)); return json(res, 502, { ok:false, error:'groq_' + r.status, detalle: txt.slice(0,200) }, req); }
+      const d = JSON.parse(txt);
+      log('stt', (d.text || '').slice(0, 70));
+      return json(res, 200, { ok:true, text: d.text || '', idioma: d.language || 'es' }, req);
+    } catch(e){ return json(res, 502, { ok:false, error:'groq_no_disponible', detalle:String(e.message).slice(0,160) }, req); }
+  }
+
+  if (u.pathname === '/api/tts' && req.method === 'POST'){
+    if (!permitir(ip, 80, 60000)) return json(res, 429, { ok:false, error:'demasiadas_solicitudes' }, req);
+    let body; try { body = await leerBody(req, 32 * 1024); } catch(e){ return json(res, 400, { ok:false, error:e.message }, req); }
+    const texto = String(body.text || '').slice(0, 1200);
+    if (!texto) return json(res, 400, { ok:false, error:'texto_faltante' }, req);
+    /* 1) webhook TTS gratuito (Edge neuronal es-MX). Ver tools/tts-edge.py */
+    const hook = process.env.TTS_WEBHOOK || (body.webhook || '');
+    if (hook){
+      try {
+        const rh = await fetch(hook, { method:'POST', headers:{ 'Content-Type':'application/json' },
+          body: JSON.stringify({ text: texto, voice: body.voice || 'es-MX-DaliaNeural', rate: body.rate || '+2%', pitch: body.pitch || '+4Hz', volume: body.volume || '100', format: body.formato || 'mp3', ssml: body.ssml || null }) });
+        if (rh.ok){
+          const buf = Buffer.from(await rh.arrayBuffer());
+          if (buf.length > 400){
+            res.writeHead(200, { 'Content-Type': rh.headers.get('content-type') || 'audio/mpeg', 'Content-Length': buf.length, 'Cache-Control':'no-store' });
+            return res.end(buf);
+          }
+        } else log('tts webhook', rh.status);
+      } catch(e){ log('tts webhook falló:', e.message); }
+    }
+    /* 2) PlayAI vía Groq */
+    const key = process.env.GROQ_API_KEY;
+    if (!key) return json(res, 503, { ok:false, error:'sin_clave' }, req);
+    try {
+      const r = await fetch('https://api.groq.com/openai/v1/audio/speech', {
+        method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + key },
+        body: JSON.stringify({ model: String(body.modelo || 'playai-tts'), voice: String(body.voice || 'Jennifer'),
+          response_format: String(body.formato || 'mp3'), input: texto,
+          ...(body.style ? { style: String(body.style).slice(0,30) } : {}),
+          ...(body.speed ? { speed: Math.min(1.6, Math.max(0.6, Number(body.speed) || 1)) } : {}) })
+      });
+      if (!r.ok){ const t = await r.text(); log('groq tts', r.status, t.slice(0,140)); return json(res, 502, { ok:false, error:'groq_' + r.status, detalle:t.slice(0,180) }, req); }
+      const buf = Buffer.from(await r.arrayBuffer());
+      res.writeHead(200, { 'Content-Type': r.headers.get('content-type') || 'audio/mpeg', 'Content-Length': buf.length, 'Cache-Control':'no-store' });
+      return res.end(buf);
+    } catch(e){ return json(res, 502, { ok:false, error:'tts_no_disponible', detalle:String(e.message).slice(0,160) }, req); }
+  }
+
+  /* ── estáticos ── */
+  if (req.method !== 'GET' && req.method !== 'HEAD') return json(res, 405, { ok:false, error:'metodo_no_permitido' }, req);
+  let p = decodeURIComponent(u.pathname);
+  if (p === '/admin' || p === '/admin/') p = '/admin.html';
+  const privado = (p === '/admin.html');
+  if (p === '/boleto' || p === '/boleto/') p = '/index.html';
+  let file = path.normalize(path.join(ROOT, p));
+  if (!file.startsWith(ROOT)) { res.writeHead(403); return res.end('Forbidden'); }
+  if (p.endsWith('/')) file = path.join(file, 'index.html');
+  let code = 200;
+  if (!fs.existsSync(file) || fs.statSync(file).isDirectory()){
+    if (fs.existsSync(path.join(file, 'index.html'))) file = path.join(file, 'index.html');
+    else { file = path.join(ROOT, '404.html'); code = 404; if (!fs.existsSync(file)) { res.writeHead(404); return res.end('404'); } }
+  }
+  const ext = path.extname(file).toLowerCase();
+  const stat = fs.statSync(file);
+  const etag = '"' + stat.size + '-' + Math.round(stat.mtimeMs) + '"';
+  const heads = {
+    'Content-Type': MIME[ext] || 'application/octet-stream',
+    'ETag': etag,
+    'Cache-Control': ext === '.html' ? 'public, max-age=0, must-revalidate' : (p.startsWith('/assets/') ? 'public, max-age=31536000, immutable' : 'public, max-age=3600'),
+    'X-Content-Type-Options': 'nosniff',
+    'Referrer-Policy': privado ? 'no-referrer' : 'strict-origin-when-cross-origin',
+    'X-Robots-Tag': privado ? 'noindex, nofollow, noarchive' : undefined,
+    'X-Frame-Options': 'SAMEORIGIN'
+  };
+  if (!heads['X-Robots-Tag']) delete heads['X-Robots-Tag'];
+  if (privado) heads['Cache-Control'] = 'no-store';
+  if (req.headers['if-none-match'] === etag){ res.writeHead(304, heads); return res.end(); }
+  let buf = fs.readFileSync(file);
+  const aceptan = String(req.headers['accept-encoding'] || '');
+  if (buf.length > 1024 && /\.(html|css|js|svg|json|xml|webmanifest|txt)$/.test(ext) && /gzip/.test(aceptan)){
+    buf = zlib.gzipSync(buf, { level: 9 }); heads['Content-Encoding'] = 'gzip'; heads['Vary'] = 'Accept-Encoding';
+  }
+  heads['Content-Length'] = buf.length;
+  res.writeHead(code, heads);
+  res.end(req.method === 'HEAD' ? undefined : buf);
+});
+
+server.listen(PORT, () => {
+  log(`TapaTech listo en http://localhost:${PORT}`);
+  const avisoPin = process.env.ADMIN_PIN ? 'definido por env' : 'por defecto "cambia-este-pin" — ¡CÁMBIALO!';
+  log('Panel: http://localhost:' + PORT + '/admin.html  (PIN ' + avisoPin + ')');
+  log(`BD: ${LEADS}`);
+});
