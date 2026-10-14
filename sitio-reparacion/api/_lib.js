@@ -1,17 +1,29 @@
 /* Helpers compartidos por las funciones de Vercel (los archivos con _ no se enrutan).
-   Backend: Supabase (Postgres) vía REST con la SERVICE KEY (solo servidor). */
+   Backend SIN Supabase: almacenamiento en el filesystem efímero de la función
+   (/tmp/leads.jsonl). En serverless los /tmp son por instancia y temporales —
+   para historial duradero usa LEAD_WEBHOOK (WhatsApp/email) o reactiva SUPABASE_URL.
+   Si defines SUPABASE_URL + SUPABASE_SERVICE_KEY como variables de entorno,
+   este mismo código cambia automáticamente a Supabase (opcional, no obligatorio). */
+const fs = require('fs');
 const ESTADOS = ['nuevo','contactado','cotizado','autorizado','en_reparacion','entregado','perdido'];
 const TIPOS   = ['diagnostico','cotizacion','callback','cita','oferta','boleto','otro'];
 
-function cfg(){
-  const url = process.env.SUPABASE_URL, key = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) throw Object.assign(new Error('Faltan SUPABASE_URL o SUPABASE_SERVICE_KEY'), { status: 500 });
-  return { base: url.replace(/\/$/, '') + '/rest/v1', key, table: process.env.SUPABASE_TABLE || 'leads' };
-}
+/* ── Almacenamiento local (default en Vercel gratis) ─────────────────── */
+const DATA_DIR = process.env.DATA_DIR || '/tmp/tapatech';
+const LEADS_F  = () => DATA_DIR + '/leads.jsonl';
+const EVENTOS_F = () => DATA_DIR + '/eventos.jsonl';
+function ensureDir(){ try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch(e){} }
+function leerJsonl(f){ try { return fs.readFileSync(f, 'utf8').split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch(e){ return null; } }).filter(Boolean); } catch(e){ return []; } }
+function anexarJsonl(f, obj){ ensureDir(); fs.appendFileSync(f, JSON.stringify(obj) + '\n'); }
+function escribirJsonl(f, arr){ ensureDir(); const tmp = f + '.tmp'; fs.writeFileSync(tmp, arr.map(x => JSON.stringify(x)).join('\n') + (arr.length ? '\n' : '')); fs.renameSync(tmp, f); }
+
+/* ── Modo Supabase opcional (solo si las env vars existen) ───────────── */
+function tieneSupabase(){ return !!(process.env.SUPABASE_URL && (process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY)); }
 async function sb(path, opts = {}){
-  const c = cfg();
-  const r = await fetch(c.base + path, Object.assign({
-    headers: { apikey: c.key, Authorization: 'Bearer ' + c.key, 'Content-Type': 'application/json' }
+  const base = process.env.SUPABASE_URL.replace(/\/$/, '') + '/rest/v1';
+  const key = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const r = await fetch(base + path, Object.assign({
+    headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' }
   }, opts));
   const txt = await r.text();
   let body = null; try { body = txt ? JSON.parse(txt) : null; } catch(e){ body = txt; }
@@ -49,7 +61,7 @@ async function webhook(lead){
     await fetch(url, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ text: texto, lead }) });
   } catch(e){ console.error('webhook:', e.message); }
 }
-module.exports = { sb, cfg, json, pinOk, ip, normalizar, webhook, ESTADOS, TIPOS };
+module.exports = { sb, tieneSupabase, json, pinOk, ip, normalizar, webhook, ESTADOS, TIPOS, DATA_DIR, LEADS_F, EVENTOS_F, leerJsonl, anexarJsonl, escribirJsonl };
 
 /* ── Groq: clave solo en el servidor ─────────────────────────────────── */
 const GROQ = 'https://api.groq.com/openai/v1';

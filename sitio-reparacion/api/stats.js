@@ -1,14 +1,19 @@
-/* GET /api/stats?pin= → métricas agregadas */
-const { sb, json, pinOk } = require('./_lib');
+/* GET /api/stats?pin= → métricas agregadas (local o Supabase) */
+const { sb, tieneSupabase, json, pinOk, LEADS_F, leerJsonl } = require('./_lib');
 module.exports = async function handler(req, res) {
   try {
     if (!pinOk(req)) return json(res, 401, { ok:false, error:'pin_invalido' });
-    const t = process.env.SUPABASE_TABLE || 'leads';
-    const all = await sb(`/${t}?select=tipo,estado,equipo,falla,domicilio,cita_fecha,created_at&limit=5000`);
+    let all;
+    if (tieneSupabase()){
+      const t = process.env.SUPABASE_TABLE || 'leads';
+      all = await sb(`/${t}?select=tipo,estado,equipo,falla,domicilio,cita_fecha,created_at&limit=5000`);
+    } else {
+      all = leerJsonl(LEADS_F()).slice(0, 5000);
+    }
     const hoy = new Date().toISOString().slice(0,10);
     const d7 = new Date(Date.now() - 7*864e5).toISOString().slice(0,10);
     const por = k => all.reduce((a,r) => (a[r[k]||'—'] = (a[r[k]||'—']||0)+1, a), {});
-    return json(res, 200, { ok:true, stats:{
+    return json(res, 200, { ok:true, backend: tieneSupabase() ? 'supabase' : 'local', stats:{
       total: all.length,
       hoy: all.filter(r => (r.created_at||'').slice(0,10) === hoy).length,
       ultimos7: all.filter(r => (r.created_at||'').slice(0,10) >= d7).length,
