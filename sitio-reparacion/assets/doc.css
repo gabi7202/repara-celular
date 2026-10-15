@@ -39,7 +39,7 @@ a:hover{color:var(--acc)}
 .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 20px;border-radius:999px;font-weight:800;font-size:.9rem;text-decoration:none;border:2px solid transparent;cursor:pointer;transition:transform .15s,box-shadow .15s}
 .btn--acc{background:var(--acc);color:#FFFFFF;box-shadow:0 6px 18px rgba(10,5,238,.3)}
 .btn--acc:hover{transform:translateY(-2px);color:#FFFFFF}
-.btn--wa{background:#DB1E1E;color:#FFFFFF}
+.btn--wa{background:#000000;color:#FFFFFF}
 .btn--ghost{border-color:var(--line);color:var(--txt)}
 .btn--ghost:hover{border-color:var(--acc)}
 .btn--dark{background:var(--ink);color:#fff}
@@ -109,6 +109,6 @@ blockquote{border-left:3px solid var(--line);padding-left:18px;margin:1.5em 0;co
 .skip{position:absolute;left:-9999px}
 .skip:focus{left:0;top:0;background:var(--acc);color:#FFFFFF;padding:12px 16px;z-index:99;border-radius:0 0 var(--r-s) 0}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
-.wa-float{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:60;width:56px;height:56px;border-radius:50%;background:#DB1E1E;display:grid;place-items:center;box-shadow:0 10px 26px rgba(219,30,30,.45)}
+.wa-float{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:60;width:56px;height:56px;border-radius:50%;background:#000000;display:grid;place-items:center;box-shadow:0 10px 26px rgba(0,0,0,.45)}
 .wa-float svg{width:29px;height:29px;fill:#fff}
 @media print{.hdr,.ftr,.cta,.wa-float,.no-print{display:none!important}body{font-size:12pt;color:#000;background:#fff}}
