@@ -6,10 +6,30 @@
    Las notificaciones SOLO se envían con permiso otorgado y frecuencia
    limitada por el servidor (nunca spam).
    ═══════════════════════════════════════════════════════════════════ */
-const CACHE = 'tapatech-v1';
+/* ═══ AUTO-UPDATE: este service worker se revalida solo en cada navegación.
+   Cuando Vercel publica una nueva versión del sitio, la próxima visita ya
+   muestra los cambios (sin "sitio viejo" ni caché atrapada). ═══ */
+const SW_VER = '2026-10-15-head-limpio';
 
 self.addEventListener('install', e => self.skipWaiting());
-self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+self.addEventListener('activate', e => e.waitUntil((async () => {
+  /* limpia cachés antiguas de versiones previas */
+  const keys = await caches.keys();
+  await Promise.all(keys.filter(k => k !== 'tapatech-v1').map(k => caches.delete(k)));
+  await self.clients.claim();
+})()));
+
+/* Cada vez que la página pide actualizar (navegación), el SW comprueba si hay
+   versión nueva y se auto-reemplaza sin intervención del usuario. */
+async function checkForUpdate() {
+  try {
+    const reg = await self.registration.update();
+    if (reg.installing || reg.waiting) return; /* ya hay nueva esperando */
+  } catch (e) {}
+}
+self.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'lupita:check-update') checkForUpdate();
+});
 
 /* Mensaje desde la página: {type:'lupita:registrar'} → suscribe este SW */
 self.addEventListener('message', async (e) => {

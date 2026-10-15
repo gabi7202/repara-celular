@@ -3214,9 +3214,25 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   if('serviceWorker' in navigator && location.protocol==='https:'){
     window.addEventListener('load', function(){
       navigator.serviceWorker.register('/sw.js').then(function(reg){
+        /* AUTO-UPDATE: si hay versión nueva del sitio, instalarla ya y recargar
+           una sola vez (evita ver el "sitio viejo" tras un deploy en Vercel). */
+        reg.addEventListener('updatefound', function(){
+          var nw = reg.installing; if(!nw) return;
+          nw.addEventListener('statechange', function(){
+            if(nw.state === 'installed' && navigator.serviceWorker.controller){
+              try{
+                if(sessionStorage.getItem('sw-reloaded') !== '1'){
+                  sessionStorage.setItem('sw-reloaded','1');
+                  location.reload();
+                }
+              }catch(e){}
+            }
+          });
+        });
         return reg.ready;
       }).then(function(reg){
         try{ reg.active && reg.active.postMessage({ type:'lupita:registrar' }); }catch(e){}
+        try{ reg.active && reg.active.postMessage({ type:'lupita:check-update' }); }catch(e){}
       }).catch(function(){});
     });
   }
