@@ -2,6 +2,10 @@
 .env
 .env.*
 !.env.example
+# .env.local SI es secreto y nunca se sube; el único archivo de env que VIAJA
+# en el repo es .env.example, con la clave GENÉRICA de arranque (placeholder):
+# permite que el build de Vercel funcione sin configurar nada. Luego solo
+# reemplaza GROQ_API_KEY en Vercel por tu clave gsk_... real.
 *.pem
 *.key
 .vercel

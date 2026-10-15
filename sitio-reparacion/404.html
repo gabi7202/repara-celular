@@ -8,6 +8,9 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/doc.css">
 <style>
+/* Regla global: texto BLANCO sobre fondos oscuros — no aplica a botones/CTAs */
+.ftr :not(.btn):not(a),.ftr a,.cta :not(.btn),.cta :not(.btn) a,.cta-mini :not(.btn),.cta-mini :not(.btn) a{color:#fff!important}
+
   .nf{min-height:70vh;display:grid;place-items:center;text-align:center;padding:40px 20px}
   .nf h1{font-size:clamp(4rem,18vw,9rem);line-height:.9;color:var(--acc);letter-spacing:-.06em}
   .nf p{max-width:52ch;margin:14px auto 26px;color:var(--txt-2)}
@@ -33,8 +36,8 @@
 .ftr-grid a{display:block;font-size:.88rem;margin-bottom:7px}
 .ftr-grid div:first-child{font-size:.88rem;line-height:1.6}
 .cta-mini{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;
-  background:linear-gradient(120deg,rgba(37,99,235,.14),rgba(255,255,255,.03));
-  border:1px solid rgba(37,99,235,.28);border-radius:20px;padding:18px 22px}
+  background:linear-gradient(120deg,rgba(10,5,238,.16),rgba(255,255,255,.03));
+  border:1px solid rgba(219,30,30,.4);border-radius:20px;padding:18px 22px}
 .cta-btns{display:flex;gap:8px;flex-wrap:wrap}
 .ftr-legal{margin-top:26px;padding-top:18px;border-top:1px solid #22304E;font-size:.78rem;color:#8190A8}
 @media(max-width:640px){.cta-mini{flex-direction:column;align-items:stretch}}

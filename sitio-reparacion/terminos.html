@@ -9,6 +9,9 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/doc.css">
 <style>
+/* Regla global: texto BLANCO sobre fondos oscuros — no aplica a botones/CTAs */
+.ftr :not(.btn):not(a),.ftr a,.cta :not(.btn),.cta :not(.btn) a,.cta-mini :not(.btn),.cta-mini :not(.btn) a{color:#fff!important}
+
 /* Navegación unificada (inyectada por tools/inject-chrome.py) */
 .burger{display:none;margin-left:auto;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:transparent;cursor:pointer;place-items:center;color:var(--txt)}
 .burger:hover{border-color:var(--acc)}
@@ -28,8 +31,8 @@
 .ftr-grid a{display:block;font-size:.88rem;margin-bottom:7px}
 .ftr-grid div:first-child{font-size:.88rem;line-height:1.6}
 .cta-mini{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;
-  background:linear-gradient(120deg,rgba(37,99,235,.14),rgba(255,255,255,.03));
-  border:1px solid rgba(37,99,235,.28);border-radius:20px;padding:18px 22px}
+  background:linear-gradient(120deg,rgba(10,5,238,.16),rgba(255,255,255,.03));
+  border:1px solid rgba(219,30,30,.4);border-radius:20px;padding:18px 22px}
 .cta-btns{display:flex;gap:8px;flex-wrap:wrap}
 .ftr-legal{margin-top:26px;padding-top:18px;border-top:1px solid #22304E;font-size:.78rem;color:#8190A8}
 @media(max-width:640px){.cta-mini{flex-direction:column;align-items:stretch}}

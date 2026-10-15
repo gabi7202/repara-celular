@@ -26,6 +26,11 @@ const path = require('path');
 const zlib = require('zlib');
 const crypto = require('crypto');
 const { URL } = require('url');
+/* Lupita: mismo cliente Groq resiliente (fallback de modelos + retries) que las
+   funciones de Vercel. Los archivos _ no se enrutan como endpoint en Vercel y
+   aquí solo se requieren como librería — cero duplicación de lógica. */
+const { groqKey, chatConFallback, sttConFallback } = require('./api/_groq');
+const { cotizarServer, parseSalida } = require('./api/_agente');
 
 /* Carga .env sin dependencias (dotenv-style): claves → process.env.
    Las variables que ya existan en el entorno tienen prioridad sobre .env,
@@ -168,7 +173,14 @@ const server = http.createServer(async (req, res) => {
   }
 
   /* ── API ── */
-  if (u.pathname === '/api/health') return json(res, 200, { ok:true, ts:new Date().toISOString(), leads: leer(LEADS).length, backend:'local', groq: process.env.GROQ_API_KEY ? 'conectada' : 'FALTA_GROQ_API_KEY' }, req);
+  if (u.pathname === '/api/health'){
+    const kg = process.env.GROQ_API_KEY ? String(process.env.GROQ_API_KEY).trim() : '';
+    return json(res, 200, { ok:true, ts:new Date().toISOString(), leads: leer(LEADS).length, backend:'local',
+      groq: process.env.GROQ_API_KEY ? 'conectada' : 'FALTA_GROQ_API_KEY',
+      groq_detalle: { estado: process.env.GROQ_API_KEY ? 'conectada' : 'FALTA_GROQ_API_KEY',
+        info:{ longitud: kg.length, empieza_gsk:/^gsk_/i.test(kg), espacios_dentro:/\s/.test(kg) } },
+      node: process.version }, req);
+  }
 
   if (u.pathname === '/api/leads' && req.method === 'POST'){
     if (!permitir(ip)) return json(res, 429, { ok:false, error:'demasiadas_solicitudes' }, req);
@@ -266,11 +278,10 @@ const server = http.createServer(async (req, res) => {
     return json(res, 201, { ok:true, nueva: esNueva, notificar, freq: LUPITA_FREQ }, req);
   }
 
-  /* ── IA: Groq (LLM + Whisper) y TTS neuronal ─────────────────────────── */
+  /* ── IA: Groq (LLM + Whisper) y TTS neuronal — MISMA lógica resiliente que api/ en Vercel ── */
   if (u.pathname === '/api/chat' && req.method === 'POST'){
     if (!permitir(ip, 40, 60000)) return json(res, 429, { ok:false, error:'demasiadas_solicitudes' }, req);
-    const key = process.env.GROQ_API_KEY;
-    if (!key) return json(res, 503, { ok:false, error:'sin_clave', detalle:'Define GROQ_API_KEY en el servidor (es gratis en console.groq.com).' }, req);
+    let key; try { key = groqKey(req); } catch(e){ return json(res, e.status || 503, { ok:false, error:e.code || 'sin_clave', detalle:String(e.message).slice(0,200) }, req); }
     let body; try { body = await leerBody(req, 256 * 1024); } catch(e){ return json(res, 400, { ok:false, error:e.message }, req); }
     const mensajes = Array.isArray(body.mensajes) ? body.mensajes.slice(-20).map(m => ({
       role: ['system','user','assistant','tool'].includes(m.role) ? m.role : 'user',
@@ -280,55 +291,71 @@ const server = http.createServer(async (req, res) => {
       ...(m.name ? { name: m.name } : {})
     })) : [];
     if (!mensajes.length) return json(res, 400, { ok:false, error:'mensajes_vacios' }, req);
-    const sistema = String(body.sistema || '').slice(0, 24000);
-    const contexto = String(body.contexto || '').slice(0, 12000);
-    mensajes.unshift({ role:'system', content: sistema + (contexto ? '\n\n' + contexto : '') });
-    const tools = Array.isArray(body.herramientas) ? body.herramientas.filter(t => t && t.type === 'function' && t.function && t.function.name).slice(0, 12) : undefined;
+    /* prompt maestro desde disco (cache 5 min), igual que api/chat.js en Vercel */
+    let maestro = '';
     try {
-      const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + key },
-        body: JSON.stringify({
-          model: String(body.modelo || 'llama-3.3-70b-versatile').slice(0, 60),
-          messages: mensajes,
-          temperature: Number.isFinite(body.temperature) ? Math.min(1.2, Math.max(0, body.temperature)) : 0.45,
-          max_tokens: Math.min(700, parseInt(body.max_tokens || 260, 10) || 260),
-          top_p: Number.isFinite(body.top_p) ? body.top_p : 0.9,
-          stream: false,
-          ...(tools && tools.length ? { tools, tool_choice:'auto' } : {})
-        })
-      });
-      const txt = await r.text();
-      if (!r.ok){ log('groq chat', r.status, txt.slice(0,160)); return json(res, r.status >= 500 ? 502 : r.status, { ok:false, error:'groq_' + r.status, detalle: txt.slice(0, 200) }, req); }
-      const d = JSON.parse(txt);
+      const crudo = fs.readFileSync(path.join(ROOT, 'datos', 'prompt-agente.md'), 'utf8');
+      const i = crudo.lastIndexOf('===PROMPT==='), j = i >= 0 ? crudo.indexOf('===FIN===', i) : -1;
+      maestro = (i >= 0 && j > i) ? crudo.slice(i + 12, j).trim() : crudo.trim();
+    } catch(e){ log('prompt maestro no encontrado:', e.message); }
+    const sistema = [maestro, String(body.sistema || '').slice(0, 12000)].filter(Boolean).join('\n\n')
+                  + (body.contexto ? '\n\n' + String(body.contexto).slice(0, 12000) : '');
+    mensajes.unshift({ role:'system', content: sistema });
+    const tools = Array.isArray(body.herramientas) ? body.herramientas.filter(t => t && t.type === 'function' && t.function && t.function.name).slice(0, 12) : undefined;
+    const payloadBase = {
+      messages: mensajes,
+      temperature: Number.isFinite(body.temperature) ? Math.min(1.2, Math.max(0, body.temperature)) : 0.45,
+      max_tokens: Math.min(900, parseInt(body.max_tokens || 400, 10) || 400),
+      top_p: Number.isFinite(body.top_p) ? body.top_p : 0.9,
+      stream: false,
+      ...(tools && tools.length ? { tools, tool_choice:'auto' } : {})
+    };
+    try {
+      let d = null, jsonFormat = true;
+      try { d = await chatConFallback(Object.assign({ response_format:{ type:'json_object' } }, payloadBase), body.modelo, key); }
+      catch(e){ jsonFormat = false; d = await chatConFallback(payloadBase, body.modelo, key); }
       const msg = (d.choices && d.choices[0] && d.choices[0].message) || {};
-      log('chat', msg.tool_calls ? 'tool_calls:' + msg.tool_calls.map(t=>t.function.name).join(',') : (msg.content||'').slice(0,60).replace(/\n/g,' '));
-      return json(res, 200, { ok:true, content: msg.content || '', tool_calls: msg.tool_calls || null,
-        uso: d.usage || null, modelo: d.model || '' }, req);
-    } catch(e){ return json(res, 502, { ok:false, error:'groq_no_disponible', detalle:String(e.message).slice(0,160) }, req); }
+      const sal = parseSalida(msg.content || '');
+      log('chat', msg.tool_calls ? 'tool_calls:' + msg.tool_calls.map(t=>t.function.name).join(',') : (sal.decir||'').slice(0,60).replace(/\n/g,' '), '· modelo', d._modelo_usado);
+      return json(res, 200, { ok:true, content: sal.decir, accion: sal.accion, tool_calls: msg.tool_calls || null,
+        uso: d.usage || null, modelo: d._modelo_usado || '', json_format: jsonFormat }, req);
+    } catch(e){
+      const s = e.groqStatus || e.status || 502;
+      const code = (s === 401 || s === 403) ? 'clave_invalida' : s === 429 ? 'limite_groq' : 'groq_fallo';
+      log('groq chat falló:', s, String(e.message).slice(0,160));
+      return json(res, s >= 400 && s < 600 ? s : 502, { ok:false, error:code, detalle:String(e.message).slice(0,200) }, req);
+    }
   }
 
   if (u.pathname === '/api/stt' && req.method === 'POST'){
     if (!permitir(ip, 40, 60000)) return json(res, 429, { ok:false, error:'demasiadas_solicitudes' }, req);
-    const key = process.env.GROQ_API_KEY;
-    if (!key) return json(res, 503, { ok:false, error:'sin_clave' }, req);
+    let key; try { key = groqKey(req); } catch(e){ return json(res, e.status || 503, { ok:false, error:e.code || 'sin_clave' }, req); }
     let body; try { body = await leerBody(req, 6 * 1024 * 1024); } catch(e){ return json(res, 413, { ok:false, error:'audio_demasiado_grande' }, req); }
     if (!body.audio_base64) return json(res, 400, { ok:false, error:'audio_faltante' }, req);
-    let buf; try { buf = Buffer.from(String(body.audio_base64).slice(0, 5.5 * 1024 * 1024), 'base64'); } catch(e){ return json(res, 400, { ok:false, error:'audio_invalido' }, req); }
-    const ext = String(body.mime || '').includes('mp4') ? 'm4a' : String(body.mime || '').includes('ogg') ? 'ogg' : String(body.mime || '').includes('wav') ? 'wav' : 'webm';
-    const fd = new FormData();
-    fd.append('file', new Blob([buf], { type: body.mime || 'audio/webm' }), 'audio.' + ext);
-    fd.append('model', String(body.modelo || 'whisper-large-v3-turbo').slice(0, 60));
-    fd.append('language', String(body.idioma || 'es').slice(0, 8));
-    fd.append('response_format', 'json');
-    fd.append('temperature', '0');
+    let buf; try { buf = Buffer.from(String(body.audio_base64).replace(/^data:[^,]+,/,'').slice(0, 5.5 * 1024 * 1024), 'base64'); } catch(e){ return json(res, 400, { ok:false, error:'audio_invalido' }, req); }
+    const mime = String(body.mime || 'audio/webm');
+    const ext = mime.includes('mp4') ? 'm4a' : mime.includes('ogg') ? 'ogg' : mime.includes('wav') ? 'wav' : 'webm';
+    const formFactory = (model) => {
+      const fd = new FormData();
+      fd.append('file', new Blob([buf], { type: mime }), 'audio.' + ext);
+      fd.append('model', model);
+      fd.append('language', String(body.idioma || 'es').slice(0, 8));
+      fd.append('response_format', 'json');
+      fd.append('temperature', '0');
+      fd.append('no_speech_threshold', '0.6');
+      fd.append('compression_ratio_threshold', '2.4');
+      fd.append('logprob_threshold', '-1.0');
+      return fd;
+    };
     try {
-      const r = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', { method:'POST', headers:{ Authorization:'Bearer ' + key }, body: fd });
-      const txt = await r.text();
-      if (!r.ok){ log('groq stt', r.status, txt.slice(0,160)); return json(res, 502, { ok:false, error:'groq_' + r.status, detalle: txt.slice(0,200) }, req); }
-      const d = JSON.parse(txt);
-      log('stt', (d.text || '').slice(0, 70));
-      return json(res, 200, { ok:true, text: d.text || '', idioma: d.language || 'es' }, req);
-    } catch(e){ return json(res, 502, { ok:false, error:'groq_no_disponible', detalle:String(e.message).slice(0,160) }, req); }
+      const d = await sttConFallback(formFactory, body.modelo || 'whisper-large-v3-turbo', key);
+      log('stt', (d.text || '').slice(0, 70), '· modelo', d._modelo_usado);
+      return json(res, 200, { ok:true, text: d.text || '', idioma: d.language || 'es', modelo: d._modelo_usado || '' }, req);
+    } catch(e){
+      const s = e.groqStatus || 502;
+      log('groq stt', s, String(e.message).slice(0,160));
+      return json(res, s >= 400 && s < 600 ? s : 502, { ok:false, error:(s === 401 || s === 403) ? 'clave_invalida' : 'groq_fallo', detalle: String(e.message).slice(0,200) }, req);
+    }
   }
 
   if (u.pathname === '/api/tts' && req.method === 'POST'){
@@ -351,18 +378,30 @@ const server = http.createServer(async (req, res) => {
         } else log('tts webhook', rh.status);
       } catch(e){ log('tts webhook falló:', e.message); }
     }
-    /* 2) PlayAI vía Groq */
-    const key = process.env.GROQ_API_KEY;
-    if (!key) return json(res, 503, { ok:false, error:'sin_clave' }, req);
+    /* 2) PlayAI vía Groq — con normalización de voz/estilo y retries (igual que api/tts.js) */
+    let key; try { key = groqKey(req); } catch(e){ return json(res, e.status || 503, { ok:false, error:e.code || 'sin_clave' }, req); }
+    const ESTILOS_VALIDOS = ['Cheerful','Sincere','Efficient','Lively'];
+    let voz = String(body.voice || 'Jennifer');
+    let estilo = body.style ? String(body.style).slice(0,30) : null;
+    if (/^es[-_]/i.test(voz) || !/^[A-Z][a-z]+$/.test(voz)) voz = 'Jennifer';
+    if (estilo && !ESTILOS_VALIDOS.includes(estilo)) estilo = null;
     try {
-      const r = await fetch('https://api.groq.com/openai/v1/audio/speech', {
-        method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + key },
-        body: JSON.stringify({ model: String(body.modelo || 'playai-tts'), voice: String(body.voice || 'Jennifer'),
-          response_format: String(body.formato || 'mp3'), input: texto,
-          ...(body.style ? { style: String(body.style).slice(0,30) } : {}),
-          ...(body.speed ? { speed: Math.min(1.6, Math.max(0.6, Number(body.speed) || 1)) } : {}) })
-      });
-      if (!r.ok){ const t = await r.text(); log('groq tts', r.status, t.slice(0,140)); return json(res, 502, { ok:false, error:'groq_' + r.status, detalle:t.slice(0,180) }, req); }
+      let r = null, ultimoTxt = '';
+      for (let intento = 0; intento < 4 && !r; intento++){
+        const payload = { model: 'playai-tts', voice: voz,
+          response_format: String(body.formato || 'mp3'), input: texto };
+        if (estilo) payload.style = estilo;
+        if (body.speed) payload.speed = Math.min(1.6, Math.max(0.6, Number(body.speed) || 1));
+        const rr = await fetch('https://api.groq.com/openai/v1/audio/speech', { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + key }, body: JSON.stringify(payload) });
+        if (rr.ok){ r = rr; break; }
+        ultimoTxt = (await rr.text().catch(()=>'')).slice(0,180);
+        const s = rr.status;
+        if (s === 404 || s === 400 || s === 422) continue;
+        if ((s === 429 || s >= 500) && intento < 3){ await new Promise(z => setTimeout(z, 500)); continue; }
+        log('groq tts', s, ultimoTxt.slice(0,140));
+        return json(res, 502, { ok:false, error:'groq_fallo', detalle: ultimoTxt }, req);
+      }
+      if (!r) return json(res, 502, { ok:false, error:'groq_fallo', detalle: ultimoTxt }, req);
       const buf = Buffer.from(await r.arrayBuffer());
       res.writeHead(200, { 'Content-Type': r.headers.get('content-type') || 'audio/mpeg', 'Content-Length': buf.length, 'Cache-Control':'no-store' });
       return res.end(buf);
