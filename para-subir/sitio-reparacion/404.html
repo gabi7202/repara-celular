@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Página no encontrada (404) | TapaTech Tapachula</title>
+<meta name="description" content="La página que buscas no existe. Ve al cotizador de reparación, a la lista de precios o escríbenos por WhatsApp.">
+<meta name="robots" content="noindex,follow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/doc.css">
+<style>
+/* Regla global: texto BLANCO sobre fondos oscuros — no aplica a botones/CTAs */
+.ftr :not(.btn):not(a),.ftr a,.cta :not(.btn),.cta :not(.btn) a,.cta-mini :not(.btn),.cta-mini :not(.btn) a{color:#fff!important}
+
+  .nf{min-height:70vh;display:grid;place-items:center;text-align:center;padding:40px 20px}
+  .nf h1{font-size:clamp(4rem,18vw,9rem);line-height:.9;color:var(--acc);letter-spacing:-.06em}
+  .nf p{max-width:52ch;margin:14px auto 26px;color:var(--txt-2)}
+  .nf .btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+</style>
+<style>
+/* Navegación unificada (inyectada por tools/inject-chrome.py) */
+.burger{display:none;margin-left:auto;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:transparent;cursor:pointer;place-items:center;color:var(--txt)}
+.burger:hover{border-color:var(--acc)}
+.hdr nav a.is-active{background:var(--acc-soft);color:var(--acc-ink)}
+@media(max-width:900px){
+  .burger{display:grid}
+  .hdr nav{position:absolute;top:62px;left:0;right:0;z-index:60;flex-direction:column;align-items:stretch;
+    background:var(--paper);border-bottom:1px solid var(--line);padding:10px 18px 18px;gap:4px;
+    box-shadow:0 18px 34px rgba(11,15,18,.14);transform:translateY(-140%);
+    transition:transform .26s cubic-bezier(.2,.8,.2,1);max-height:calc(100dvh - 62px);overflow:auto}
+  .hdr nav.is-open{transform:none}
+  .hdr nav a{padding:13px 12px;font-size:.98rem;border-radius:10px;display:block}
+  .hdr nav a.btn{display:flex;justify-content:center;margin-top:8px}
+}
+.ftr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:26px;margin-top:26px}
+.ftr-grid b{color:#fff;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.ftr-grid a{display:block;font-size:.88rem;margin-bottom:7px}
+.ftr-grid div:first-child{font-size:.88rem;line-height:1.6}
+.cta-mini{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+  background:linear-gradient(120deg,rgba(76,91,212,.16),rgba(255,255,255,.03));
+  border:1px solid rgba(0,0,0,.16);border-radius:20px;padding:18px 22px}
+.cta-btns{display:flex;gap:8px;flex-wrap:wrap}
+.ftr-legal{margin-top:26px;padding-top:18px;border-top:1px solid #22304E;font-size:.78rem;color:#8190A8}
+@media(max-width:640px){.cta-mini{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="TapaTech — inicio"><span class="logo-mark" style="color:#60A5FA" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M13.5 2 5 13.2h5.2L9.6 22 19 10.4h-5.6L13.5 2Z" fill="currentColor"/></svg></span><span>TapaTech<small>Tapachula · Chiapas</small></span></a>
+    <button class="burger" type="button" id="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav id="menu" aria-label="Navegación principal">
+      <a href="/#servicios">Servicios</a>
+      <a href="/#cotizador">Cotizador</a>
+      <a href="/#precios">Precios</a>
+      <a href="/#domicilio">A domicilio</a>
+      <a href="/#proceso">Proceso</a>
+      <a href="/#resenas">Reseñas</a>
+      <a href="/#faq">FAQ</a>
+      <a href="/#ubicacion">Ubicación</a>
+      <a href="/blog/">Blog</a>
+      <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Quiero%20cotizar%20una%20reparaci%C3%B3n." rel="noopener">WhatsApp</a>
+      <a class="btn btn--acc" href="/#diagnostico">Agendar</a>
+    </nav>
+  </div>
+</header>
+<script>
+(function(){
+  var b=document.getElementById('burger'), n=document.getElementById('menu');
+  if(!b||!n) return;
+  b.addEventListener('click',function(){
+    var o=n.classList.toggle('is-open');
+    b.setAttribute('aria-expanded',o?'true':'false');
+    b.setAttribute('aria-label',o?'Cerrar menú':'Abrir menú');
+  });
+  n.addEventListener('click',function(e){ if(e.target.tagName==='A'){ n.classList.remove('is-open'); b.setAttribute('aria-expanded','false'); } });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&n.classList.contains('is-open')){ n.classList.remove('is-open'); b.setAttribute('aria-expanded','false'); } });
+})();
+</script>
+<main class="nf">
+  <div>
+    <h1>404</h1>
+    <span class="eyebrow">Pantalla negra, pero con arreglo</span>
+    <p style="font-size:1.15rem;font-weight:700;color:var(--txt)">Esta página no existe (o la movimos).</p>
+    <p>A diferencia de tu celular, esto sí tiene solución rápida: elige a dónde quieres ir.</p>
+    <div class="btn-row">
+      <a class="btn btn--acc" href="/#cotizador">Cotizar mi reparación</a>
+      <a class="btn btn--dark" href="/">Ir al inicio</a>
+      <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Buscaba%20una%20p%C3%A1gina%20de%20su%20sitio%20y%20no%20la%20encontr%C3%A9." rel="noopener">Escribir por WhatsApp</a>
+    </div>
+    <p style="margin-top:26px;font-size:.88rem">Populares: <a href="/#servicios">Servicios</a> · <a href="/#precios">Precios</a> · <a href="/#domicilio">Servicio a domicilio</a> · <a href="/#faq">Preguntas frecuentes</a> · <a href="/blog/">Blog</a></p>
+  </div>
+</main>
+<footer class="ftr">
+  <div class="wrap">
+    <div class="cta-mini">
+      <div><b style="color:#fff;font-size:1.05rem">¿Listo para repararlo?</b>
+        <p style="margin:4px 0 0">Diagnóstico gratis, precio cerrado por escrito y garantía de 30 días.</p></div>
+      <div class="cta-btns">
+        <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Quiero%20reparar%20mi%20equipo." rel="noopener">WhatsApp</a>
+        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="tel:+529622889585">Llamar</a>
+        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="/#diagnostico">Agendar cita</a>
+      </div>
+    </div>
+    <div class="ftr-grid">
+      <div><b>TapaTech</b>Quinceava Avenida Sur esq. 18a Calle Oriente, Col. Los Naranjos<br>16 de Septiembre, C.P. 30705, Tapachula de Córdova y Ordóñez, Chis.<br><a href="tel:+529622889585">962 288 9585</a><br>
+        <span style="font-size:.82rem">Lun a Sáb 9:00–19:00 corrido · Dom: urgencias por WhatsApp</span></div>
+      <div><b>Servicios</b>
+        <a href="/#servicios">Cambio de pantalla</a><a href="/#servicios">Batería y puerto de carga</a>
+        <a href="/#servicios">Equipos mojados</a><a href="/#servicios">Laptops: SSD, RAM, formateo</a>
+        <a href="/#servicios">Xbox / PS / Switch</a><a href="/#domicilio">Recolección a domicilio</a></div>
+      <div><b>Información</b>
+        <a href="/#cotizador">Cotizador</a><a href="/#precios">Lista de precios</a>
+        <a href="/#garantia">Garantía</a><a href="/#proceso">Cómo trabajamos</a>
+        <a href="/#mitos">Mitos de reparación</a><a href="/#faq">Preguntas frecuentes</a>
+        <a href="/#ubicacion">Ubicación y horario</a></div>
+      <div><b>Sitio</b>
+        <a href="/blog/">Blog y guías</a><a href="/privacidad.html">Aviso de privacidad</a>
+        <a href="/terminos.html">Términos y garantía</a><a href="/admin.html">Panel del taller</a>
+        <a href="https://www.google.com/maps/search/reparacion+de+celulares/@14.8934489,-92.2596839,15z?entry=ttu" target="_blank" rel="noopener">Google Maps</a></div>
+    </div>
+    <p class="ftr-legal">© <span id="year">2026</span> TapaTech Tapachula · Chiapas. Todos los derechos reservados.
+      Precios en pesos mexicanos (MXN), sujetos a diagnóstico gratuito.</p>
+  </div>
+  <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+</footer>
+</body>
+</html>
