@@ -26,7 +26,7 @@ function dormir(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 function log() { try { if (W.console && console.info) console.info.apply(console, ['[voz]'].concat([].slice.call(arguments))); } catch (e) {} }
 
 var CFG = null, PROMPT = '', CTX = '';
-var historial = [], turnosSinAccion = 0;
+var historial = [], turnosSinAccion = 0, propuestasConvertidas = 0;
 var muted = false, manosLibres = true, velUsuario = 1, iniciado = false, cicloActivo = false;
 var recogn = null, detenerTodo = false;
 var colaAudio = [], reproduciendo = false, audioCtx = null;
@@ -177,7 +177,7 @@ function construirContexto() {
   if (ultimoFolio) partes.push('- Folio de la cotización que el usuario tiene en pantalla: ' + ultimoFolio);
   var dom = $('#vozLog');
   if (dom && dom.dataset.turnos) partes.push('- Turnos de esta conversación: ' + dom.dataset.turnos);
-  partes.push('- CATALOGO DE PRECIOS (MXN, aproximados "desde", pieza + mano de obra incluidos). REGLA: al dar cualquier precio di SIEMPRE "aproximadamente desde X pesos, depende de tu modelo" y agrega "siempre te damos la mejor calidad al mejor precio". Nunca des un rango alto ni una cifra única como precio final. En iPhone ofrece la opcion de pantalla SIN mensaje de pieza cambiada (desde 2000). Las tapas traseras solo existen para iPhone (desde 1000); si el cliente tiene Android no las ofrezcas.');
+  partes.push('- CATALOGO DE PRECIOS (MXN, aproximados "desde", pieza + mano de obra incluidos; es la MISMA tabla que muestra el cotizador del sitio, unica fuente de precios). REGLA: al dar cualquier precio di SIEMPRE "aproximadamente desde X pesos, depende de tu modelo exacto" y agrega "siempre te damos la mejor calidad y el mejor precio". Nunca des un rango alto ni una cifra unica como precio final, e invita a usar el cotizador o pasar por el taller para el precio cerrado tras diagnostico gratis. En iPhone ofrece la opcion de pantalla SIN mensaje de pieza cambiada. Las tapas traseras solo existen para iPhone; si el cliente tiene Android no las ofrezcas.');
   partes.push(catalogoCompacto());
   return partes.join('\n');
 }
@@ -298,6 +298,14 @@ async function llamarLLM(mensajes) {
 
 async function pensar(textoUsuario) {
   historial.push({ role: 'user', content: textoUsuario });
+  /* CIERRE DIRECTO tras 2 propuestas de conversión sin aceptación:
+     se inyecta una orden de sistema al final del historial (no se guarda
+     permanente; solo vive en esta llamada). Así Lupita deja de insistir,
+     ahorra llamadas a la API y suelta al "comparador de precios" con elegancia. */
+  var maxProp = (CFG.conversacion && CFG.conversacion.maxPropuestasConversion) || 2;
+  if (propuestasConvertidas >= maxProp) {
+    historial.push({ role: 'system', content: 'CIERRE OBLIGATORIO: ya ofreciste ayuda ' + propuestasConvertidas + ' veces y el cliente no toma ninguna acción (solo compara precios o evade). NO vuelvas a proponer WhatsApp, cotización ni cita. Responde ÚNICAMENTE un cierre corto, amable y directo, más o menos así: "Si en algún momento decides repararlo, escríbenos por WhatsApp y te atendemos de inmediato. Que estés bien." Y termina la conversación con calma.' });
+  }
   recortar();
   var respuesta = await llamarLLM(historial);
   var guarda = 0;
@@ -323,6 +331,13 @@ async function pensar(textoUsuario) {
   historial.push({ role: 'assistant', content: decir });
   recortar();
   if (/whatsapp|folio|cita/i.test(decir)) turnosSinAccion = 0; else turnosSinAccion++;
+  /* Contador de PROPUESTAS DE CONVERSIÓN: cada vez que Lupita ofrece WhatsApp,
+     cita o folio se cuenta como intento (máx. 2). Al llegar a 2 sin que el
+     cliente acepte ninguna acción, pensar() inyecta la orden de cierre directo. */
+  if (/whatsapp|cotiza|agend|cita|folio|puedo ayudar|¿te lo abro|seguimos\?/i.test(decir)) propuestasConvertidas++;
+  /* El cliente ACEPTÓ una propuesta (acción real de conversión): Lupita puede
+     seguir ofreciendo con normalidad — se reinicia el contador de propuestas. */
+  if (accion) propuestasConvertidas = 0;
   return { decir: decir, accion: accion };
 }
 
@@ -840,6 +855,17 @@ async function ciclo() {
       await hablar('[[e:empatico]]Para atenderte mejor,[[p:300]] te propongo seguir por WhatsApp con el técnico.[[/]][[p:400]] ¿Te lo abro?');
       abrirWhatsApp('continuar conversación desde el asistente de voz');
       turnosSinAccion = 0;
+      propuestasConvertidas = 1;
+    }
+    /* CIERRE DEFINITIVO local (sin gastar más llamadas a la IA): tras 2 propuestas
+       ignoradas, Lupita suelta al visitante con una frase directa y cierra la sesión. */
+    var maxProp = (CFG.conversacion && CFG.conversacion.maxPropuestasConversion) || 2;
+    if (propuestasConvertidas >= maxProp + 1) {
+      track('voz_cierre_evasion', { propuestas: propuestasConvertidas });
+      await hablar('[[e:empatico]]Si en algún momento decides repararlo,[[p:250]] escríbenos por WhatsApp y te atendemos de inmediato.[[/]][[p:350]] ¡Que estés bien!');
+      propuestasConvertidas = 0;
+      API.estado = 'fin'; setEstado('Conversación terminada');
+      return;
     }
     if ((manosLibres || pendienteEscucha) && API.estado !== 'fin') {
       pendienteEscucha = false;
@@ -932,7 +958,7 @@ async function cargarConfig() {
 async function saludar() {
   var saludo = (CFG.asistente && CFG.asistente.saludo) || '¡Hola! Soy Lupita, del taller TapaTech. ¿Qué le pasó a tu equipo?';
   historial = [{ role: 'assistant', content: saludo }];
-  turnosSinAccion = 0;
+  turnosSinAccion = 0; propuestasConvertidas = 0;
   await hablar(saludo);
 }
 

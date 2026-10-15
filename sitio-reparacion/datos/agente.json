@@ -124,6 +124,8 @@
     "interrumpir": true,
     "autoEscucharTrasMs": 450,
     "maxTurnosSinAccion": 8,
+    "maxPropuestasConversion": 2,
+    "_maxPropuestasConversion": "tras 2 propuestas de conversión (WhatsApp/cita/folio) ignoradas, Lupita cierra la conversación con una frase directa y deja de gastar llamadas a la IA",
     "recordarSilencio": 1,
     "notificarSiPestanaOculta": true,
     "guardarTranscripcion": true
