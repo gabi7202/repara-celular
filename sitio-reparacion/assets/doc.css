@@ -36,7 +36,7 @@ a:hover{color:var(--acc)}
 .hdr nav{margin-left:auto;display:flex;gap:6px;align-items:center}
 .hdr nav a{padding:9px 12px;border-radius:999px;text-decoration:none;font-size:.86rem;font-weight:600;color:var(--txt-2)}
 .hdr nav a:hover{background:var(--paper-2);color:var(--txt)}
-.btn{display:inline-flex;align-items:center;gap:9px;padding:13px 20px;border-radius:999px;font-weight:800;font-size:.9rem;text-decoration:none;border:2px solid transparent;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:13px 20px;border-radius:999px;font-weight:800;font-size:.9rem;text-decoration:none;border:2px solid transparent;cursor:pointer;transition:transform .15s,box-shadow .15s;white-space:normal;overflow-wrap:anywhere;max-width:100%}
 .btn--acc{background:var(--acc);color:#FFFFFF;box-shadow:0 6px 18px rgba(76,91,212,.3)}
 .btn--acc:hover{transform:translateY(-2px);color:#FFFFFF}
 .btn--wa{background:#2B2B2B;color:#FFFFFF;box-shadow:0 6px 16px rgba(0,0,0,.16)}
@@ -81,8 +81,15 @@ table{width:100%;border-collapse:collapse;margin:1.4em 0;font-size:.92rem}
   .btn{width:auto;max-width:100%}
   .btn-row{gap:10px}
   .cta-mini{flex-direction:column;align-items:stretch}
+  .cta-mini .btn,.cta .btn-row .btn{flex:1 1 auto;justify-content:center}
   figure{margin:1.4em 0}
   blockquote{padding:14px 16px}
+  /* Bloques largos (listas/tablas/detalles) sin desbordes horizontales */
+  article li,article p,details summary{overflow-wrap:anywhere}
+  details summary{min-width:0}
+  .cards{grid-template-columns:1fr}
+  .toc{padding:16px 18px}
+  .meta{gap:10px}
 }
 caption{text-align:left;font-size:.84rem;color:var(--txt-2);padding-bottom:10px}
 th,td{padding:11px 13px;border-bottom:1px solid var(--line);text-align:left}
