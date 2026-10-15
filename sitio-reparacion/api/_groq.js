@@ -22,17 +22,16 @@ const GROQ = 'https://api.groq.com/openai/v1';
 
 /* Cadidatos por rol, del preferido al respaldo. Si algún día Groq jubila uno,
    solo agrega/quíta nombres aquí — o cámbialos en datos/agente.json.
-   ACTUALIZADO OCT-2026: Groq renombró/jubiló modelos sin avisar y el navegador
-   mandaba "openai/gpt-oss-20b" (retirado → 413/400). Lista verificada contra
-   GET /models; los openai/gpt-oss-* se conservan solo como último recurso. */
+   ACTUALIZADO OCT-2026 (2): Groq jubiló también los openai/gpt-oss-* (devolvían
+   413 "Request too large for model ...", que en realidad significa "modelo ya no
+   está disponible"). Ya NO se listan como candidatos; si algún cliente viejo los
+   pide, sanearModelo() los reescribe a un modelo vigente. */
 const CANDIDATOS_CHAT = [
   'llama-3.3-70b-versatile',
   'llama-3.1-8b-instant',
   'moonshotai/kimi-k2-instruct-0905',
   'meta-llama/llama-4-scout-17b-16e-instruct',
-  'meta-llama/llama-4-maverick-17b-128e-instruct',
-  'openai/gpt-oss-20b',
-  'openai/gpt-oss-120b'
+  'meta-llama/llama-4-maverick-17b-128e-instruct'
 ];
 const CANDIDATOS_STT = [
   'whisper-large-v3-turbo',

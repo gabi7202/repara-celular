@@ -1029,7 +1029,8 @@ async function cargarConfig() {
      archivo de config o una copia en caché del navegador todavía trae uno de
      esos nombres, lo reescribemos localmente ANTES de llamar al servidor.
      El servidor (_groq.js) tiene el mismo sanado por si acaso. */
-  var MODELOS_RETIrados = /^openai\/gpt-oss|(^|\/)gpt-oss-\d+(b)?$|^llama-3\.1-70b-versatile$|^llama-3\.3-70b-instruct$/i;
+  /* Cualquier variante de gpt-oss (retirados oct-2026 → groq_413), con o sin prefijo "openai/", y alias viejos de llama. */
+  var MODELOS_RETIrados = /gpt-oss|^llama-3\.1-70b-versatile$|^llama-3\.3-70b-instruct$/i;
   function sanearCfg(){
     try {
       if (CFG.llm && MODELOS_RETIrados.test(String(CFG.llm.modelo || ''))) CFG.llm.modelo = 'llama-3.3-70b-versatile';
