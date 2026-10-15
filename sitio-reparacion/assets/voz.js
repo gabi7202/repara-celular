@@ -291,9 +291,59 @@ async function llamarLLM(mensajes) {
     modelo: CFG.llm.modelo, temperature: CFG.llm.temperature, max_tokens: CFG.llm.maxTokens,
     sistema: PROMPT, contexto: CTX, mensajes: mensajes, herramientas: HERRAMIENTAS
   };
-  var r = await fetch(endpoint('chat'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cuerpo) });
-  if (!r.ok) { var t = ''; try { t = (await r.text()).slice(0, 160); } catch (e) {} throw new Error('llm_' + r.status + (t ? ':' + t : '')); }
+  /* timeout propio: si Vercel tarda o el teléfono cambia de red, NO dejamos a
+     Lupita congelada en "Pensando…" — abortamos y caemos al manejo de error. */
+  var ctrl = new AbortController();
+  var to = setTimeout(function () { try { ctrl.abort(); } catch (e) {} }, (CFG.llm && CFG.llm.timeoutMs) || 20000);
+  var r;
+  try {
+    r = await fetch(endpoint('chat'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cuerpo), signal: ctrl.signal });
+  } catch (e) {
+    if (String(e && e.name) === 'AbortError') throw new Error('llm_timeout');
+    throw new Error('llm_red: ' + String(e && e.message || e).slice(0, 60));
+  } finally { clearTimeout(to); }
+  if (!r.ok) {
+    var t = '', code = '';
+    try { var j = await r.json(); code = j && j.error ? j.error : ''; t = (j && j.detalle) ? String(j.detalle).slice(0, 140) : ''; }
+    catch (e) { try { t = (await r.text()).slice(0, 140); } catch (e2) {} }
+    var err = new Error('llm_' + r.status + (code ? '_' + code : '') + (t ? ':' + t : ''));
+    err.code = code; err.status = r.status;
+    throw err;
+  }
   return await r.json();
+}
+
+/* ── Regla de marketing + conversión (versión robusta) ────────────────────
+   Los contadores viven en localStorage: así NO se reinician al recargar, al
+   cambiar de red o si el usuario abre/cierra la consola a media plática.
+   Antes se perdían y Lupita "olvidaba" las evasiones → nunca cerraba y el
+   visitante quedaba dando vueltas sin convertir. */
+var CONV_KEY = 'lupita_conv_v1';
+function leerEstadoConv() {
+  try { return JSON.parse(localStorage.getItem(CONV_KEY) || '{}') || {}; } catch (e) { return {}; }
+}
+function guardarEstadoConv(o) {
+  try { localStorage.setItem(CONV_KEY, JSON.stringify(Object.assign({ t: Date.now() }, o))); } catch (e) {}
+}
+(function () { var e0 = leerEstadoConv(); propuestasConvertidas = e0.p || 0; turnosSinAccion = e0.u || 0; reintentosRuido = e0.r || 0; })();
+
+function accionEsConversion(a) { return !!a && (a.tipo === 'whatsapp' || a.tipo === 'cotizador'); }
+
+/** Se llama con la respuesta YA resuelta del turno. Devuelve true si hay que CERRAR. */
+function registrarConversion(decir, acc) {
+  var maxProp = (CFG.conversacion && CFG.conversacion.maxPropuestasConversion) || 2;
+  var e = leerEstadoConv();
+  var propuso = !!(accionEsConversion(acc)) || /\b(whatsapp|pas[áa]rtelo? por whats|te abro whats)/i.test(String(decir || ''));
+  /* ¿el cliente ACEPTÓ? (sí claro / ok / está bien / anótame / ahí voy…) */
+  var ultimoUser = '';
+  for (var i = historial.length - 1; i >= 0; i--) if (historial[i].role === 'user') { ultimoUser = String(historial[i].content || ''); break; }
+  var acepto = /\b(s[ií]\s?(claro|por favor|va|dale|ok|está? bien|me parece|se puede|afectado)?|ok(?:ay)?|va?le|dale|perfecto|genial|est[aá]?\s?(bien|perfecto|genial)|an[oó]tame|aparta|agenda|pase|ah[ií]\s?voy|manda|env[ií]a|quiero|s[ií]?,? me sirve)\b/i.test(ultimoUser);
+  if (acepto) { e.p = 0; }                                  /* conversion encaminada: se reinicia la cuenta */
+  else if (propuso) { e.p = (e.p || 0) + 1; }               /* propuesta ignorada: +1 */
+  e.u = turnosSinAccion; e.r = reintentosRuido;
+  guardarEstadoConv(e);
+  propuestasConvertidas = e.p || 0;
+  return propuestasConvertidas >= maxProp + 1;              /* con 2 ignoradas ya se cierra */
 }
 
 async function pensar(textoUsuario) {
@@ -323,7 +373,7 @@ async function pensar(textoUsuario) {
     recortar();
     respuesta = await llamarLLM(historial);
   }
-  var decir = respuesta.content || '';
+  var decir = API.corregirNombre(respuesta.content || '');
   var accion = null, parsed = intentarJSON(decir);
   if (parsed && typeof parsed.decir === 'string') { decir = parsed.decir; accion = parsed.accion || null; }
   /* Si el modelo usó herramientas y se quedó callado, cerramos con una frase útil */
@@ -360,6 +410,19 @@ async function pensar(textoUsuario) {
    g) Reintento inteligente: si la captura fue pobre, Lupita lo dice y da
       consejos concretos en vez de responder cualquier cosa.
    ══════════════════════════════════════════════════════════════════ */
+/* ── LUPITA NUNCA DICE "TAPATECH" (espejo cliente de api/_groq.js) ─────────
+   El STT del navegador (Web Speech API) transcribe "TapaTech" como "tapatech".
+   Se corrige la transcripción ANTES de pintar el "Entendí: ..." y antes de
+   enviarla al LLM; y se limpia también toda salida hablada, por si acaso. */
+var VARIANTES_NOMBRE = /\b(?:tapa|ta\s?pa|tapat)[\s.,'-]*(?:tech|teck|tex|teks|tach|tetsh?|tetch)\b|\btapatech\b|\btapatex\b/gi;
+API.corregirNombre = function (t) {
+  var s = String(t == null ? '' : t);
+  if (!s) return s;
+  s = s.replace(VARIANTES_NOMBRE, function (m) { return /chula/i.test(m) ? m : 'TapaTech'; });
+  s = s.replace(/\btapatech\b/gi, function (m) { return /chula/i.test(m) ? m : 'TapaTech'; });
+  return s;
+};
+
 function sttNativo() { return W.SpeechRecognition || W.webkitSpeechRecognition || null; }
 async function pedirMicrofono() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('sin_mic');
@@ -484,7 +547,7 @@ function escucharNavegador() {
       /* Confianza muy baja = probablemente nos comió el ruido → usar Whisper */
       if (mejorConf && mejorConf < minConfianza) return reject(new Error('stt_ruido_baja_confianza'));
       if (API.textoSospechoso(t)) return reject(new Error('stt_ruido_sospechoso'));
-      resolve(t);
+      resolve(API.corregirNombre(t));
     };
     recogn = r;
     try { r.start(); } catch (e) { reject(new Error('stt_no_inicio')); }
@@ -560,7 +623,8 @@ async function escucharWhisper() {
   var txt = j.text.trim();
   /* Whisper alucina con ruido ("¡Gracias!", subtítulos) — lo filtramos aquí también */
   if (API.textoSospechoso(txt)) throw new Error('stt_ruido_sospechoso');
-  return txt;
+  /* el servidor ya corrige, pero aplicamos de nuevo por si vino de caché u otro backend */
+  return API.corregirNombre(txt);
 }
 
 function escuchar() {
@@ -917,7 +981,24 @@ async function manejarError(e) {
   else if (/stt_(no-speech|sin_audio|audio-capture|vacio)/.test(m)) { reintentosRuido++; msg = consejoRuido(); if (manosLibres) setTimeout(function () { if (API.estado !== 'fin') ciclo(); }, 400); }
   else if (/stt_(network|language-not-supported)/.test(m)) msg = 'El reconocimiento de voz del navegador falló. Puedes escribirnos por WhatsApp.';
   else if (/sin_mic/.test(m)) msg = 'Este navegador no da acceso al micrófono. Usa Chrome o Safari, o escríbenos por WhatsApp.';
-  else if (/llm_(401|403|503)|sin_clave/.test(m)) msg = 'El asistente aún no tiene conectada la IA en este servidor. Mientras tanto, cotiza en el sitio o escríbenos por WhatsApp.';
+  /* Clave placeholder sin reemplazar (sitio recién desplegado): Lupita sigue viva,
+     ofrece el modo texto y avisa al dueño cómo activar la IA real. */
+  else if (/llm_503_sin_clave|sin_clave|clave_invalida/.test(m)){
+    try { fetch('/api/health', { method:'GET' }).then(function(h){ return h.ok ? h.json() : null; }).then(function(j){ window.__lupitaHealth = j; }).catch(function(){}); } catch(e){}
+    msg = 'Hola, soy Lupita.[[p:300]] Por ahora estoy en modo texto porque el dueño aún no conecta la llave de inteligencia artificial del taller.[[p:300]] Pueden escribirme por WhatsApp o usar el cotizador de la página, y quedo lista muy pronto. ¡Gracias!';
+    setEstado('IA pendiente de activar · usa el cotizador o WhatsApp');
+    track('voz_sin_clave', {});
+    /* aviso técnico SOLO para el dueño (admin autenticado), nunca para clientes */
+    try {
+      var pinGuardado = W.localStorage && localStorage.getItem('tt_admin_pin');
+      if (location.pathname.indexOf('admin') >= 0 && pinGuardado){
+        pintarBurbuja('sys', '⚙️ GROQ_API_KEY sigue con el placeholder genérico: Vercel → Settings → Environment Variables → reemplaza el valor por tu clave gsk_... de console.groq.com/keys (Scope Production) y haz Redeploy. /api/health lo confirma.');
+      }
+    } catch(e){}
+    abrirWhatsApp('asistente de voz sin IA conectada');
+    return;
+  }
+  else if (/llm_(401|403|503)/.test(m)) msg = 'El asistente aún no tiene conectada la IA en este servidor. Mientras tanto, cotiza en el sitio o escríbenos por WhatsApp.';
   else if (/llm_429/.test(m)) msg = 'Estamos atendiendo a varias personas a la vez. Intenta en unos segundos o escríbenos por WhatsApp.';
   else if (/llm_|Failed to fetch|NetworkError/.test(m)) msg = 'Se perdió la conexión con el asistente. Revisa tu internet o sigue por WhatsApp.';
   else if (/tts_|webhook_/.test(m)) msg = 'Tuve un problema con el audio, pero aquí está la respuesta escrita.';

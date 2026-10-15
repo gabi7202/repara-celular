@@ -1,0 +1,329 @@
+From 7a173dc171562f1319a2171f59f789bdb0d28e39 Mon Sep 17 00:00:00 2001
+From: "qwen.ai[bot]" <qwenlm-intl@service.alibaba.com>
+Date: Thu, 15 Oct 2026 17:44:47 +0000
+Subject: [PATCH] =?UTF-8?q?Paleta=20m=C3=A1s=20suave=20(azul=20#4C5BD4,=20?=
+ =?UTF-8?q?oscuros=20grafito=20#2B2B2B,=20texto=20#1A1A1A)=20+=20adaptaci?=
+ =?UTF-8?q?=C3=B3n=20m=C3=B3vil=20en=20doc.css/nosotros/blog?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ sitio-reparacion/404.html                     |  4 +--
+ sitio-reparacion/assets/doc.css               | 28 ++++++++++++---
+ .../index.html                                |  2 +-
+ sitio-reparacion/blog/index.html              |  4 +--
+ sitio-reparacion/index.html                   | 36 +++++++++----------
+ sitio-reparacion/nosotros.html                | 19 +++++++---
+ sitio-reparacion/privacidad.html              |  4 +--
+ sitio-reparacion/terminos.html                |  4 +--
+ 8 files changed, 64 insertions(+), 37 deletions(-)
+
+diff --git a/sitio-reparacion/404.html b/sitio-reparacion/404.html
+index 3f7358c..0b10fae 100644
+--- a/sitio-reparacion/404.html
++++ b/sitio-reparacion/404.html
+@@ -36,8 +36,8 @@
+ .ftr-grid a{display:block;font-size:.88rem;margin-bottom:7px}
+ .ftr-grid div:first-child{font-size:.88rem;line-height:1.6}
+ .cta-mini{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+-  background:linear-gradient(120deg,rgba(10,5,238,.16),rgba(255,255,255,.03));
+-  border:1px solid rgba(0,0,0,.4);border-radius:20px;padding:18px 22px}
++  background:linear-gradient(120deg,rgba(76,91,212,.16),rgba(255,255,255,.03));
++  border:1px solid rgba(0,0,0,.16);border-radius:20px;padding:18px 22px}
+ .cta-btns{display:flex;gap:8px;flex-wrap:wrap}
+ .ftr-legal{margin-top:26px;padding-top:18px;border-top:1px solid #22304E;font-size:.78rem;color:#8190A8}
+ @media(max-width:640px){.cta-mini{flex-direction:column;align-items:stretch}}
+diff --git a/sitio-reparacion/assets/doc.css b/sitio-reparacion/assets/doc.css
+index d8f7185..bdb6c66 100644
+--- a/sitio-reparacion/assets/doc.css
++++ b/sitio-reparacion/assets/doc.css
+@@ -4,7 +4,7 @@
+ *{margin:0}
+ :root{
+   --ink:#0B1220;--paper:#fff;--paper-2:#F5F8FD;--txt:#0F172A;--txt-2:#334155;--txt-3:#5B6B85;
+-  --acc:#0A05EE;--acc-ink:#0A05EE;--acc-soft:#EAEAFE;--warn:#FFB020;--warn-soft:#FFF4DF;
++  --acc:#4C5BD4;--acc-ink:#3D4BBE;--acc-soft:#EFF1FB;--warn:#FFB020;--warn-soft:#FFF4DF;
+   --line:#E6EAF0;--r-s:10px;--r-m:16px;--r-l:24px;
+   --ff:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+   --ff-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+@@ -13,7 +13,7 @@
+   --paper:#0B1220;--paper-2:#101B33;--txt:#EAF0FB;--txt-2:#B4C0DA;--txt-3:#8190A8;
+   --acc:#5B58F5;--acc-soft:#171549;--warn-soft:#2A2113;--line:#22304E}}
+ html{scroll-behavior:smooth;scroll-padding-top:80px;-webkit-text-size-adjust:100%}
+-body{font-family:var(--ff);background:var(--paper);color:var(--txt);line-height:1.7;font-size:16.5px;-webkit-font-smoothing:antialiased}
++body{font-family:var(--ff);background:var(--paper);color:var(--txt);line-height:1.7;font-size:clamp(15.5px,2.6vw,16.5px);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+ img{max-width:100%;height:auto;display:block}
+ a{color:var(--acc-ink);text-decoration-thickness:1px;text-underline-offset:3px}
+ a:hover{color:var(--acc)}
+@@ -37,9 +37,9 @@ a:hover{color:var(--acc)}
+ .hdr nav a{padding:9px 12px;border-radius:999px;text-decoration:none;font-size:.86rem;font-weight:600;color:var(--txt-2)}
+ .hdr nav a:hover{background:var(--paper-2);color:var(--txt)}
+ .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 20px;border-radius:999px;font-weight:800;font-size:.9rem;text-decoration:none;border:2px solid transparent;cursor:pointer;transition:transform .15s,box-shadow .15s}
+-.btn--acc{background:var(--acc);color:#FFFFFF;box-shadow:0 6px 18px rgba(10,5,238,.3)}
++.btn--acc{background:var(--acc);color:#FFFFFF;box-shadow:0 6px 18px rgba(76,91,212,.3)}
+ .btn--acc:hover{transform:translateY(-2px);color:#FFFFFF}
+-.btn--wa{background:#000000;color:#FFFFFF}
++.btn--wa{background:#2B2B2B;color:#FFFFFF;box-shadow:0 6px 16px rgba(0,0,0,.16)}
+ .btn--ghost{border-color:var(--line);color:var(--txt)}
+ .btn--ghost:hover{border-color:var(--acc)}
+ .btn--dark{background:var(--ink);color:#fff}
+@@ -66,6 +66,24 @@ figure{margin:1.8em 0}
+ figure img{border-radius:var(--r-l);border:1px solid var(--line)}
+ figcaption{font-size:.8rem;color:var(--txt-3);margin-top:9px}
+ table{width:100%;border-collapse:collapse;margin:1.4em 0;font-size:.92rem}
++/* Móvil: tablas anchas con scroll horizontal en lugar de desbordar la pantalla */
++@media(max-width:720px){
++  article table,main table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:normal}
++  article table td,article table th{min-width:110px}
++  .btn{padding:13px 18px}
++  .wrap{padding-inline:16px}
++}
++/* Adaptación móvil general: tipografía fluida, botones táctiles, sin desbordes */
++@media(max-width:640px){
++  h1{font-size:clamp(1.55rem,7vw,2rem)}
++  h2{margin-top:1.6em;font-size:clamp(1.2rem,5vw,1.45rem)}
++  .hero-doc{padding-top:22px}
++  .btn{width:auto;max-width:100%}
++  .btn-row{gap:10px}
++  .cta-mini{flex-direction:column;align-items:stretch}
++  figure{margin:1.4em 0}
++  blockquote{padding:14px 16px}
++}
+ caption{text-align:left;font-size:.84rem;color:var(--txt-2);padding-bottom:10px}
+ th,td{padding:11px 13px;border-bottom:1px solid var(--line);text-align:left}
+ thead th{background:var(--paper-2);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-3)}
+@@ -109,6 +127,6 @@ blockquote{border-left:3px solid var(--line);padding-left:18px;margin:1.5em 0;co
+ .skip{position:absolute;left:-9999px}
+ .skip:focus{left:0;top:0;background:var(--acc);color:#FFFFFF;padding:12px 16px;z-index:99;border-radius:0 0 var(--r-s) 0}
+ :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+-.wa-float{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:60;width:56px;height:56px;border-radius:50%;background:#000000;display:grid;place-items:center;box-shadow:0 10px 26px rgba(0,0,0,.45)}
++.wa-float{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:60;width:56px;height:56px;border-radius:50%;background:#2B2B2B;display:grid;place-items:center;box-shadow:0 8px 20px rgba(0,0,0,.22)}
+ .wa-float svg{width:29px;height:29px;fill:#fff}
+ @media print{.hdr,.ftr,.cta,.wa-float,.no-print{display:none!important}body{font-size:12pt;color:#000;background:#fff}}
+diff --git a/sitio-reparacion/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html b/sitio-reparacion/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html
+index 522acdb..6f170df 100644
+--- a/sitio-reparacion/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html
++++ b/sitio-reparacion/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html
+@@ -89,7 +89,7 @@
+ .ftr-grid a{display:block;font-size:.88rem;margin-bottom:7px}
+ .ftr-grid div:first-child{font-size:.88rem;line-height:1.6}
+ .cta-mini{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+-  background:linear-gradient(120deg,rgba(10,5,238,.16),rgba(255,255,255,.03));
++  background:linear-gradient(120deg,rgba(76,91,212,.16),rgba(255,255,255,.03));
+   border:1px solid rgba(0,0,0,.4);border-radius:20px;padding:18px 22px}
+ .cta-btns{display:flex;gap:8px;flex-wrap:wrap}
+ .ftr-legal{margin-top:26px;padding-top:18px;border-top:1px solid #22304E;font-size:.78rem;color:#8190A8}
+diff --git a/sitio-reparacion/blog/index.html b/sitio-reparacion/blog/index.html
+index 720fcf4..d167bdd 100644
+--- a/sitio-reparacion/blog/index.html
++++ b/sitio-reparacion/blog/index.html
+@@ -64,8 +64,8 @@
+ .ftr-grid a{display:block;font-size:.88rem;margin-bottom:7px}
+ .ftr-grid div:first-child{font-size:.88rem;line-height:1.6}
+ .cta-mini{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+-  background:linear-gradient(120deg,rgba(10,5,238,.16),rgba(255,255,255,.03));
+-  border:1px solid rgba(0,0,0,.4);border-radius:20px;padding:18px 22px}
++  background:linear-gradient(120deg,rgba(76,91,212,.16),rgba(255,255,255,.03));
++  border:1px solid rgba(0,0,0,.16);border-radius:20px;padding:18px 22px}
+ .cta-btns{display:flex;gap:8px;flex-wrap:wrap}
+ .ftr-legal{margin-top:26px;padding-top:18px;border-top:1px solid #22304E;font-size:.78rem;color:#8190A8}
+ @media(max-width:640px){.cta-mini{flex-direction:column;align-items:stretch}}
+diff --git a/sitio-reparacion/index.html b/sitio-reparacion/index.html
+index 36c206f..3eb12a9 100644
+--- a/sitio-reparacion/index.html
++++ b/sitio-reparacion/index.html
+@@ -162,15 +162,15 @@ html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:84p
+   /* ─── IDENTIDAD DE COLOR v4 (única paleta autorizada) ───────────────
+      Fondo: degradado blanco(70%) → salmón suave(30%) en TODO el sitio.
+      Texto: negro puro / negro claro / gris / blanco.
+-     Acento CTA: azul #0A05EE con texto blanco · botones oscuros en NEGRO (#000000). */
++     Acento CTA: azul #4C5BD4 (tono bajo, menos cargado) con texto blanco · botones oscuros grafito #2B2B2B. */
+   --ink:#111111; --ink-2:#1B1B1B; --ink-3:#262626;
+   --paper:#FFFFFF; --paper-2:#FDF5F2; --paper-3:#FBEEE8;
+   --salmon:#FFB19E; /* salmón suave del degradado de fondo */
+-  --txt:#000000; --txt-2:#3A3A3A; --txt-3:#6E6E6E;
+-  /* Acento = azul #0A05EE (CTAs y enlaces) · NEGRO (#000000) para botones con fondo oscuro — el rojo se eliminó del head por petición */
+-  --acc:#0A05EE; --on-acc:#FFFFFF; --acc-ink:#0A05EE; --acc-soft:#EAEAFE; --acc-pale:#D6D5FB;
+-  --ai:#0A05EE; --ai-ink:#0A05EE; --ai-soft:#EAEAFE;
+-  --rojo:#000000; /* antes #DB1E1E → ahora NEGRO (petición: sin rojo en el sitio) */
++  --txt:#1A1A1A; --txt-2:#3A3A3A; --txt-3:#6E6E6E; /* negro puro → grafito: cansa menos la vista */
++  /* Acento = azul #4C5BD4, más suave que el #4C5BD4 (petición: bajar tono, menos saturado) */
++  --acc:#4C5BD4; --on-acc:#FFFFFF; --acc-ink:#3D4BBE; --acc-soft:#EFF1FB; --acc-pale:#DCE0F5;
++  --ai:#4C5BD4; --ai-ink:#3D4BBE; --ai-soft:#EFF1FB;
++  --rojo:#2B2B2B; /* botones oscuros: negro puro → grafito #2B2B2B (menos pesado) */
+   /* Lupita (mascota): salmón — SOLO la mascota */
+   --lupita:#FA8072; --lupita-ink:#C1493C; --lupita-soft:#FFF1EE; --lupita-deep:#7A2B22;
+   --ok:#111111; --ok-soft:#EFEFEF;
+@@ -195,7 +195,7 @@ body{
+   /* Fondo principal: 70% blanco → 30% salmón suave (equilibrio pedido) */
+   background:linear-gradient(180deg,#FFFFFF 0%,#FFEFEA 45%,#FFDCCF 100%);
+   background-attachment:fixed;
+-  font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
++  font-size:clamp(15.5px,2.6vw,16px); line-height:1.6; -webkit-font-smoothing:antialiased;
+   overflow-x:hidden; padding-bottom:calc(64px + var(--sab));
+ }
+ @media(min-width:900px){body{padding-bottom:0}}
+@@ -228,10 +228,10 @@ p{text-wrap:pretty}
+ /* ── Botones ─────────────────────────────────────────────── */
+ .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 24px;border-radius:999px;font-weight:800;font-size:.95rem;text-decoration:none;border:2px solid transparent;cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,background .16s ease,color .16s ease;white-space:nowrap;letter-spacing:-.01em}
+ .btn:active{transform:translateY(1px) scale(.99)}
+-.btn--acc{background:var(--acc);color:#FFFFFF;box-shadow:0 6px 20px rgba(10,5,238,.30)}
+-.btn--acc:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(10,5,238,.40)}
++.btn--acc{background:var(--acc);color:#FFFFFF;box-shadow:0 6px 20px rgba(76,91,212,.30)}
++.btn--acc:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(76,91,212,.40)}
+ /* WhatsApp: negro sólido con texto SIEMPRE blanco (el rojo competía con el azul en el header) */
+-.btn--wa{background:#111111;color:#FFFFFF!important;box-shadow:0 6px 20px rgba(0,0,0,.28)}
++.btn--wa{background:#2B2B2B;color:#FFFFFF!important;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+ .btn--wa:hover{transform:translateY(-2px)}
+ .btn--wa svg,.btn--wa span,.btn--wa b{color:#FFFFFF!important}
+ /* Regla de legibilidad: CTA azul = texto blanco SIEMPRE (nunca azul sobre azul) */
+@@ -240,7 +240,7 @@ p{text-wrap:pretty}
+ .btn--ghost:hover{border-color:var(--acc);color:var(--acc-ink);background:var(--acc-soft)}
+ .sec--dark .btn--ghost{border-color:var(--line);color:var(--txt)}
+ .sec--dark .btn--ghost:hover{background:var(--acc-soft);border-color:var(--acc);color:var(--acc-ink)}
+-.btn--dark{background:#111111;color:#fff!important}
++.btn--dark{background:#2B2B2B;color:#fff!important}
+ .btn--dark:hover{transform:translateY(-2px);box-shadow:var(--sh-m)}
+ .btn--sm{padding:10px 16px;font-size:.85rem}
+ .btn--lg{padding:18px 30px;font-size:1.02rem}
+@@ -252,14 +252,14 @@ p{text-wrap:pretty}
+ .topbar{background:var(--ink);color:#CFCFCF;font-size:.8rem;padding:9px 0;position:relative;z-index:60}
+ .topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+ .topbar b{color:#fff;font-weight:700}
+-.dot{width:9px;height:9px;border-radius:50%;background:var(--acc);display:inline-block;box-shadow:0 0 0 0 rgba(10,5,238,.55);animation:pulse 2.4s infinite;flex:none}
++.dot{width:9px;height:9px;border-radius:50%;background:var(--acc);display:inline-block;box-shadow:0 0 0 0 rgba(76,91,212,.55);animation:pulse 2.4s infinite;flex:none}
+ .dot--off{background:#FFFFFF;animation:none}
+ /* Head limpio: sin azul/rojo dominando — punto de estado y logo en blanco/negro */
+ .topbar .dot{background:#FFFFFF;box-shadow:none;animation:none}
+ .topbar .dot--off{background:#8A8A8A}
+-.hdr .logo-mark,.topbar .logo-mark{background:#111111;border-color:#111111;color:#fff}
++.hdr .logo-mark,.topbar .logo-mark{background:#2B2B2B;border-color:#2B2B2B;color:#fff}
+ .nav a.is-active{background:rgba(17,17,17,.06);color:var(--txt)}
+-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(10,5,238,.45)}70%{box-shadow:0 0 0 9px rgba(10,5,238,0)}100%{box-shadow:0 0 0 0 rgba(10,5,238,0)}}
++@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(76,91,212,.45)}70%{box-shadow:0 0 0 9px rgba(76,91,212,0)}100%{box-shadow:0 0 0 0 rgba(76,91,212,0)}}
+ .status{display:inline-flex;align-items:center;gap:8px;font-weight:600}
+ .topbar-links{display:flex;align-items:center;gap:16px}
+ .topbar-links a{text-decoration:none;color:#CFCFCF;display:inline-flex;align-items:center;gap:6px}
+@@ -296,7 +296,7 @@ p{text-wrap:pretty}
+ /* ── Hero ────────────────────────────────────────────────── */
+ /* ── Hero CRISTAL: panel translúcido blanco sobre el degradado salmón ── */
+ .hero{position:relative;background:linear-gradient(165deg,rgba(255,255,255,.78) 0%,rgba(255,244,240,.66) 55%,rgba(255,231,222,.6) 100%);backdrop-filter:blur(14px) saturate(150%);-webkit-backdrop-filter:blur(14px) saturate(150%);color:var(--txt);overflow:hidden;padding-bottom:clamp(34px,5vw,60px);border-bottom:1px solid var(--line)}
+-.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(900px 420px at 78% 8%,rgba(10,5,238,.07),transparent 62%),radial-gradient(600px 380px at 6% 92%,rgba(250,128,114,.12),transparent 60%);pointer-events:none}
++.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(900px 420px at 78% 8%,rgba(76,91,212,.07),transparent 62%),radial-gradient(600px 380px at 6% 92%,rgba(250,128,114,.12),transparent 60%);pointer-events:none}
+ .hero .wrap{position:relative;z-index:1;display:block;padding-block:clamp(38px,6vw,74px) clamp(20px,3vw,34px)}
+ /* Asegura que la imagen del hero quede SIEMPRE por debajo de los botones del encabezado (WhatsApp / Cotizar gratis), incluso al hacer scroll */
+ .hdr{z-index:80}
+@@ -431,7 +431,7 @@ textarea.ctl{resize:vertical;min-height:96px}
+ .steps{counter-reset:s;display:grid;gap:18px}
+ .step{position:relative;padding-left:58px;counter-increment:s}
+ .step::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:0;width:42px;height:42px;border-radius:13px;background:var(--acc);color:var(--on-acc);font-weight:900;font-family:var(--ff-mono);display:grid;place-items:center;font-size:.92rem}
+-.sec--dark .step::before{background:rgba(10,5,238,.14);color:#0A05EE;border:1px solid rgba(10,5,238,.32)}
++.sec--dark .step::before{background:rgba(76,91,212,.14);color:#4C5BD4;border:1px solid rgba(76,91,212,.32)}
+ .step h3{font-size:1.04rem;margin-bottom:5px}
+ .step p{font-size:.9rem;color:var(--txt-2)}
+ .sec--dark .step p{color:#3A3A3A}
+@@ -544,7 +544,7 @@ html[data-theme="dark"] .faq details[open] summary{color:var(--acc)}
+ .dock .d-wa{color:#3A3A3A}
+ .dock .d-cta{background:var(--acc);color:var(--on-acc)}
+ @media(min-width:900px){.dock{display:none}}
+-.wa-float{position:fixed;right:18px;bottom:calc(84px + var(--sab));z-index:65;width:58px;height:58px;border-radius:50%;background:var(--rojo);display:grid;place-items:center;box-shadow:0 10px 28px rgba(0,0,0,.35);text-decoration:none;transition:transform .18s}
++.wa-float{position:fixed;right:18px;bottom:calc(84px + var(--sab));z-index:65;width:58px;height:58px;border-radius:50%;background:var(--rojo);display:grid;place-items:center;box-shadow:0 8px 22px rgba(0,0,0,.22);text-decoration:none;transition:transform .18s}
+ .wa-float:hover{transform:scale(1.07)}
+ .wa-float svg{width:30px;height:30px;fill:#fff}
+ .wa-float::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--rojo);animation:ring 2.6s ease-out infinite}
+@@ -621,7 +621,7 @@ html[data-theme="dark"] .svc-go{color:var(--acc)}
+ .ftr .strip h3,.ftr .strip p{color:#FFFFFF}
+ .ftr .strip .btn--ghost{border-color:#262626;color:#fff;background:transparent}
+ .ftr .strip .btn--ghost:hover{border-color:#fff;background:rgba(255,255,255,.1);color:#fff}
+-.sec--dark .strip{background:linear-gradient(120deg,var(--acc-soft),rgba(255,255,255,.7) 62%);border-color:rgba(10,5,238,.30)}
++.sec--dark .strip{background:linear-gradient(120deg,var(--acc-soft),rgba(255,255,255,.7) 62%);border-color:rgba(76,91,212,.30)}
+ .strip h3{font-size:1.04rem;margin-bottom:3px}
+ .strip p{font-size:.88rem;color:var(--txt-2);margin:0;max-width:56ch}
+ .sec--dark .strip p{color:#3A3A3A}
+diff --git a/sitio-reparacion/nosotros.html b/sitio-reparacion/nosotros.html
+index 8dd11eb..1cc290b 100644
+--- a/sitio-reparacion/nosotros.html
++++ b/sitio-reparacion/nosotros.html
+@@ -39,7 +39,7 @@
+ }
+ </script>
+ <style>
+-:root{--bg:#0B1220;--panel:#101A2E;--line:rgba(148,163,184,.22);--txt:#E6EDF7;--mut:#9FB0C7;--acc:#0A05EE;--on-acc:#FFFFFF;--rojo:#000000}
++:root{--bg:#0B1220;--panel:#101A2E;--line:rgba(148,163,184,.22);--txt:#E6EDF7;--mut:#9FB0C7;--acc:#4C5BD4;--on-acc:#FFFFFF;--rojo:#2B2B2B}
+ *{box-sizing:border-box}html{scroll-behavior:smooth}
+ body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--txt);line-height:1.65;-webkit-font-smoothing:antialiased}
+ a{color:var(--acc)}
+@@ -54,7 +54,7 @@ header.top{position:sticky;top:0;z-index:10;background:rgba(11,18,32,.85);backdr
+ .eyebrow{display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#fff;background:var(--acc);padding:7px 14px;border-radius:999px;margin-bottom:18px}
+ h1{font-size:clamp(1.7rem,4.5vw,2.6rem);line-height:1.2;margin:0 0 14px;color:#fff;letter-spacing:-.02em}
+ .sub{color:var(--mut);font-size:1.05rem;max-width:62ch;margin:0 auto}
+-.avatar{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#000000,#0A05EE);display:grid;place-items:center;font-size:44px;font-weight:800;color:#fff;margin:26px auto 0;border:3px solid rgba(0,0,0,.5)}
++.avatar{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#2B2B2B,#4C5BD4);display:grid;place-items:center;font-size:44px;font-weight:800;color:#fff;margin:26px auto 0;border:3px solid rgba(0,0,0,.5)}
+ section{padding:44px 0;border-top:1px solid var(--line)}
+ h2{font-size:1.45rem;color:#fff;margin:0 0 14px;letter-spacing:-.01em}
+ p{margin:0 0 14px;color:#CBD7E6}
+@@ -63,18 +63,27 @@ p{margin:0 0 14px;color:#CBD7E6}
+ .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;text-align:center}
+ .stat b{display:block;font-size:1.7rem;color:var(--acc)}
+ .stat span{font-size:.82rem;color:var(--mut)}
+-blockquote{margin:20px 0;padding:18px 22px;border-left:4px solid var(--acc);background:rgba(10,5,238,.12);border-radius:0 14px 14px 0;font-size:1.05rem;color:#E6EDF7;font-style:italic}
++blockquote{margin:20px 0;padding:18px 22px;border-left:4px solid var(--acc);background:rgba(76,91,212,.12);border-radius:0 14px 14px 0;font-size:1.05rem;color:#E6EDF7;font-style:italic}
+ ul.clean{list-style:none;padding:0;margin:0}
+ ul.clean li{padding:10px 0 10px 30px;position:relative;border-bottom:1px dashed var(--line);color:#CBD7E6}
+ ul.clean li::before{content:"✓";position:absolute;left:2px;top:10px;color:var(--acc);font-weight:800}
+-.cta{background:linear-gradient(120deg,rgba(10,5,238,.28),rgba(255,255,255,.03));border:1px solid rgba(0,0,0,.45);border-radius:18px;padding:26px;text-align:center;margin:30px 0}
++.cta{background:linear-gradient(120deg,rgba(76,91,212,.28),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:26px;text-align:center;margin:30px 0}
+ .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+ .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:12px;font-weight:700;text-decoration:none;font-size:.95rem}
+ .btn--acc{background:var(--acc);color:#FFFFFF}.btn--acc:hover{filter:brightness(1.08)}
+-.btn--wa{background:#111111;color:#FFFFFF!important}.btn--wa:hover{filter:brightness(1.08)}
++.btn--wa{background:#2B2B2B;color:#FFFFFF!important}.btn--wa:hover{filter:brightness(1.35)}
+ .btn--ghost{border:1.5px solid var(--line);color:#fff}.btn--ghost:hover{border-color:var(--acc)}
+ footer{padding:30px 0 44px;border-top:1px solid var(--line);color:var(--mut);font-size:.85rem;text-align:center}
+ @media(max-width:640px){.navlinks a.hide-s{display:none}}
++/* Móvil: scroll sin desbordes, tipografía fluida y botones táctiles */
++html{-webkit-text-size-adjust:100%}body{overflow-x:hidden}
++@media(max-width:640px){
++  h1{font-size:clamp(1.6rem,7vw,2.1rem)}
++  .wrap{padding-inline:16px}
++  .card,.cta{padding:18px}
++  .btns{flex-direction:column;align-items:stretch}
++  .btn{justify-content:center}
++}
+ </style>
+ </head>
+ <body>
+diff --git a/sitio-reparacion/privacidad.html b/sitio-reparacion/privacidad.html
+index 6113048..177a107 100644
+--- a/sitio-reparacion/privacidad.html
++++ b/sitio-reparacion/privacidad.html
+@@ -31,8 +31,8 @@
+ .ftr-grid a{display:block;font-size:.88rem;margin-bottom:7px}
+ .ftr-grid div:first-child{font-size:.88rem;line-height:1.6}
+ .cta-mini{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+-  background:linear-gradient(120deg,rgba(10,5,238,.16),rgba(255,255,255,.03));
+-  border:1px solid rgba(0,0,0,.4);border-radius:20px;padding:18px 22px}
++  background:linear-gradient(120deg,rgba(76,91,212,.16),rgba(255,255,255,.03));
++  border:1px solid rgba(0,0,0,.16);border-radius:20px;padding:18px 22px}
+ .cta-btns{display:flex;gap:8px;flex-wrap:wrap}
+ .ftr-legal{margin-top:26px;padding-top:18px;border-top:1px solid #22304E;font-size:.78rem;color:#8190A8}
+ @media(max-width:640px){.cta-mini{flex-direction:column;align-items:stretch}}
+diff --git a/sitio-reparacion/terminos.html b/sitio-reparacion/terminos.html
+index 47adeae..a16f2db 100644
+--- a/sitio-reparacion/terminos.html
++++ b/sitio-reparacion/terminos.html
+@@ -31,8 +31,8 @@
+ .ftr-grid a{display:block;font-size:.88rem;margin-bottom:7px}
+ .ftr-grid div:first-child{font-size:.88rem;line-height:1.6}
+ .cta-mini{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+-  background:linear-gradient(120deg,rgba(10,5,238,.16),rgba(255,255,255,.03));
+-  border:1px solid rgba(0,0,0,.4);border-radius:20px;padding:18px 22px}
++  background:linear-gradient(120deg,rgba(76,91,212,.16),rgba(255,255,255,.03));
++  border:1px solid rgba(0,0,0,.16);border-radius:20px;padding:18px 22px}
+ .cta-btns{display:flex;gap:8px;flex-wrap:wrap}
+ .ftr-legal{margin-top:26px;padding-top:18px;border-top:1px solid #22304E;font-size:.78rem;color:#8190A8}
+ @media(max-width:640px){.cta-mini{flex-direction:column;align-items:stretch}}
+-- 
+2.39.5
+
