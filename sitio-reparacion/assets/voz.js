@@ -1024,17 +1024,23 @@ async function cargarConfig() {
   var r = await fetch(url, { cache: 'no-cache' });
   if (!r.ok) throw new Error('cfg_' + r.status);
   CFG = await r.json();
-  /* Blindaje contra modelos jubilados: Groq renombra/retira modelos sin avisar
-     (oct-2026: openai/gpt-oss-20b devolvía 413 "Request too large"). Si el
-     archivo de config o una copia en caché del navegador todavía trae uno de
-     esos nombres, lo reescribemos localmente ANTES de llamar al servidor.
-     El servidor (_groq.js) tiene el mismo sanado por si acaso. */
-  /* Cualquier variante de gpt-oss (retirados oct-2026 → groq_413), con o sin prefijo "openai/", y alias viejos de llama. */
-  var MODELOS_RETIrados = /gpt-oss|^llama-3\.1-70b-versatile$|^llama-3\.3-70b-instruct$/i;
+  /* Blindaje contra modelos jubilados: Groq renombra/retira modelos sin avisar.
+     Ojo (oct-2026): los openai/gpt-oss-* SIGUEN VIVOS en Groq — la app Android
+     los usa; su 413 es cuota agotada, no modelo retirado, y el servidor ya
+     hace fallback solo. Aquí solo corregimos alias que sí desaparecieron y
+     normalizamos gpt-oss sin prefijo a su nombre canónico "openai/...". */
+  var MODELOS_RETIrados = /^llama-3\.1-70b-versatile$|^llama-3\.3-70b-instruct$/i;
+  function canonModelo(m){
+    var s = String(m || '').trim();
+    var oss = s.match(/^(?:openai\/)?(gpt-oss-(?:120b|20b))$/i);
+    return oss ? 'openai/' + oss[1].toLowerCase() : s;
+  }
   function sanearCfg(){
     try {
       if (CFG.llm && MODELOS_RETIrados.test(String(CFG.llm.modelo || ''))) CFG.llm.modelo = 'llama-3.3-70b-versatile';
       if (CFG.llm && MODELOS_RETIrados.test(String(CFG.llm.modeloRapido || ''))) CFG.llm.modeloRapido = 'llama-3.1-8b-instant';
+      if (CFG.llm && CFG.llm.modelo) CFG.llm.modelo = canonModelo(CFG.llm.modelo);
+      if (CFG.llm && CFG.llm.modeloRapido) CFG.llm.modeloRapido = canonModelo(CFG.llm.modeloRapido);
       if (CFG.stt && /gpt-oss/i.test(String(CFG.stt.modeloWhisper || ''))) CFG.stt.modeloWhisper = 'whisper-large-v3-turbo';
       if (CFG.tts && CFG.tts.groq && !/^playai/i.test(String(CFG.tts.groq.modelo || 'playai-tts'))) CFG.tts.groq.modelo = 'playai-tts';
     } catch (e) {}

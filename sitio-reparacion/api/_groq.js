@@ -22,11 +22,14 @@ const GROQ = 'https://api.groq.com/openai/v1';
 
 /* Cadidatos por rol, del preferido al respaldo. Si algún día Groq jubila uno,
    solo agrega/quíta nombres aquí — o cámbialos en datos/agente.json.
-   ACTUALIZADO OCT-2026 (2): Groq jubiló también los openai/gpt-oss-* (devolvían
-   413 "Request too large for model ...", que en realidad significa "modelo ya no
-   está disponible"). Ya NO se listan como candidatos; si algún cliente viejo los
-   pide, sanearModelo() los reescribe a un modelo vigente. */
+   ACTUALIZADO OCT-2026 (3): los openai/gpt-oss-* SIGUEN EXISTENTES en Groq
+   (la app Android los usa sin problema), pero tienen cuota muy baja en el
+   tier "on_demand": cuando se agota devuelven 413 "Request too large for
+   model ...", que engaña porque parece problema de tamaño del prompt.
+   Por eso: se mantienen como primer candidato, y si Groq responde 413/404/
+   model_not_found, chatConFallback salta automáticamente al siguiente. */
 const CANDIDATOS_CHAT = [
+  'openai/gpt-oss-120b',
   'llama-3.3-70b-versatile',
   'llama-3.1-8b-instant',
   'moonshotai/kimi-k2-instruct-0905',
@@ -37,15 +40,12 @@ const CANDIDATOS_STT = [
   'whisper-large-v3-turbo',
   'whisper-large-v3'
 ];
-/* Alias históricos que Groq ya NO acepta: si un cliente viejo o un archivo de
-   configuración todavía los envía, se reescriben al modelo sano equivalente
-   ANTES de llamar a la API (así evitamos el groq_413 "Request too large for
-   model openai/gpt-oss-20b", que en realidad significa "modelo retirado"). */
+/* Alias históricos que Groq ya NO acepta (estos sí fueron renombrados):
+   si un cliente viejo los envía, se reescriben al nombre vigente ANTES de
+   llamar a la API. OJO: los gpt-oss-* NO están aquí porque siguen vivos;
+   su nombre canónico es "openai/gpt-oss-120b" / "openai/gpt-oss-20b", así
+   que a las variantes sin prefijo solo se les agrega el prefijo. */
 const ALIAS_RETIrados = {
-  'openai/gpt-oss-20b': 'llama-3.3-70b-versatile',
-  'openai/gpt-oss-120b': 'llama-3.3-70b-versatile',
-  'gpt-oss-20b': 'llama-3.3-70b-versatile',
-  'gpt-oss-120b': 'llama-3.3-70b-versatile',
   'llama-3.1-70b-versatile': 'llama-3.3-70b-versatile',
   'llama-3.3-70b-instruct': 'llama-3.3-70b-versatile',
   'whisper-large-v3-turbo-20241113': 'whisper-large-v3-turbo'
@@ -54,7 +54,11 @@ const ALIAS_RETIrados = {
 function sanearModelo(m){
   const s = String(m || '').trim();
   if (!s) return '';
-  return ALIAS_RETIrados[s] || ALIAS_RETIrados[s.toLowerCase()] || s;
+  if (ALIAS_RETIrados[s]) return ALIAS_RETIrados[s];
+  /* gpt-oss-120b → openai/gpt-oss-120b (nombre canónico con prefijo) */
+  const oss = s.match(/^(?:openai\/)?(gpt-oss-(?:120b|20b))$/i);
+  if (oss) return 'openai/' + oss[1].toLowerCase();
+  return ALIAS_RETIrados[s.toLowerCase()] || s;
 }
 /* cache en memoria de la instancia: modelo que ya respondió bien */
 let chatOk = null, sttOk = null;
