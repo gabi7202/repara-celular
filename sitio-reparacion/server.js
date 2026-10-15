@@ -29,7 +29,7 @@ const { URL } = require('url');
 /* Lupita: mismo cliente Groq resiliente (fallback de modelos + retries) que las
    funciones de Vercel. Los archivos _ no se enrutan como endpoint en Vercel y
    aquí solo se requieren como librería — cero duplicación de lógica. */
-const { groqKey, chatConFallback, sttConFallback } = require('./api/_groq');
+const { groqKey, chatConFallback, sttConFallback, sanearModelo } = require('./api/_groq');
 const { cotizarServer, parseSalida } = require('./api/_agente');
 
 /* Carga .env sin dependencias (dotenv-style): claves → process.env.
@@ -378,17 +378,21 @@ const server = http.createServer(async (req, res) => {
         } else log('tts webhook', rh.status);
       } catch(e){ log('tts webhook falló:', e.message); }
     }
-    /* 2) PlayAI vía Groq — con normalización de voz/estilo y retries (igual que api/tts.js) */
+    /* 2) PlayAI vía Groq — con normalización de voz/estilo y retries (igual que api/tts.js).
+       Sanear modelos retirados: si el cliente pide uno jubilado (p. ej. openai/gpt-oss-*),
+       se fuerza 'playai-tts' (los 4xx ya hacían caer el TTS entero con groq_fallo/502). */
     let key; try { key = groqKey(req); } catch(e){ return json(res, e.status || 503, { ok:false, error:e.code || 'sin_clave' }, req); }
     const ESTILOS_VALIDOS = ['Cheerful','Sincere','Efficient','Lively'];
     let voz = String(body.voice || 'Jennifer');
     let estilo = body.style ? String(body.style).slice(0,30) : null;
     if (/^es[-_]/i.test(voz) || !/^[A-Z][a-z]+$/.test(voz)) voz = 'Jennifer';
     if (estilo && !ESTILOS_VALIDOS.includes(estilo)) estilo = null;
+    const mCliente = sanearModelo(body.modelo);
+    const modeloTts = (mCliente && /^playai/i.test(mCliente)) ? mCliente : 'playai-tts';
     try {
       let r = null, ultimoTxt = '';
       for (let intento = 0; intento < 4 && !r; intento++){
-        const payload = { model: 'playai-tts', voice: voz,
+        const payload = { model: modeloTts, voice: voz,
           response_format: String(body.formato || 'mp3'), input: texto };
         if (estilo) payload.style = estilo;
         if (body.speed) payload.speed = Math.min(1.6, Math.max(0.6, Number(body.speed) || 1));

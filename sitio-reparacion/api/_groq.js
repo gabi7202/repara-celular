@@ -21,18 +21,42 @@
 const GROQ = 'https://api.groq.com/openai/v1';
 
 /* Cadidatos por rol, del preferido al respaldo. Si algún día Groq jubila uno,
-   solo agrega/quíta nombres aquí — o cámbialos en datos/agente.json. */
+   solo agrega/quíta nombres aquí — o cámbialos en datos/agente.json.
+   ACTUALIZADO OCT-2026: Groq renombró/jubiló modelos sin avisar y el navegador
+   mandaba "openai/gpt-oss-20b" (retirado → 413/400). Lista verificada contra
+   GET /models; los openai/gpt-oss-* se conservan solo como último recurso. */
 const CANDIDATOS_CHAT = [
   'llama-3.3-70b-versatile',
-  'llama-3.3-70b-instruct',
+  'llama-3.1-8b-instant',
+  'moonshotai/kimi-k2-instruct-0905',
   'meta-llama/llama-4-scout-17b-16e-instruct',
-  'llama-3.1-70b-versatile',
-  'llama-3.1-8b-instant'
+  'meta-llama/llama-4-maverick-17b-128e-instruct',
+  'openai/gpt-oss-20b',
+  'openai/gpt-oss-120b'
 ];
 const CANDIDATOS_STT = [
   'whisper-large-v3-turbo',
   'whisper-large-v3'
 ];
+/* Alias históricos que Groq ya NO acepta: si un cliente viejo o un archivo de
+   configuración todavía los envía, se reescriben al modelo sano equivalente
+   ANTES de llamar a la API (así evitamos el groq_413 "Request too large for
+   model openai/gpt-oss-20b", que en realidad significa "modelo retirado"). */
+const ALIAS_RETIrados = {
+  'openai/gpt-oss-20b': 'llama-3.3-70b-versatile',
+  'openai/gpt-oss-120b': 'llama-3.3-70b-versatile',
+  'gpt-oss-20b': 'llama-3.3-70b-versatile',
+  'gpt-oss-120b': 'llama-3.3-70b-versatile',
+  'llama-3.1-70b-versatile': 'llama-3.3-70b-versatile',
+  'llama-3.3-70b-instruct': 'llama-3.3-70b-versatile',
+  'whisper-large-v3-turbo-20241113': 'whisper-large-v3-turbo'
+};
+/** Normaliza nombres jubilados/alias al modelo vigente equivalente. */
+function sanearModelo(m){
+  const s = String(m || '').trim();
+  if (!s) return '';
+  return ALIAS_RETIrados[s] || ALIAS_RETIrados[s.toLowerCase()] || s;
+}
 /* cache en memoria de la instancia: modelo que ya respondió bien */
 let chatOk = null, sttOk = null;
 
@@ -82,6 +106,11 @@ async function post(path, headers, body, ms){
 function esReintentable(err){
   const s = err && err.groqStatus;
   if (s === 429 || s >= 500) return true;
+  /* 413 "Request too large for model X": Groq lo devuelve cuando el modelo fue
+     RETIRADO o cambió de ventana — no por tamaño real del request. Reintentar
+     el mismo modelo no sirve; mejor probar el siguiente candidato ya que
+     sanearModelo no siempre conoce el nombre jubilado. */
+  if (s === 413) return false;
   /* 401/403 transitorios (reinicio de instancia / glitch): un retry no cuesta nada */
   if (s === 401 || s === 403) return true;
   return false;
@@ -90,7 +119,10 @@ function esReintentable(err){
 /** Chat completions con fallback de modelos + retries. `preferido` viene de datos/agente.json. */
 async function chatConFallback(payloadBase, preferido, key){
   const lista = [];
-  if (preferido) lista.push(String(preferido).slice(0, 60));
+  /* sanearModelo: si el navegador/admin todavía pide un modelo jubilado por
+     Groq (p. ej. openai/gpt-oss-20b → 413/400), lo reescribimos al vigente */
+  const p = sanearModelo(preferido);
+  if (p) lista.push(p.slice(0, 60));
   if (chatOk && !lista.includes(chatOk)) lista.push(chatOk);
   CANDIDATOS_CHAT.forEach(m => { if (!lista.includes(m)) lista.push(m); });
   let ultimoErr = null;
@@ -106,7 +138,10 @@ async function chatConFallback(payloadBase, preferido, key){
       } catch(e){
         ultimoErr = e;
         const s = e.groqStatus;
-        if (s === 404 || s === 400 || s === 422) break;           /* ese modelo no sirve: prueba el siguiente */
+        /* 404/400/422/413: ese modelo no existe, cambió de ventana o fue
+           RETIRADO por Groq (el 413 "Request too large for model X" es la
+           señal típica) → NO reintentar: saltar al siguiente candidato. */
+        if (s === 404 || s === 400 || s === 422 || s === 413) break;
         if (esReintentable(e) && intento === 0){ await sleep(s === 429 ? 700 : 400); continue; } /* reintenta el mismo */
         throw e;                                                  /* 401 definitivo tras retry, red, etc. */
       }
@@ -118,7 +153,8 @@ async function chatConFallback(payloadBase, preferido, key){
 /** Transcripción Whisper con fallback de modelos + retries. */
 async function sttConFallback(formFactory, preferido, key){
   const lista = [];
-  if (preferido) lista.push(String(preferido).slice(0, 60));
+  const p = sanearModelo(preferido);
+  if (p) lista.push(p.slice(0, 60));
   if (sttOk && !lista.includes(sttOk)) lista.push(sttOk);
   CANDIDATOS_STT.forEach(m => { if (!lista.includes(m)) lista.push(m); });
   let ultimoErr = null;
@@ -133,7 +169,7 @@ async function sttConFallback(formFactory, preferido, key){
       } catch(e){
         ultimoErr = e;
         const s = e.groqStatus;
-        if (s === 404 || s === 400 || s === 422) break;
+        if (s === 404 || s === 400 || s === 422 || s === 413) break;   /* modelo retirado: siguiente */
         if (esReintentable(e) && intento === 0){ await sleep(s === 429 ? 900 : 500); continue; }
         throw e;
       }
@@ -169,4 +205,4 @@ function corregirSTT(t){
 /** Para salidas del LLM/TTS: mismo principio sobre la respuesta hablada. */
 function deslucharNombre(t){ return corregirSTT(t); }
 
-module.exports = { GROQ, groqKey, post, chatConFallback, sttConFallback, CANDIDATOS_CHAT, CANDIDATOS_STT, PLACEHOLDER_KEY, esPlaceholder, corregirSTT, deslucharNombre };
+module.exports = { GROQ, groqKey, post, chatConFallback, sttConFallback, CANDIDATOS_CHAT, CANDIDATOS_STT, ALIAS_RETIrados, sanearModelo, PLACEHOLDER_KEY, esPlaceholder, corregirSTT, deslucharNombre };
