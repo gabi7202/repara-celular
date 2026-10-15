@@ -162,15 +162,15 @@ html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:84p
   /* ─── IDENTIDAD DE COLOR v4 (única paleta autorizada) ───────────────
      Fondo: degradado blanco(70%) → salmón suave(30%) en TODO el sitio.
      Texto: negro puro / negro claro / gris / blanco.
-     Acento CTA: azul #0A05EE con texto blanco · botones oscuros en NEGRO (#000000). */
+     Acento CTA: azul #4C5BD4 (tono bajo, menos cargado) con texto blanco · botones oscuros grafito #2B2B2B. */
   --ink:#111111; --ink-2:#1B1B1B; --ink-3:#262626;
   --paper:#FFFFFF; --paper-2:#FDF5F2; --paper-3:#FBEEE8;
   --salmon:#FFB19E; /* salmón suave del degradado de fondo */
-  --txt:#000000; --txt-2:#3A3A3A; --txt-3:#6E6E6E;
-  /* Acento = azul #0A05EE (CTAs y enlaces) · NEGRO (#000000) para botones con fondo oscuro — el rojo se eliminó del head por petición */
-  --acc:#0A05EE; --on-acc:#FFFFFF; --acc-ink:#0A05EE; --acc-soft:#EAEAFE; --acc-pale:#D6D5FB;
-  --ai:#0A05EE; --ai-ink:#0A05EE; --ai-soft:#EAEAFE;
-  --rojo:#000000; /* antes #DB1E1E → ahora NEGRO (petición: sin rojo en el sitio) */
+  --txt:#1A1A1A; --txt-2:#3A3A3A; --txt-3:#6E6E6E; /* negro puro → grafito: cansa menos la vista */
+  /* Acento = azul #4C5BD4, más suave que el #4C5BD4 (petición: bajar tono, menos saturado) */
+  --acc:#4C5BD4; --on-acc:#FFFFFF; --acc-ink:#3D4BBE; --acc-soft:#EFF1FB; --acc-pale:#DCE0F5;
+  --ai:#4C5BD4; --ai-ink:#3D4BBE; --ai-soft:#EFF1FB;
+  --rojo:#2B2B2B; /* botones oscuros: negro puro → grafito #2B2B2B (menos pesado) */
   /* Lupita (mascota): salmón — SOLO la mascota */
   --lupita:#FA8072; --lupita-ink:#C1493C; --lupita-soft:#FFF1EE; --lupita-deep:#7A2B22;
   --ok:#111111; --ok-soft:#EFEFEF;
@@ -195,7 +195,7 @@ body{
   /* Fondo principal: 70% blanco → 30% salmón suave (equilibrio pedido) */
   background:linear-gradient(180deg,#FFFFFF 0%,#FFEFEA 45%,#FFDCCF 100%);
   background-attachment:fixed;
-  font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
+  font-size:clamp(15.5px,2.6vw,16px); line-height:1.6; -webkit-font-smoothing:antialiased;
   overflow-x:hidden; padding-bottom:calc(64px + var(--sab));
 }
 @media(min-width:900px){body{padding-bottom:0}}
@@ -228,10 +228,10 @@ p{text-wrap:pretty}
 /* ── Botones ─────────────────────────────────────────────── */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 24px;border-radius:999px;font-weight:800;font-size:.95rem;text-decoration:none;border:2px solid transparent;cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,background .16s ease,color .16s ease;white-space:nowrap;letter-spacing:-.01em}
 .btn:active{transform:translateY(1px) scale(.99)}
-.btn--acc{background:var(--acc);color:#FFFFFF;box-shadow:0 6px 20px rgba(10,5,238,.30)}
-.btn--acc:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(10,5,238,.40)}
+.btn--acc{background:var(--acc);color:#FFFFFF;box-shadow:0 6px 20px rgba(76,91,212,.30)}
+.btn--acc:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(76,91,212,.40)}
 /* WhatsApp: negro sólido con texto SIEMPRE blanco (el rojo competía con el azul en el header) */
-.btn--wa{background:#111111;color:#FFFFFF!important;box-shadow:0 6px 20px rgba(0,0,0,.28)}
+.btn--wa{background:#2B2B2B;color:#FFFFFF!important;box-shadow:0 6px 18px rgba(0,0,0,.18)}
 .btn--wa:hover{transform:translateY(-2px)}
 .btn--wa svg,.btn--wa span,.btn--wa b{color:#FFFFFF!important}
 /* Regla de legibilidad: CTA azul = texto blanco SIEMPRE (nunca azul sobre azul) */
@@ -240,7 +240,7 @@ p{text-wrap:pretty}
 .btn--ghost:hover{border-color:var(--acc);color:var(--acc-ink);background:var(--acc-soft)}
 .sec--dark .btn--ghost{border-color:var(--line);color:var(--txt)}
 .sec--dark .btn--ghost:hover{background:var(--acc-soft);border-color:var(--acc);color:var(--acc-ink)}
-.btn--dark{background:#111111;color:#fff!important}
+.btn--dark{background:#2B2B2B;color:#fff!important}
 .btn--dark:hover{transform:translateY(-2px);box-shadow:var(--sh-m)}
 .btn--sm{padding:10px 16px;font-size:.85rem}
 .btn--lg{padding:18px 30px;font-size:1.02rem}
@@ -252,14 +252,14 @@ p{text-wrap:pretty}
 .topbar{background:var(--ink);color:#CFCFCF;font-size:.8rem;padding:9px 0;position:relative;z-index:60}
 .topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
 .topbar b{color:#fff;font-weight:700}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--acc);display:inline-block;box-shadow:0 0 0 0 rgba(10,5,238,.55);animation:pulse 2.4s infinite;flex:none}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--acc);display:inline-block;box-shadow:0 0 0 0 rgba(76,91,212,.55);animation:pulse 2.4s infinite;flex:none}
 .dot--off{background:#FFFFFF;animation:none}
 /* Head limpio: sin azul/rojo dominando — punto de estado y logo en blanco/negro */
 .topbar .dot{background:#FFFFFF;box-shadow:none;animation:none}
 .topbar .dot--off{background:#8A8A8A}
-.hdr .logo-mark,.topbar .logo-mark{background:#111111;border-color:#111111;color:#fff}
+.hdr .logo-mark,.topbar .logo-mark{background:#2B2B2B;border-color:#2B2B2B;color:#fff}
 .nav a.is-active{background:rgba(17,17,17,.06);color:var(--txt)}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(10,5,238,.45)}70%{box-shadow:0 0 0 9px rgba(10,5,238,0)}100%{box-shadow:0 0 0 0 rgba(10,5,238,0)}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(76,91,212,.45)}70%{box-shadow:0 0 0 9px rgba(76,91,212,0)}100%{box-shadow:0 0 0 0 rgba(76,91,212,0)}}
 .status{display:inline-flex;align-items:center;gap:8px;font-weight:600}
 .topbar-links{display:flex;align-items:center;gap:16px}
 .topbar-links a{text-decoration:none;color:#CFCFCF;display:inline-flex;align-items:center;gap:6px}
@@ -296,7 +296,7 @@ p{text-wrap:pretty}
 /* ── Hero ────────────────────────────────────────────────── */
 /* ── Hero CRISTAL: panel translúcido blanco sobre el degradado salmón ── */
 .hero{position:relative;background:linear-gradient(165deg,rgba(255,255,255,.78) 0%,rgba(255,244,240,.66) 55%,rgba(255,231,222,.6) 100%);backdrop-filter:blur(14px) saturate(150%);-webkit-backdrop-filter:blur(14px) saturate(150%);color:var(--txt);overflow:hidden;padding-bottom:clamp(34px,5vw,60px);border-bottom:1px solid var(--line)}
-.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(900px 420px at 78% 8%,rgba(10,5,238,.07),transparent 62%),radial-gradient(600px 380px at 6% 92%,rgba(250,128,114,.12),transparent 60%);pointer-events:none}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(900px 420px at 78% 8%,rgba(76,91,212,.07),transparent 62%),radial-gradient(600px 380px at 6% 92%,rgba(250,128,114,.12),transparent 60%);pointer-events:none}
 .hero .wrap{position:relative;z-index:1;display:block;padding-block:clamp(38px,6vw,74px) clamp(20px,3vw,34px)}
 /* Asegura que la imagen del hero quede SIEMPRE por debajo de los botones del encabezado (WhatsApp / Cotizar gratis), incluso al hacer scroll */
 .hdr{z-index:80}
@@ -431,7 +431,7 @@ textarea.ctl{resize:vertical;min-height:96px}
 .steps{counter-reset:s;display:grid;gap:18px}
 .step{position:relative;padding-left:58px;counter-increment:s}
 .step::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:0;width:42px;height:42px;border-radius:13px;background:var(--acc);color:var(--on-acc);font-weight:900;font-family:var(--ff-mono);display:grid;place-items:center;font-size:.92rem}
-.sec--dark .step::before{background:rgba(10,5,238,.14);color:#0A05EE;border:1px solid rgba(10,5,238,.32)}
+.sec--dark .step::before{background:rgba(76,91,212,.14);color:#4C5BD4;border:1px solid rgba(76,91,212,.32)}
 .step h3{font-size:1.04rem;margin-bottom:5px}
 .step p{font-size:.9rem;color:var(--txt-2)}
 .sec--dark .step p{color:#3A3A3A}
@@ -544,7 +544,7 @@ html[data-theme="dark"] .faq details[open] summary{color:var(--acc)}
 .dock .d-wa{color:#3A3A3A}
 .dock .d-cta{background:var(--acc);color:var(--on-acc)}
 @media(min-width:900px){.dock{display:none}}
-.wa-float{position:fixed;right:18px;bottom:calc(84px + var(--sab));z-index:65;width:58px;height:58px;border-radius:50%;background:var(--rojo);display:grid;place-items:center;box-shadow:0 10px 28px rgba(0,0,0,.35);text-decoration:none;transition:transform .18s}
+.wa-float{position:fixed;right:18px;bottom:calc(84px + var(--sab));z-index:65;width:58px;height:58px;border-radius:50%;background:var(--rojo);display:grid;place-items:center;box-shadow:0 8px 22px rgba(0,0,0,.22);text-decoration:none;transition:transform .18s}
 .wa-float:hover{transform:scale(1.07)}
 .wa-float svg{width:30px;height:30px;fill:#fff}
 .wa-float::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--rojo);animation:ring 2.6s ease-out infinite}
@@ -621,7 +621,7 @@ html[data-theme="dark"] .svc-go{color:var(--acc)}
 .ftr .strip h3,.ftr .strip p{color:#FFFFFF}
 .ftr .strip .btn--ghost{border-color:#262626;color:#fff;background:transparent}
 .ftr .strip .btn--ghost:hover{border-color:#fff;background:rgba(255,255,255,.1);color:#fff}
-.sec--dark .strip{background:linear-gradient(120deg,var(--acc-soft),rgba(255,255,255,.7) 62%);border-color:rgba(10,5,238,.30)}
+.sec--dark .strip{background:linear-gradient(120deg,var(--acc-soft),rgba(255,255,255,.7) 62%);border-color:rgba(76,91,212,.30)}
 .strip h3{font-size:1.04rem;margin-bottom:3px}
 .strip p{font-size:.88rem;color:var(--txt-2);margin:0;max-width:56ch}
 .sec--dark .strip p{color:#3A3A3A}
