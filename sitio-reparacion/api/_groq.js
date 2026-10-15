@@ -23,11 +23,8 @@ const GROQ = 'https://api.groq.com/openai/v1';
 /* Cadidatos por rol, del preferido al respaldo. Si algún día Groq jubila uno,
    solo agrega/quíta nombres aquí — o cámbialos en datos/agente.json. */
 const CANDIDATOS_CHAT = [
-  'llama-3.3-70b-versatile',
-  'llama-3.3-70b-instruct',
-  'meta-llama/llama-4-scout-17b-16e-instruct',
-  'llama-3.1-70b-versatile',
-  'llama-3.1-8b-instant'
+  'openai/gpt-oss-20b',
+  'openai/gpt-oss-120b'
 ];
 const CANDIDATOS_STT = [
   'whisper-large-v3-turbo',
