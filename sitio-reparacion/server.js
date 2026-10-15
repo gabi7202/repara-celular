@@ -168,7 +168,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   /* ── API ── */
-  if (u.pathname === '/api/health') return json(res, 200, { ok:true, ts:new Date().toISOString(), leads: leer(LEADS).length }, req);
+  if (u.pathname === '/api/health') return json(res, 200, { ok:true, ts:new Date().toISOString(), leads: leer(LEADS).length, backend:'local', groq: process.env.GROQ_API_KEY ? 'conectada' : 'FALTA_GROQ_API_KEY' }, req);
 
   if (u.pathname === '/api/leads' && req.method === 'POST'){
     if (!permitir(ip)) return json(res, 429, { ok:false, error:'demasiadas_solicitudes' }, req);
