@@ -1024,6 +1024,21 @@ async function cargarConfig() {
   var r = await fetch(url, { cache: 'no-cache' });
   if (!r.ok) throw new Error('cfg_' + r.status);
   CFG = await r.json();
+  /* Blindaje contra modelos jubilados: Groq renombra/retira modelos sin avisar
+     (oct-2026: openai/gpt-oss-20b devolvía 413 "Request too large"). Si el
+     archivo de config o una copia en caché del navegador todavía trae uno de
+     esos nombres, lo reescribemos localmente ANTES de llamar al servidor.
+     El servidor (_groq.js) tiene el mismo sanado por si acaso. */
+  var MODELOS_RETIrados = /^openai\/gpt-oss|(^|\/)gpt-oss-\d+(b)?$|^llama-3\.1-70b-versatile$|^llama-3\.3-70b-instruct$/i;
+  function sanearCfg(){
+    try {
+      if (CFG.llm && MODELOS_RETIrados.test(String(CFG.llm.modelo || ''))) CFG.llm.modelo = 'llama-3.3-70b-versatile';
+      if (CFG.llm && MODELOS_RETIrados.test(String(CFG.llm.modeloRapido || ''))) CFG.llm.modeloRapido = 'llama-3.1-8b-instant';
+      if (CFG.stt && /gpt-oss/i.test(String(CFG.stt.modeloWhisper || ''))) CFG.stt.modeloWhisper = 'whisper-large-v3-turbo';
+      if (CFG.tts && CFG.tts.groq && !/^playai/i.test(String(CFG.tts.groq.modelo || 'playai-tts'))) CFG.tts.groq.modelo = 'playai-tts';
+    } catch (e) {}
+  }
+  sanearCfg();
   var purl = (CFG.llm && CFG.llm.promptUrl) || 'datos/prompt-agente.md';
   var pr = await fetch(purl, { cache: 'no-cache' });
   var crudo = pr.ok ? await pr.text() : '';

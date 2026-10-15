@@ -1,6 +1,7 @@
 /* POST /api/tts → 1) webhook TTS gratuito (Edge neuronal es-MX) o 2) PlayAI vía Groq.
    Devuelve audio binario listo para reproducir. */
 const { json, groqKey } = require('./_lib');
+const { sanearModelo } = require('./_groq');
 const GROQ = 'https://api.groq.com/openai/v1';
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST'){ res.setHeader('Allow','POST'); return json(res, 405, { ok:false }); }
@@ -33,10 +34,17 @@ module.exports = async function handler(req, res) {
     let estilo = b.style ? String(b.style).slice(0, 30) : null;
     if (/^es[-_]/i.test(voz) || !/^[A-Z][a-z]+$/.test(voz)) voz = 'Jennifer';           /* voz Edge → usa la default de PlayAI */
     if (estilo && !ESTILOS_VALIDOS.includes(estilo)) estilo = null;
-    const modelos = [String(b.modelo || 'playai-tts'), 'playai-tts'].filter((v, i, a) => a.indexOf(v) === i);
+    const modelos = [];
+    /* sanear: si el navegador/admin pide un modelo retirado (p. ej. los
+       "openai/gpt-oss-*" que Groq jubiló y que devolvían groq_413), lo
+       descartamos y usamos los candidatos vigentes de PlayAI. */
+    const mCliente = sanearModelo(b.modelo);
+    if (mCliente && /^playai/i.test(mCliente)) modelos.push(String(mCliente).slice(0, 60));
+    modelos.push('playai-tts');
+    const uniq = modelos.filter((v, i, a) => a.indexOf(v) === i);
     let r = null, ultimoTxt = '';
     for (let intento = 0; intento < 4 && !r; intento++){
-      const payload = { model: modelos[Math.min(intento, modelos.length - 1)], voice: voz,
+      const payload = { model: uniq[Math.min(intento, uniq.length - 1)], voice: voz,
         response_format: String(b.formato || 'mp3'), input: texto };
       if (estilo) payload.style = estilo;
       if (b.speed) payload.speed = Math.min(1.6, Math.max(0.6, Number(b.speed) || 1));
