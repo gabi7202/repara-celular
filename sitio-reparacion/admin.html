@@ -186,7 +186,7 @@ function pintar(){
     <tr class="${r.estado !== 'nuevo' ? 'leido' : ''}" data-id="${esc(r.id)}">
       <td class="mono">${fecha(r.created_at)}</td>
       <td class="mono">${esc(r.folio)}</td>
-      <td><span class="badge b-${esc(r.tipo)}">${esc(r.tipo)}</span>${r.domicilio ? '<br><small style="color:var(--txt-3)">🛵 domicilio</small>' : ''}</td>
+      <td><span class="badge b-${esc(r.tipo)}">${esc(r.tipo)}</span>${r.domicilio ? '<br><small style="color:var(--txt-3)">domicilio</small>' : ''}</td>
       <td><b>${esc(r.nombre) || '<i style="color:var(--txt-3)">sin nombre</i>'}</b><br>
           <span class="mono">${esc(r.telefono_texto || r.telefono || '')}</span>
           ${r.email ? '<br><small style="color:var(--txt-3)">' + esc(r.email) + '</small>' : ''}</td>
