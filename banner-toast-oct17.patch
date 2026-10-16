@@ -1,0 +1,141 @@
+diff --git a/sitio-reparacion/index.html b/sitio-reparacion/index.html
+index 7f1319e..f71eae3 100644
+--- a/sitio-reparacion/index.html
++++ b/sitio-reparacion/index.html
+@@ -617,35 +617,38 @@ html[data-theme="dark"] .faq details[open] summary{color:var(--acc)}
+ .hr{height:1px;background:var(--line);border:0;margin:26px 0}
+ .note{font-size:.8rem;color:var(--txt-3)}
+ .badge-live{display:inline-flex;align-items:center;gap:7px;font-size:.76rem;font-weight:800;background:var(--acc-soft);color:var(--acc-ink);padding:6px 12px;border-radius:999px}
+-/* ═══════════ RECOLECCIÓN INMEDIATA · banner FLOTANTE encima del sitio (primer objetivo de conversión) ═══════════ */
+-.rc{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:center;align-items:flex-start;padding:14px clamp(10px,3vw,24px);pointer-events:none;background:linear-gradient(rgba(12,12,12,.55),rgba(12,12,12,.18) 70%,transparent);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);max-height:100svh;overflow-y:auto}
+-body.rc-open{overflow:hidden}
+-.rc-card{pointer-events:auto;position:relative;max-width:980px;width:100%;text-align:center;border-radius:var(--r-xl);padding:clamp(20px,4vw,40px) clamp(16px,4vw,48px);background:radial-gradient(120% 90% at 50% 0%,#232323 0%,#161616 60%,#0C0C0C 100%);border:1px solid rgba(255,255,255,.14);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 30px 90px rgba(0,0,0,.55)}
+-.rc-x{position:absolute;top:10px;right:12px;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;font-size:1rem;line-height:1;cursor:pointer;display:grid;place-items:center;transition:background .16s,border-color .16s}
++/* ═══════════ RECOLECCIÓN INMEDIATA · banner flotante tipo toast (NO bloquea el inicio) ═══════════
++   Profesional: aparece como tarjeta compacta abajo-centro, sin overlay ni scroll-lock.
++   El usuario puede leer el hero, desplazarse e interactuar con todo el sitio con el banner visible.
++   En móvil se apila sobre la dock existente con safe-area y es deslizable para no tapar contenido. */
++.rc{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:95;display:flex;justify-content:center;align-items:flex-end;padding:0 clamp(8px,2vw,16px);width:min(720px,100%);pointer-events:none}
++.rc-card{pointer-events:auto;position:relative;max-width:100%;width:100%;text-align:left;border-radius:var(--r-lg);padding:16px 20px 14px;background:radial-gradient(130% 120% at 20% 0%,#232323 0%,#161616 55%,#0C0C0C 100%);border:1px solid rgba(255,255,255,.16);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 18px 50px rgba(0,0,0,.45);display:grid;grid-template-columns:1fr auto;gap:10px 14px;align-items:center}
++.rc-x{position:static;grid-column:2;grid-row:1;justify-self:end;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;font-size:1rem;line-height:1;cursor:pointer;display:grid;place-items:center;transition:background .16s,border-color .16s}
+ .rc-x:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.45)}
+ .rc-x:focus-visible{outline:2px solid #C9D1F6;outline-offset:2px}
+ .rc .eyebrow{color:#C9D1F6;background:rgba(76,91,212,.22);border-color:rgba(201,209,246,.25)}
+-.rc-h{font-size:clamp(1.45rem,4.2vw,2.6rem);line-height:1.16;letter-spacing:-.01em;color:#fff;margin-top:14px;text-wrap:balance}
+-.rc-sub{font-size:clamp(.95rem,2.2vw,1.08rem);line-height:1.6;color:rgba(255,255,255,.78);max-width:62ch;margin:14px auto 0}
++.rc-body{grid-column:1;grid-row:1}
++.rc-h{font-size:clamp(1.02rem,2.6vw,1.3rem);line-height:1.25;letter-spacing:-.01em;color:#fff;margin-top:8px;text-wrap:balance}
++.rc-sub{font-size:clamp(.86rem,1.9vw,.95rem);line-height:1.5;color:rgba(255,255,255,.78);max-width:62ch;margin:8px 0 0}
+ .rc-sub b{color:#fff}
+-.rc-chips{list-style:none;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:20px 0 0;padding:0}
+-.rc-chips li{display:inline-flex;align-items:center;gap:7px;font-size:.82rem;font-weight:700;color:rgba(255,255,255,.88);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:8px 14px}
+-.rc-chips li::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--salmon);flex:none}
+-.rc-btns{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:26px}
++.rc-chips{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;padding:0}
++.rc-chips li{display:inline-flex;align-items:center;gap:6px;font-size:.74rem;font-weight:700;color:rgba(255,255,255,.88);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 11px}
++.rc-chips li::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--salmon);flex:none}
++.rc-btns{grid-column:1/-1;grid-row:2;display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-start;margin-top:4px}
+ .rc-btns .btn--ghost{color:#fff;border-color:rgba(255,255,255,.35)}
+ .rc-btns .btn--ghost:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.55)}
+-.rc-note{color:rgba(255,255,255,.6);margin:18px auto 0;max-width:56ch;font-size:.8rem;line-height:1.5}
+-.rc-intro{animation:rcIn .5s cubic-bezier(.2,.8,.2,1)}
+-@keyframes rcIn{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
++.rc-note{color:rgba(255,255,255,.6);margin:8px 0 0;max-width:60ch;font-size:.74rem;line-height:1.45}
++.rc-intro{animation:rcIn .5s cubic-bezier(.2,.8,.2,1) .8s backwards}
++@keyframes rcIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+ @media(max-width:640px){
+-  .rc{padding:8px 8px}
+-  .rc-h{font-size:clamp(1.12rem,5vw,1.4rem);margin-top:18px}
+-  .rc-sub{font-size:.88rem;margin-top:10px}
+-  .rc-chips{gap:7px;margin-top:14px}
+-  .rc-chips li{font-size:.72rem;padding:6px 10px}
+-  .rc-btns{flex-direction:column;align-items:stretch;gap:10px;margin-top:18px}
+-  .rc-btns .btn{width:100%;justify-content:center}
+-  .rc-note{font-size:.72rem;margin-top:12px}
++  .rc{bottom:calc(74px + env(safe-area-inset-bottom,0px));padding:0 8px;width:100%}
++  .rc-card{padding:12px 14px 12px;gap:8px 10px}
++  .rc-h{font-size:1rem;margin-top:6px}
++  .rc-sub{font-size:.82rem;margin-top:6px}
++  .rc-chips{display:none}
++  .rc-btns{flex-direction:column;align-items:stretch;gap:8px}
++  .rc-btns .btn{width:100%;justify-content:center;font-size:.92rem;padding:12px 14px}
++  .rc-note{font-size:.7rem}
+ }
+ #recoleccion:focus{outline:none}
+ #recoleccion .btn{white-space:normal}
+@@ -2006,21 +2009,21 @@ const MSJ = {
+ };
+ Object.keys(MSJ).forEach(id => { const el = document.getElementById(id); if (el) el.href = waLink(MSJ[id]); });
+ 
+-/* ── 1b. Banner flotante de recolección inmediata · "Lo checo" / ✕ ─────── */
++/* ── 1b. Banner flotante de recolección inmediata · toast NO bloqueante ───────
++   Profesional: no usa overlay ni bloquea el scroll; aparece tras 0.8s, persistente por sesión. */
+ (function(){
+   const banner = document.getElementById('recoleccion');
+   if (!banner) return;
+   function cerrar(recordar){
+-    document.body.classList.remove('rc-open');
+     if (recordar){ try{ sessionStorage.setItem('rc_visto', '1'); }catch(e){} }
+     banner.style.transition = 'opacity .3s ease, transform .3s ease';
+-    banner.style.opacity = '0'; banner.style.transform = 'translateY(-14px)';
++    banner.style.opacity = '0'; banner.style.transform = 'translateX(-50%) translateY(16px)';
+     setTimeout(() => { banner.style.display = 'none'; }, 320);
+   }
+   let visto = false;
+   try{ visto = sessionStorage.getItem('rc_visto') === '1'; }catch(e){}
+-  if (visto){ cerrar(false); } else { document.body.classList.add('rc-open'); }
+-  try{ banner.classList.add('rc-intro'); }catch(e){}
++  if (visto){ banner.style.display = 'none'; }
++  else { try{ banner.classList.add('rc-intro'); }catch(e){} }
+   ['rcNo','rcNoTxt'].forEach(id => {
+     const b = document.getElementById(id);
+     if (b) b.addEventListener('click', () => cerrar(true));
+@@ -3333,22 +3336,24 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
+ })();
+ </script>
+ 
+-<aside class="rc" id="recoleccion" role="dialog" aria-modal="false" aria-labelledby="rcH" tabindex="-1">
++<aside class="rc" id="recoleccion" role="region" aria-label="Aviso de recolección inmediata" tabindex="-1">
+   <div class="rc-card">
++    <div class="rc-body">
++      <span class="eyebrow"><span class="dot" aria-hidden="true"></span> Recolección inmediata · Hoy mismo en Tapachula</span>
++      <h2 class="rc-h" id="rcH">¿Pasamos por tu equipo a tu dirección y te lo regresamos reparado?</h2>
++      <p class="rc-sub">Un mensajero identificado recoge tu celular, laptop o consola en tu casa o trabajo. Te enviamos el diagnóstico con <b>precio cerrado</b> y solo reparamos si autorizas; te lo devolvemos funcionando y pagas contra entrega, con <b>garantía escrita de 30 días</b>.</p>
++      <ul class="rc-chips" aria-label="Cómo funciona">
++        <li>Precio cerrado antes de tocar tu equipo</li>
++        <li>Boleto con folio al recoger</li>
++        <li>Pago contra entrega: efectivo, transferencia o tarjeta</li>
++      </ul>
++    </div>
+     <button class="rc-x" id="rcNo" type="button" aria-label="Cerrar aviso de recolección" data-trk="rc_lo_chequeo">✕</button>
+-    <span class="eyebrow"><span class="dot" aria-hidden="true"></span> Recolección inmediata · Hoy mismo en Tapachula</span>
+-    <h2 class="rc-h" id="rcH">¿Te gustaría que pasáramos por tu equipo a tu dirección y te lo regresáramos reparado, con toda confianza?</h2>
+-    <p class="rc-sub">Un mensajero identificado recoge tu celular, laptop o consola en tu casa o trabajo, te enviamos el diagnóstico con <b>precio cerrado</b> y solo reparamos si autorizas. Te lo devolvemos funcionando, pagas contra entrega y recibes <b>garantía escrita de 30 días</b>. Con boleto y folio desde el primer minuto.</p>
+-    <ul class="rc-chips" aria-label="Cómo funciona">
+-      <li>Precio cerrado antes de tocar tu equipo</li>
+-      <li>Boleto con folio al recoger</li>
+-      <li>Pago contra entrega: efectivo, transferencia o tarjeta</li>
+-    </ul>
+     <div class="rc-btns">
+-      <a class="btn btn--acc btn--lg" id="rcYes" href="#" rel="noopener" data-trk="rc_acepto_recoleccion">Aceptar: pasen por mi equipo hoy
++      <a class="btn btn--acc" id="rcYes" href="#" rel="noopener" data-trk="rc_acepto_recoleccion">Aceptar: pasen por mi equipo hoy
+         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+       </a>
+-      <button class="btn btn--ghost btn--lg" id="rcNoTxt" type="button" data-trk="rc_lo_chequeo">Lo checo</button>
++      <button class="btn btn--ghost" id="rcNoTxt" type="button" data-trk="rc_lo_chequeo">Lo checo</button>
+     </div>
+     <p class="note rc-note" id="rcNote">La recolección se cotiza en WhatsApp según la distancia. La revisión tiene costo, que se descuenta si autorizas la reparación; si no la autorizas, solo pagas la recolección.</p>
+   </div>
+diff --git a/sitio-reparacion/sw.js b/sitio-reparacion/sw.js
+index 9ce24f7..ec4119b 100644
+--- a/sitio-reparacion/sw.js
++++ b/sitio-reparacion/sw.js
+@@ -9,7 +9,7 @@
+ /* ═══ AUTO-UPDATE: este service worker se revalida solo en cada navegación.
+    Cuando Vercel publica una nueva versión del sitio, la próxima visita ya
+    muestra los cambios (sin "sitio viejo" ni caché atrapada). ═══ */
+-const SW_VER = '2026-10-17-recoleccion-flotante-2';
++const SW_VER = '2026-10-17-recoleccion-toast-3';
+ 
+ self.addEventListener('install', e => self.skipWaiting());
+ self.addEventListener('activate', e => e.waitUntil((async () => {

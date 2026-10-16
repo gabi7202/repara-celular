@@ -1,0 +1,175 @@
+From 977e7f4c1cea8592453d0527e407305b8f74f598 Mon Sep 17 00:00:00 2001
+From: "qwen.ai[bot]" <qwenlm-intl@service.alibaba.com>
+Date: Fri, 16 Oct 2026 23:34:16 +0000
+Subject: [PATCH] =?UTF-8?q?Banner=20recolecci=C3=B3n:=20rectangular,=20apa?=
+ =?UTF-8?q?rece=20al=20hacer=20scroll=20(no=20bloquea=20inicio),=20cierre?=
+ =?UTF-8?q?=20visible=20por=20=E2=9C=95/Cerrar/Escape?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ sitio-reparacion/index.html | 87 ++++++++++++++++++++++++-------------
+ sitio-reparacion/sw.js      |  2 +-
+ 2 files changed, 57 insertions(+), 32 deletions(-)
+
+diff --git a/sitio-reparacion/index.html b/sitio-reparacion/index.html
+index f71eae3..7618d59 100644
+--- a/sitio-reparacion/index.html
++++ b/sitio-reparacion/index.html
+@@ -617,32 +617,38 @@ html[data-theme="dark"] .faq details[open] summary{color:var(--acc)}
+ .hr{height:1px;background:var(--line);border:0;margin:26px 0}
+ .note{font-size:.8rem;color:var(--txt-3)}
+ .badge-live{display:inline-flex;align-items:center;gap:7px;font-size:.76rem;font-weight:800;background:var(--acc-soft);color:var(--acc-ink);padding:6px 12px;border-radius:999px}
+-/* ═══════════ RECOLECCIÓN INMEDIATA · banner flotante tipo toast (NO bloquea el inicio) ═══════════
+-   Profesional: aparece como tarjeta compacta abajo-centro, sin overlay ni scroll-lock.
+-   El usuario puede leer el hero, desplazarse e interactuar con todo el sitio con el banner visible.
+-   En móvil se apila sobre la dock existente con safe-area y es deslizable para no tapar contenido. */
+-.rc{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:95;display:flex;justify-content:center;align-items:flex-end;padding:0 clamp(8px,2vw,16px);width:min(720px,100%);pointer-events:none}
+-.rc-card{pointer-events:auto;position:relative;max-width:100%;width:100%;text-align:left;border-radius:var(--r-lg);padding:16px 20px 14px;background:radial-gradient(130% 120% at 20% 0%,#232323 0%,#161616 55%,#0C0C0C 100%);border:1px solid rgba(255,255,255,.16);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 18px 50px rgba(0,0,0,.45);display:grid;grid-template-columns:1fr auto;gap:10px 14px;align-items:center}
+-.rc-x{position:static;grid-column:2;grid-row:1;justify-self:end;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;font-size:1rem;line-height:1;cursor:pointer;display:grid;place-items:center;transition:background .16s,border-color .16s}
++/* ═══════════ RECOLECCIÓN INMEDIATA · banner flotante rectangular (aparece al hacer scroll) ═══════════
++   Profesional: NO bloquea el inicio — arranca oculto y solo aparece cuando el usuario baja ~320px.
++   Forma rectangular ancha tipo barra de anuncio (esquinas poco redondeadas, proporción horizontal).
++   Cierre garantizado por tres vías visibles: botón "Cerrar" con texto, ✕ arriba a la derecha y Escape. */
++.rc{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(24px);z-index:95;display:flex;justify-content:center;align-items:flex-end;padding:0 clamp(8px,2vw,16px);width:min(980px,100%);pointer-events:none;opacity:0;visibility:hidden;transition:opacity .45s ease,transform .45s cubic-bezier(.2,.8,.2,1),visibility 0s linear .45s}
++.rc.rc-on{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);transition:opacity .45s ease,transform .45s cubic-bezier(.2,.8,.2,1),visibility 0s}
++.rc.rc-out{opacity:0;transform:translateX(-50%) translateY(24px);pointer-events:none}
++.rc-card{pointer-events:auto;position:relative;max-width:100%;width:100%;text-align:left;border-radius:10px;padding:14px 18px 12px;background:linear-gradient(100deg,#1B1B1B 0%,#141414 60%,#0E0E0E 100%);border:1px solid rgba(255,255,255,.16);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 18px 50px rgba(0,0,0,.45);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 14px;align-items:start}
++.rc-x{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;font-size:.95rem;line-height:1;cursor:pointer;display:grid;place-items:center;transition:background .16s,border-color .16s;z-index:2}
+ .rc-x:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.45)}
+ .rc-x:focus-visible{outline:2px solid #C9D1F6;outline-offset:2px}
+ .rc .eyebrow{color:#C9D1F6;background:rgba(76,91,212,.22);border-color:rgba(201,209,246,.25)}
+-.rc-body{grid-column:1;grid-row:1}
+-.rc-h{font-size:clamp(1.02rem,2.6vw,1.3rem);line-height:1.25;letter-spacing:-.01em;color:#fff;margin-top:8px;text-wrap:balance}
+-.rc-sub{font-size:clamp(.86rem,1.9vw,.95rem);line-height:1.5;color:rgba(255,255,255,.78);max-width:62ch;margin:8px 0 0}
++.rc-body{grid-column:1;grid-row:1;min-width:0}
++.rc-h{font-size:clamp(1rem,2.2vw,1.22rem);line-height:1.25;letter-spacing:-.01em;color:#fff;margin-top:8px;padding-right:34px;text-wrap:balance}
++.rc-sub{font-size:clamp(.84rem,1.6vw,.92rem);line-height:1.5;color:rgba(255,255,255,.78);max-width:78ch;margin:6px 0 0}
+ .rc-sub b{color:#fff}
+-.rc-chips{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;padding:0}
+-.rc-chips li{display:inline-flex;align-items:center;gap:6px;font-size:.74rem;font-weight:700;color:rgba(255,255,255,.88);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 11px}
++.rc-chips{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0;padding:0}
++.rc-chips li{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:700;color:rgba(255,255,255,.88);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:5px 10px}
+ .rc-chips li::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--salmon);flex:none}
+-.rc-btns{grid-column:1/-1;grid-row:2;display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-start;margin-top:4px}
++.rc-btns{grid-column:1/-1;grid-row:2;display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-start;margin-top:2px}
+ .rc-btns .btn--ghost{color:#fff;border-color:rgba(255,255,255,.35)}
+ .rc-btns .btn--ghost:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.55)}
+-.rc-note{color:rgba(255,255,255,.6);margin:8px 0 0;max-width:60ch;font-size:.74rem;line-height:1.45}
+-.rc-intro{animation:rcIn .5s cubic-bezier(.2,.8,.2,1) .8s backwards}
+-@keyframes rcIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
++.rc-note{color:rgba(255,255,255,.6);margin:8px 0 0;max-width:78ch;font-size:.72rem;line-height:1.45}
++@media(min-width:861px){
++  /* diseño rectangular horizontal: texto a la izquierda, botones a la derecha, una sola fila */
++  .rc-card{grid-template-columns:minmax(0,1fr) max-content;align-items:center;padding:16px 20px}
++  .rc-body{grid-row:1}
++  .rc-btns{grid-column:2;grid-row:1;flex-direction:column;margin-top:0}
++}
+ @media(max-width:640px){
+   .rc{bottom:calc(74px + env(safe-area-inset-bottom,0px));padding:0 8px;width:100%}
+-  .rc-card{padding:12px 14px 12px;gap:8px 10px}
++  .rc-card{padding:12px 14px 12px;gap:8px 10px;border-radius:10px}
+   .rc-h{font-size:1rem;margin-top:6px}
+   .rc-sub{font-size:.82rem;margin-top:6px}
+   .rc-chips{display:none}
+@@ -2009,27 +2015,46 @@ const MSJ = {
+ };
+ Object.keys(MSJ).forEach(id => { const el = document.getElementById(id); if (el) el.href = waLink(MSJ[id]); });
+ 
+-/* ── 1b. Banner flotante de recolección inmediata · toast NO bloqueante ───────
+-   Profesional: no usa overlay ni bloquea el scroll; aparece tras 0.8s, persistente por sesión. */
++/* ── 1b. Banner flotante de recolección inmediata · rectangular, aparece al hacer scroll ──
++   Profesional: arranca OCULTO (no bloquea el inicio). Se activa cuando el usuario baja ~320px.
++   Cierre por tres vías: botón "Cerrar" con texto, ✕ arriba a la derecha y tecla Escape. */
+ (function(){
+   const banner = document.getElementById('recoleccion');
+   if (!banner) return;
++  let visible = false, cerrado = false;
++  try{ cerrado = sessionStorage.getItem('rc_visto') === '1'; }catch(e){}
++  function mostrar(){
++    if (cerrado || visible) return;
++    visible = true;
++    banner.classList.remove('rc-out');
++    banner.classList.add('rc-on');
++  }
+   function cerrar(recordar){
++    if (!visible) return;
+     if (recordar){ try{ sessionStorage.setItem('rc_visto', '1'); }catch(e){} }
+-    banner.style.transition = 'opacity .3s ease, transform .3s ease';
+-    banner.style.opacity = '0'; banner.style.transform = 'translateX(-50%) translateY(16px)';
+-    setTimeout(() => { banner.style.display = 'none'; }, 320);
++    cerrado = !!recordar || cerrado;
++    visible = false;
++    banner.classList.remove('rc-on');
++    banner.classList.add('rc-out');
+   }
+-  let visto = false;
+-  try{ visto = sessionStorage.getItem('rc_visto') === '1'; }catch(e){}
+-  if (visto){ banner.style.display = 'none'; }
+-  else { try{ banner.classList.add('rc-intro'); }catch(e){} }
++  if (!cerrado){
++    let ya = false;
++    const onScroll = () => {
++      if (ya) return;
++      const y = window.scrollY || document.documentElement.scrollTop || 0;
++      if (y > 320){ ya = true; mostrar(); window.removeEventListener('scroll', onScroll, {passive:true}); }
++    };
++    window.addEventListener('scroll', onScroll, {passive:true});
++    /* respaldo táctil: si el usuario interactúa con el contenido también se activa */
++    document.addEventListener('touchmove', onScroll, {passive:true});
++  }
++  /* botones de cierre: ✕ (rcNo), "Lo checo / Cerrar" (rcNoTxt) — preventDefault evita que el enlace dispare navegación */
+   ['rcNo','rcNoTxt'].forEach(id => {
+     const b = document.getElementById(id);
+-    if (b) b.addEventListener('click', () => cerrar(true));
++    if (b) b.addEventListener('click', ev => { ev.preventDefault(); ev.stopPropagation(); cerrar(true); });
+   });
+   document.addEventListener('keydown', e => {
+-    if (e.key === 'Escape' && banner.style.display !== 'none') cerrar(true);
++    if (e.key === 'Escape' && visible) cerrar(true);
+   });
+ })();
+ 
+@@ -3338,6 +3363,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
+ 
+ <aside class="rc" id="recoleccion" role="region" aria-label="Aviso de recolección inmediata" tabindex="-1">
+   <div class="rc-card">
++    <button class="rc-x" id="rcNo" type="button" aria-label="Cerrar aviso de recolección" title="Cerrar" data-trk="rc_lo_chequeo">✕</button>
+     <div class="rc-body">
+       <span class="eyebrow"><span class="dot" aria-hidden="true"></span> Recolección inmediata · Hoy mismo en Tapachula</span>
+       <h2 class="rc-h" id="rcH">¿Pasamos por tu equipo a tu dirección y te lo regresamos reparado?</h2>
+@@ -3347,15 +3373,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
+         <li>Boleto con folio al recoger</li>
+         <li>Pago contra entrega: efectivo, transferencia o tarjeta</li>
+       </ul>
++      <p class="note rc-note" id="rcNote">La recolección se cotiza en WhatsApp según la distancia. La revisión tiene costo, que se descuenta si autorizas la reparación; si no la autorizas, solo pagas la recolección.</p>
+     </div>
+-    <button class="rc-x" id="rcNo" type="button" aria-label="Cerrar aviso de recolección" data-trk="rc_lo_chequeo">✕</button>
+     <div class="rc-btns">
+       <a class="btn btn--acc" id="rcYes" href="#" rel="noopener" data-trk="rc_acepto_recoleccion">Aceptar: pasen por mi equipo hoy
+         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+       </a>
+-      <button class="btn btn--ghost" id="rcNoTxt" type="button" data-trk="rc_lo_chequeo">Lo checo</button>
++      <button class="btn btn--ghost" id="rcNoTxt" type="button" data-trk="rc_lo_chequeo">Lo checo · Cerrar</button>
+     </div>
+-    <p class="note rc-note" id="rcNote">La recolección se cotiza en WhatsApp según la distancia. La revisión tiene costo, que se descuenta si autorizas la reparación; si no la autorizas, solo pagas la recolección.</p>
+   </div>
+ </aside>
+ 
+diff --git a/sitio-reparacion/sw.js b/sitio-reparacion/sw.js
+index ec4119b..852c4b2 100644
+--- a/sitio-reparacion/sw.js
++++ b/sitio-reparacion/sw.js
+@@ -9,7 +9,7 @@
+ /* ═══ AUTO-UPDATE: este service worker se revalida solo en cada navegación.
+    Cuando Vercel publica una nueva versión del sitio, la próxima visita ya
+    muestra los cambios (sin "sitio viejo" ni caché atrapada). ═══ */
+-const SW_VER = '2026-10-17-recoleccion-toast-3';
++const SW_VER = '2026-10-17-recoleccion-scroll-4';
+ 
+ self.addEventListener('install', e => self.skipWaiting());
+ self.addEventListener('activate', e => e.waitUntil((async () => {
+-- 
+2.39.5
+

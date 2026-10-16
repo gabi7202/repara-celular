@@ -9,7 +9,7 @@
 /* ═══ AUTO-UPDATE: este service worker se revalida solo en cada navegación.
    Cuando Vercel publica una nueva versión del sitio, la próxima visita ya
    muestra los cambios (sin "sitio viejo" ni caché atrapada). ═══ */
-const SW_VER = '2026-10-17-recoleccion-banner-1';
+const SW_VER = '2026-10-17-recoleccion-fullbleed-5';
 
 self.addEventListener('install', e => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil((async () => {
