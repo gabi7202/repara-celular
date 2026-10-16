@@ -617,10 +617,13 @@ html[data-theme="dark"] .faq details[open] summary{color:var(--acc)}
 .hr{height:1px;background:var(--line);border:0;margin:26px 0}
 .note{font-size:.8rem;color:var(--txt-3)}
 .badge-live{display:inline-flex;align-items:center;gap:7px;font-size:.76rem;font-weight:800;background:var(--acc-soft);color:var(--acc-ink);padding:6px 12px;border-radius:999px}
-/* ═══════════ RECOLECCIÓN INMEDIATA · banner tipo ads (primer objetivo de conversión) ═══════════ */
-.rc{position:relative;min-height:calc(100svh - 64px);display:flex;align-items:center;padding:clamp(28px,6vh,64px) 0;background:radial-gradient(120% 90% at 50% 0%,#232323 0%,var(--ink) 55%,#0C0C0C 100%);color:#fff}
-.rc-wrap{width:100%}
-.rc-card{max-width:980px;margin:0 auto;text-align:center;border-radius:var(--r-xl);padding:clamp(26px,5vw,56px) clamp(20px,5vw,60px);background:linear-gradient(160deg,rgba(76,91,212,.16),rgba(255,255,255,.03) 55%),rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12)}
+/* ═══════════ RECOLECCIÓN INMEDIATA · banner FLOTANTE encima del sitio (primer objetivo de conversión) ═══════════ */
+.rc{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:center;align-items:flex-start;padding:14px clamp(10px,3vw,24px);pointer-events:none;background:linear-gradient(rgba(12,12,12,.55),rgba(12,12,12,.18) 70%,transparent);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);max-height:100svh;overflow-y:auto}
+body.rc-open{overflow:hidden}
+.rc-card{pointer-events:auto;position:relative;max-width:980px;width:100%;text-align:center;border-radius:var(--r-xl);padding:clamp(20px,4vw,40px) clamp(16px,4vw,48px);background:radial-gradient(120% 90% at 50% 0%,#232323 0%,#161616 60%,#0C0C0C 100%);border:1px solid rgba(255,255,255,.14);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 30px 90px rgba(0,0,0,.55)}
+.rc-x{position:absolute;top:10px;right:12px;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;font-size:1rem;line-height:1;cursor:pointer;display:grid;place-items:center;transition:background .16s,border-color .16s}
+.rc-x:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.45)}
+.rc-x:focus-visible{outline:2px solid #C9D1F6;outline-offset:2px}
 .rc .eyebrow{color:#C9D1F6;background:rgba(76,91,212,.22);border-color:rgba(201,209,246,.25)}
 .rc-h{font-size:clamp(1.45rem,4.2vw,2.6rem);line-height:1.16;letter-spacing:-.01em;color:#fff;margin-top:14px;text-wrap:balance}
 .rc-sub{font-size:clamp(.95rem,2.2vw,1.08rem);line-height:1.6;color:rgba(255,255,255,.78);max-width:62ch;margin:14px auto 0}
@@ -635,12 +638,16 @@ html[data-theme="dark"] .faq details[open] summary{color:var(--acc)}
 .rc-intro{animation:rcIn .5s cubic-bezier(.2,.8,.2,1)}
 @keyframes rcIn{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
 @media(max-width:640px){
-  .rc{min-height:auto;padding:26px 0 34px}
-  .rc-btns{flex-direction:column;align-items:stretch}
+  .rc{padding:8px 8px}
+  .rc-h{font-size:clamp(1.12rem,5vw,1.4rem);margin-top:18px}
+  .rc-sub{font-size:.88rem;margin-top:10px}
+  .rc-chips{gap:7px;margin-top:14px}
+  .rc-chips li{font-size:.72rem;padding:6px 10px}
+  .rc-btns{flex-direction:column;align-items:stretch;gap:10px;margin-top:18px}
   .rc-btns .btn{width:100%;justify-content:center}
+  .rc-note{font-size:.72rem;margin-top:12px}
 }
 #recoleccion:focus{outline:none}
-#recoleccion .rc-card{box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),0 30px 90px rgba(0,0,0,.5)}
 #recoleccion .btn{white-space:normal}
 @media print{
   .topbar,.hdr,.dock,.wa-float,.hero-cta,.no-print,#recoleccion{display:none!important}
@@ -873,30 +880,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
 </header>
 
 <main id="contenido">
-<!-- ══════════════ RECOLECCIÓN INMEDIATA · primer objetivo de conversión (banner tipo ads) ══════════════ -->
-<section class="rc" id="recoleccion" tabindex="-1" aria-label="Recolección inmediata a domicilio">
-  <div class="wrap rc-wrap">
-    <div class="rc-card rv">
-      <span class="eyebrow"><span class="dot" aria-hidden="true"></span> Recolección inmediata · Hoy mismo en Tapachula</span>
-      <h2 class="rc-h">¿Te gustaría que pasáramos por tu equipo a tu dirección y te lo regresáramos reparado, con toda confianza?</h2>
-      <p class="rc-sub">Un mensajero identificado recoge tu celular, laptop o consola en tu casa o trabajo, te enviamos el diagnóstico con <b>precio cerrado</b> y solo reparamos si autorizas. Te lo devolvemos funcionando, pagas contra entrega y recibes <b>garantía escrita de 30 días</b>. Con boleto y folio desde el primer minuto.</p>
-      <ul class="rc-chips" aria-label="Cómo funciona">
-        <li>Precio cerrado antes de tocar tu equipo</li>
-        <li>Boleto con folio al recoger</li>
-        <li>Pago contra entrega: efectivo, transferencia o tarjeta</li>
-        <li>Si no autorizas, lo devolvemos sin costo de revisión</li>
-      </ul>
-      <div class="rc-btns">
-        <a class="btn btn--acc btn--lg" id="rcYes" href="#" rel="noopener" data-trk="rc_acepto_recoleccion">Aceptar: pasen por mi equipo hoy
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
-        <button class="btn btn--ghost btn--lg" id="rcNo" type="button" data-trk="rc_lo_chequeo">Lo checo</button>
-      </div>
-      <p class="note rc-note" id="rcNote">Sin compromiso: responde 2 preguntas por WhatsApp y confirmamos la franja de recolección (mañana o tarde) según agenda.</p>
-    </div>
-  </div>
-</section>
-
+<!-- ══════════════ RECOLECCIÓN INMEDIATA · banner flotante (primer objetivo de conversión) ══════════════ -->
 <!-- ══════════════ HERO ══════════════ -->
 <section class="hero" id="inicio">
   <div class="wrap">
@@ -2022,22 +2006,27 @@ const MSJ = {
 };
 Object.keys(MSJ).forEach(id => { const el = document.getElementById(id); if (el) el.href = waLink(MSJ[id]); });
 
-/* ── 1b. Banner de recolección inmediata · "Lo checo" ───────────────────── */
+/* ── 1b. Banner flotante de recolección inmediata · "Lo checo" / ✕ ─────── */
 (function(){
   const banner = document.getElementById('recoleccion');
   if (!banner) return;
-  try{ if (sessionStorage.getItem('rc_visto') === '1'){ banner.style.display = 'none'; } }catch(e){}
+  function cerrar(recordar){
+    document.body.classList.remove('rc-open');
+    if (recordar){ try{ sessionStorage.setItem('rc_visto', '1'); }catch(e){} }
+    banner.style.transition = 'opacity .3s ease, transform .3s ease';
+    banner.style.opacity = '0'; banner.style.transform = 'translateY(-14px)';
+    setTimeout(() => { banner.style.display = 'none'; }, 320);
+  }
+  let visto = false;
+  try{ visto = sessionStorage.getItem('rc_visto') === '1'; }catch(e){}
+  if (visto){ cerrar(false); } else { document.body.classList.add('rc-open'); }
   try{ banner.classList.add('rc-intro'); }catch(e){}
-  const no = document.getElementById('rcNo');
-  if (no) no.addEventListener('click', () => {
-    try{ sessionStorage.setItem('rc_visto', '1'); }catch(e){}
-    banner.style.transition = 'opacity .35s ease, transform .35s ease';
-    banner.style.opacity = '0'; banner.style.transform = 'translateY(-12px)';
-    setTimeout(() => {
-      banner.style.display = 'none';
-      const hero = document.getElementById('inicio');
-      if (hero){ hero.scrollIntoView({ behavior:'smooth', block:'start' }); try{ hero.focus({ preventScroll:true }); }catch(e){} }
-    }, 360);
+  ['rcNo','rcNoTxt'].forEach(id => {
+    const b = document.getElementById(id);
+    if (b) b.addEventListener('click', () => cerrar(true));
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && banner.style.display !== 'none') cerrar(true);
   });
 })();
 
@@ -3343,6 +3332,28 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   else registrarYEvaluar();
 })();
 </script>
+
+<aside class="rc" id="recoleccion" role="dialog" aria-modal="false" aria-labelledby="rcH" tabindex="-1">
+  <div class="rc-card">
+    <button class="rc-x" id="rcNo" type="button" aria-label="Cerrar aviso de recolección" data-trk="rc_lo_chequeo">✕</button>
+    <span class="eyebrow"><span class="dot" aria-hidden="true"></span> Recolección inmediata · Hoy mismo en Tapachula</span>
+    <h2 class="rc-h" id="rcH">¿Te gustaría que pasáramos por tu equipo a tu dirección y te lo regresáramos reparado, con toda confianza?</h2>
+    <p class="rc-sub">Un mensajero identificado recoge tu celular, laptop o consola en tu casa o trabajo, te enviamos el diagnóstico con <b>precio cerrado</b> y solo reparamos si autorizas. Te lo devolvemos funcionando, pagas contra entrega y recibes <b>garantía escrita de 30 días</b>. Con boleto y folio desde el primer minuto.</p>
+    <ul class="rc-chips" aria-label="Cómo funciona">
+      <li>Precio cerrado antes de tocar tu equipo</li>
+      <li>Boleto con folio al recoger</li>
+      <li>Pago contra entrega: efectivo, transferencia o tarjeta</li>
+    </ul>
+    <div class="rc-btns">
+      <a class="btn btn--acc btn--lg" id="rcYes" href="#" rel="noopener" data-trk="rc_acepto_recoleccion">Aceptar: pasen por mi equipo hoy
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <button class="btn btn--ghost btn--lg" id="rcNoTxt" type="button" data-trk="rc_lo_chequeo">Lo checo</button>
+    </div>
+    <p class="note rc-note" id="rcNote">La recolección se cotiza en WhatsApp según la distancia. La revisión tiene costo, que se descuenta si autorizas la reparación; si no la autorizas, solo pagas la recolección.</p>
+  </div>
+</aside>
+
 
 </body>
 </html>
