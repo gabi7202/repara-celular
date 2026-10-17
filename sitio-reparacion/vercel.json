@@ -76,6 +76,14 @@
       ]
     }
   ],
+  "redirects": [
+    { "source": "/mi-celular-se-mojo-que-hacer", "destination": "/blog/mi-celular-se-mojo-que-hacer/", "permanent": true },
+    { "source": "/celular-no-enciende-causas-y-soluciones", "destination": "/blog/celular-no-enciende-causas-y-soluciones/", "permanent": true },
+    { "source": "/no-carga-puerto-o-bateria", "destination": "/blog/no-carga-puerto-o-bateria/", "permanent": true },
+    { "source": "/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula", "destination": "/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/", "permanent": true },
+    { "source": "/samsung-a17-bloqueado-por-empresa-frp-knox-pago", "destination": "/blog/samsung-a17-bloqueado-por-empresa-frp-knox-pago/", "permanent": true },
+    { "source": "/samsung-galaxy-a17-pantalla-rota-precio", "destination": "/blog/samsung-galaxy-a17-pantalla-rota-precio/", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/servicio", "destination": "/index.html" },
     { "source": "/nosotros", "destination": "/nosotros.html" },

@@ -9,7 +9,7 @@
 /* ═══ AUTO-UPDATE: este service worker se revalida solo en cada navegación.
    Cuando Vercel publica una nueva versión del sitio, la próxima visita ya
    muestra los cambios (sin "sitio viejo" ni caché atrapada). ═══ */
-const SW_VER = '2026-10-17-rutas-limpias-seo-8';
+const SW_VER = '2026-10-17-links-404-fix-9';
 
 self.addEventListener('install', e => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil((async () => {
