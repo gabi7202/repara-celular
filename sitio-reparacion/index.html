@@ -45,6 +45,47 @@
 <!-- ══════════════ PERFORMANCE: preload del hero + LQIP inline (cero CLS, cero fuentes externas) ══════════════ -->
 <link rel="preload" as="image" href="assets/hero.webp" fetchpriority="high" imagesrcset="assets/hero.webp 1400w" imagesizes="(max-width: 760px) 100vw, 640px">
 
+<!-- ══════════════ ADSense + GA4: CARGA DIFERIDA (no bloquean el render) ══════════════
+     Regla de rendimiento: ningún script externo se descarga con el sitio. Se inyectan
+     SOLO cuando el usuario demuestra actividad (primer scroll/tap/tecla) o a los 4 s
+     si sigue leyendo. Así el HTML+CSS inline pinta primero y el LCP queda < 3 s.
+     Si no hay interacción tras 6 s, reintentamos cuando la pestaña vuelva a estar visible. -->
+<script>
+(function(){
+  var GID='G-1RMT73X27S', APUB='ca-pub-7674171624138112', listos=false, t1=null;
+  function cargar(){
+    if(listos) return; listos=true;
+    if(t1) clearTimeout(t1);
+    /* 1) Analítica GA4 (async, colita del head-body → nunca bloquea) */
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function(){ dataLayer.push(arguments); };
+    gtag('js', new Date());
+    gtag('config', GID, { anonymize_ip: true });
+    var gs = document.createElement('script');
+    gs.async = true;
+    gs.src = 'https://www.googletagmanager.com/gtag/js?id=' + GID;
+    document.body.appendChild(gs);
+    /* 2) AdSense (async + crossorigin, igual que la etiqueta oficial) */
+    var ad = document.createElement('script');
+    ad.async = true; ad.crossOrigin = 'anonymous';
+    ad.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + APUB;
+    document.body.appendChild(ad);
+  }
+  function activar(){
+    ['scroll','touchstart','pointerdown','keydown'].forEach(function(ev){
+      window.addEventListener(ev, cargar, { once:true, passive:true, capture:true });
+    });
+    document.addEventListener('visibilitychange', function(){
+      if(!document.hidden && !listos) t1 = setTimeout(cargar, 6000);
+    });
+    t1 = setTimeout(cargar, 4000); /* usuario leyendo sin moverse → carga en background */
+  }
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', activar);
+  else activar();
+})();
+</script>
+
 <!-- Verificación de Search Console (pega aquí tu token) -->
 <!-- <meta name="google-site-verification" content="TU_TOKEN"> -->
 
