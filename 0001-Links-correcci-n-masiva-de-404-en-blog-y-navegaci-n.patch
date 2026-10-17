@@ -1,0 +1,320 @@
+From 0f661b9d64029c16618261ce1cd272b7f20d7cf2 Mon Sep 17 00:00:00 2001
+From: "qwen.ai[bot]" <qwenlm-intl@service.alibaba.com>
+Date: Sat, 17 Oct 2026 00:56:01 +0000
+Subject: [PATCH] =?UTF-8?q?Links:=20correcci=C3=B3n=20masiva=20de=20404=20?=
+ =?UTF-8?q?en=20blog=20y=20navegaci=C3=B3n?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- vercel.json: +6 redirects 301 permanentes de URLs cortas de posts (/mi-celular-se-mojo-que-hacer etc.) a su ruta real /blog/<slug>/ — elimina el 404 reportado.
+- index.html, nosotros.html: anclas '/#x' -> '/servicio#x' (Vercel sirve la raíz, no /servicio como ancla).
+- blog/index.html y 6 posts: todas las anclas '../#' y '../../#' -> '/servicio#' para que funcionen desde cualquier profundidad.
+- Ping simulando Vercel sobre 323 URLs internas: CERO 404. Rutas clave: /, /servicio, /nosotros, /privacidad, /terminos, /blog/, 6 posts = 200; /mi-celular-se-mojo-que-hacer = 301.
+- sw.js: SW_VER bump a 'links-404-fix-9'.
+---
+ .../index.html                                |  8 +++----
+ .../index.html                                | 22 +++++++++----------
+ sitio-reparacion/blog/index.html              | 20 ++++++++---------
+ .../mi-celular-se-mojo-que-hacer/index.html   |  8 +++----
+ .../blog/no-carga-puerto-o-bateria/index.html |  8 +++----
+ .../index.html                                |  8 +++----
+ .../index.html                                |  8 +++----
+ sitio-reparacion/nosotros.html                | 12 +++++-----
+ sitio-reparacion/sw.js                        |  2 +-
+ sitio-reparacion/vercel.json                  |  8 +++++++
+ 10 files changed, 56 insertions(+), 48 deletions(-)
+
+diff --git a/sitio-reparacion/blog/celular-no-enciende-causas-y-soluciones/index.html b/sitio-reparacion/blog/celular-no-enciende-causas-y-soluciones/index.html
+index 9c06a59..e718e75 100644
+--- a/sitio-reparacion/blog/celular-no-enciende-causas-y-soluciones/index.html
++++ b/sitio-reparacion/blog/celular-no-enciende-causas-y-soluciones/index.html
+@@ -76,12 +76,12 @@
+       <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+     </button>
+     <nav id="menu" aria-label="Navegación principal">
+-      <a href="../../#cotizador">Cotizar</a>
+-      <a href="../../#servicios">Servicios</a>
++      <a href="/servicio#cotizador">Cotizar</a>
++      <a href="/servicio#servicios">Servicios</a>
+       <a href="../" class="is-active">Blog</a>
+       <a href="../../nosotros.html">Nosotros</a>
+       <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Mi%20celular%20no%20enciende%2C%20%C2%BFme%20pueden%20ayudar%3F" rel="noopener">WhatsApp</a>
+-      <a class="btn btn--acc" href="../../#diagnostico">Agendar</a>
++      <a class="btn btn--acc" href="/servicio#diagnostico">Agendar</a>
+     </nav>
+   </div>
+ </header>
+@@ -172,7 +172,7 @@
+       <p>Tráelo o mándanos una foto/video de qué hace (o qué no hace) por WhatsApp. Te decimos la causa probable y el precio ANTES de que salgas de tu casa. Diagnóstico gratis, Tapachula y domicilio disponible.</p>
+       <div class="btn-row">
+         <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Mi%20celular%20(es%20modelo%20________)%20no%20enciende.%20Ya%20prob%C3%A9%20cargar%20y%20reinicio%20forzado.%20%C2%BFQu%C3%A9%20puede%20ser%3F" rel="noopener">Enviar mi caso por WhatsApp</a>
+-        <a class="btn btn--acc" href="../../#cotizador">Ir al cotizador</a>
++        <a class="btn btn--acc" href="/servicio#cotizador">Ir al cotizador</a>
+       </div>
+     </section>
+ 
+diff --git a/sitio-reparacion/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html b/sitio-reparacion/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html
+index 3e716df..8bcaf3a 100644
+--- a/sitio-reparacion/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html
++++ b/sitio-reparacion/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html
+@@ -96,17 +96,17 @@
+       <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+     </button>
+     <nav id="menu" aria-label="Navegación principal">
+-      <a href="../../#servicios">Servicios</a>
+-      <a href="../../#cotizador">Cotizador</a>
+-      <a href="../../#precios">Precios</a>
+-      <a href="../../#domicilio">A domicilio</a>
+-      <a href="../../#proceso">Proceso</a>
+-      <a href="../../#resenas">Reseñas</a>
+-      <a href="../../#faq">FAQ</a>
+-      <a href="../../#ubicacion">Ubicación</a>
++      <a href="/servicio#servicios">Servicios</a>
++      <a href="/servicio#cotizador">Cotizador</a>
++      <a href="/servicio#precios">Precios</a>
++      <a href="/servicio#domicilio">A domicilio</a>
++      <a href="/servicio#proceso">Proceso</a>
++      <a href="/servicio#resenas">Reseñas</a>
++      <a href="/servicio#faq">FAQ</a>
++      <a href="/servicio#ubicacion">Ubicación</a>
+       <a href="../../blog/" class="is-active">Blog</a>
+       <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Quiero%20cotizar%20una%20reparaci%C3%B3n." rel="noopener">WhatsApp</a>
+-      <a class="btn btn--acc" href="../../#diagnostico">Agendar</a>
++      <a class="btn btn--acc" href="/servicio#diagnostico">Agendar</a>
+     </nav>
+   </div>
+ </header>
+@@ -257,9 +257,9 @@
+       <h2>Obtén tu precio exacto en 60 segundos</h2>
+       <p>Usa nuestro cotizador: eliges marca, modelo y calidad de pieza, y ves el rango al instante. Luego generas un boleto con folio y código QR para presentarlo en el taller o dárselo al mensajero si pides recolección a domicilio.</p>
+       <div class="btn-row">
+-        <a class="btn btn--acc" href="../../#cotizador">Abrir el cotizador</a>
++        <a class="btn btn--acc" href="/servicio#cotizador">Abrir el cotizador</a>
+         <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Quiero%20cotizar%20el%20cambio%20de%20pantalla%20de%20mi%20celular.%20Marca%20y%20modelo%3A%20" rel="noopener">Cotizar por WhatsApp</a>
+-        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="../../#precios">Ver lista completa de precios</a>
++        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="/servicio#precios">Ver lista completa de precios</a>
+       </div>
+     </section>
+ 
+diff --git a/sitio-reparacion/blog/index.html b/sitio-reparacion/blog/index.html
+index ff2fe55..9d2d78a 100644
+--- a/sitio-reparacion/blog/index.html
++++ b/sitio-reparacion/blog/index.html
+@@ -71,17 +71,17 @@
+       <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+     </button>
+     <nav id="menu" aria-label="Navegación principal">
+-      <a href="../#servicios">Servicios</a>
+-      <a href="../#cotizador">Cotizador</a>
+-      <a href="../#precios">Precios</a>
+-      <a href="../#domicilio">A domicilio</a>
+-      <a href="../#proceso">Proceso</a>
+-      <a href="../#resenas">Reseñas</a>
+-      <a href="../#faq">FAQ</a>
+-      <a href="../#ubicacion">Ubicación</a>
++      <a href="/servicio#servicios">Servicios</a>
++      <a href="/servicio#cotizador">Cotizador</a>
++      <a href="/servicio#precios">Precios</a>
++      <a href="/servicio#domicilio">A domicilio</a>
++      <a href="/servicio#proceso">Proceso</a>
++      <a href="/servicio#resenas">Reseñas</a>
++      <a href="/servicio#faq">FAQ</a>
++      <a href="/servicio#ubicacion">Ubicación</a>
+       <a href="../blog/" class="is-active">Blog</a>
+       <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Quiero%20cotizar%20una%20reparaci%C3%B3n." rel="noopener">WhatsApp</a>
+-      <a class="btn btn--acc" href="../#diagnostico">Agendar</a>
++      <a class="btn btn--acc" href="/servicio#diagnostico">Agendar</a>
+     </nav>
+   </div>
+ </header>
+@@ -158,7 +158,7 @@
+     <h2>¿Prefieres ir al grano?</h2>
+     <p>Usa el cotizador y obtén un rango de precio en 60 segundos, con pieza y mano de obra incluidas. Si te interesa, generas un boleto con folio y lo confirmas por WhatsApp.</p>
+     <div class="btn-row">
+-      <a class="btn btn--acc" href="../#cotizador">Abrir el cotizador</a>
++      <a class="btn btn--acc" href="/servicio#cotizador">Abrir el cotizador</a>
+       <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="https://wa.me/529622889585" rel="noopener">Preguntar por WhatsApp</a>
+     </div>
+   </section>
+diff --git a/sitio-reparacion/blog/mi-celular-se-mojo-que-hacer/index.html b/sitio-reparacion/blog/mi-celular-se-mojo-que-hacer/index.html
+index 8390048..ee21afe 100644
+--- a/sitio-reparacion/blog/mi-celular-se-mojo-que-hacer/index.html
++++ b/sitio-reparacion/blog/mi-celular-se-mojo-que-hacer/index.html
+@@ -76,12 +76,12 @@
+       <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+     </button>
+     <nav id="menu" aria-label="Navegación principal">
+-      <a href="../../#cotizador">Cotizar</a>
+-      <a href="../../#servicios">Servicios</a>
++      <a href="/servicio#cotizador">Cotizar</a>
++      <a href="/servicio#servicios">Servicios</a>
+       <a href="../" class="is-active">Blog</a>
+       <a href="../../nosotros.html">Nosotros</a>
+       <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Mi%20celular%20se%20moj%C3%B3%2C%20necesito%20ayuda%20urgente." rel="noopener">Urgencia WhatsApp</a>
+-      <a class="btn btn--acc" href="../../#diagnostico">Agendar</a>
++      <a class="btn btn--acc" href="/servicio#diagnostico">Agendar</a>
+     </nav>
+   </div>
+ </header>
+@@ -179,7 +179,7 @@
+       <p>Diagnóstico y revisión interna gratis. Lavado y desulfatación con garantía de 30 días; el aproximado lo confirmas al instante en el cotizador. Escríbenos AHORA con la marca y modelo, y te decimos en 5 minutos cómo traerlo.</p>
+       <div class="btn-row">
+         <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Se%20me%20moj%C3%B3%20mi%20celular%20(es%20un%20________).%20%C2%BFMe%20pueden%20ayudar%3F" rel="noopener">🆘 Urgencia: se me mojó</a>
+-        <a class="btn btn--acc" href="../../#cotizador">Cotizar en línea</a>
++        <a class="btn btn--acc" href="/servicio#cotizador">Cotizar en línea</a>
+       </div>
+     </section>
+ 
+diff --git a/sitio-reparacion/blog/no-carga-puerto-o-bateria/index.html b/sitio-reparacion/blog/no-carga-puerto-o-bateria/index.html
+index 13ce74f..b481821 100644
+--- a/sitio-reparacion/blog/no-carga-puerto-o-bateria/index.html
++++ b/sitio-reparacion/blog/no-carga-puerto-o-bateria/index.html
+@@ -76,12 +76,12 @@
+       <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+     </button>
+     <nav id="menu" aria-label="Navegación principal">
+-      <a href="../../#cotizador">Cotizar</a>
+-      <a href="../../#servicios">Servicios</a>
++      <a href="/servicio#cotizador">Cotizar</a>
++      <a href="/servicio#servicios">Servicios</a>
+       <a href="../" class="is-active">Blog</a>
+       <a href="../../nosotros.html">Nosotros</a>
+       <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Mi%20celular%20no%20carga%2C%20%C2%BFme%20pueden%20ayudar%3F" rel="noopener">WhatsApp</a>
+-      <a class="btn btn--acc" href="../../#diagnostico">Agendar</a>
++      <a class="btn btn--acc" href="/servicio#diagnostico">Agendar</a>
+     </nav>
+   </div>
+ </header>
+@@ -157,7 +157,7 @@
+       <p>Mándanos por WhatsApp marca, modelo y qué hace exactamente tu equipo al conectarlo (foto/video del puerto si puedes). Te respondemos con causa probable y precio antes de que salgas de casa. O ven directo: Quinceava Avenida Sur esq. 18a Calle Oriente, Col. Los Naranjos, Tapachula.</p>
+       <div class="btn-row">
+         <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Mi%20celular%20(es%20modelo%20________)%20no%20carga.%20Al%20conectarlo%20__________.%20%C2%BFQu%C3%A9%20ser%C3%A1%3F" rel="noopener">🔌 Enviar mi caso por WhatsApp</a>
+-        <a class="btn btn--acc" href="../../#cotizador">Ir al cotizador</a>
++        <a class="btn btn--acc" href="/servicio#cotizador">Ir al cotizador</a>
+       </div>
+     </section>
+ 
+diff --git a/sitio-reparacion/blog/samsung-a17-bloqueado-por-empresa-frp-knox-pago/index.html b/sitio-reparacion/blog/samsung-a17-bloqueado-por-empresa-frp-knox-pago/index.html
+index 4549754..8080724 100644
+--- a/sitio-reparacion/blog/samsung-a17-bloqueado-por-empresa-frp-knox-pago/index.html
++++ b/sitio-reparacion/blog/samsung-a17-bloqueado-por-empresa-frp-knox-pago/index.html
+@@ -76,12 +76,12 @@
+       <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+     </button>
+     <nav id="menu" aria-label="Navegación principal">
+-      <a href="../../#cotizador">Cotizar</a>
+-      <a href="../../#servicios">Servicios</a>
++      <a href="/servicio#cotizador">Cotizar</a>
++      <a href="/servicio#servicios">Servicios</a>
+       <a href="../" class="is-active">Blog</a>
+       <a href="../../nosotros.html">Nosotros</a>
+       <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Mi%20Samsung%20A17%20est%C3%A1%20bloqueado%20por%20empresa%2C%20%C2%BFme%20pueden%20ayudar%3F" rel="noopener">WhatsApp</a>
+-      <a class="btn btn--acc" href="../../#diagnostico">Agendar</a>
++      <a class="btn btn--acc" href="/servicio#diagnostico">Agendar</a>
+     </nav>
+   </div>
+ </header>
+@@ -180,7 +180,7 @@
+       <p>Mándanos una <b>foto del mensaje de bloqueo</b> y tu IMEI por WhatsApp. Te decimos gratis qué tipo de bloqueo tiene tu equipo, qué se puede hacer de forma segura y cómo apoyar la regularización con la empresa. Sin falsas promesas y sin tocar nada sin revisarlo primero.</p>
+       <div class="btn-row">
+         <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Mi%20Samsung%20A17%20est%C3%A1%20bloqueado%20por%20empresa%2Ffalta%20de%20pago.%20IMEI%3A%20__________%20%C2%BFc%C3%B3mo%20me%20pueden%20apoyar%3F" rel="noopener">Revisar mi caso por WhatsApp</a>
+-        <a class="btn btn--acc" href="../../#diagnostico">Agendar diagnóstico gratis</a>
++        <a class="btn btn--acc" href="/servicio#diagnostico">Agendar diagnóstico gratis</a>
+       </div>
+     </section>
+ 
+diff --git a/sitio-reparacion/blog/samsung-galaxy-a17-pantalla-rota-precio/index.html b/sitio-reparacion/blog/samsung-galaxy-a17-pantalla-rota-precio/index.html
+index 69e64bb..4380995 100644
+--- a/sitio-reparacion/blog/samsung-galaxy-a17-pantalla-rota-precio/index.html
++++ b/sitio-reparacion/blog/samsung-galaxy-a17-pantalla-rota-precio/index.html
+@@ -92,12 +92,12 @@
+       <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+     </button>
+     <nav id="menu" aria-label="Navegación principal">
+-      <a href="../../#cotizador">Cotizar</a>
+-      <a href="../../#servicios">Servicios</a>
++      <a href="/servicio#cotizador">Cotizar</a>
++      <a href="/servicio#servicios">Servicios</a>
+       <a href="../" class="is-active">Blog</a>
+       <a href="../../nosotros.html">Nosotros</a>
+       <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Se%20me%20rompi%C3%B3%20la%20pantalla%20de%20mi%20Samsung%20Galaxy%20A17%2C%20%C2%BFcu%C3%A1nto%20cuesta%3F" rel="noopener">WhatsApp</a>
+-      <a class="btn btn--acc" href="../../#diagnostico">Agendar</a>
++      <a class="btn btn--acc" href="/servicio#diagnostico">Agendar</a>
+     </nav>
+   </div>
+ </header>
+@@ -184,7 +184,7 @@
+       <p>Mándanos por WhatsApp una foto de la pantalla y el modelo exacto (A17 4G o A17 5G: Ajustes › Acerca del teléfono). Te respondemos con causa, precio cerrado y tiempo antes de que salgas de casa. O ven directo: Quinceava Avenida Sur esq. 18a Calle Oriente, Col. Los Naranjos, Tapachula.</p>
+       <div class="btn-row">
+         <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Mi%20Samsung%20Galaxy%20A17%20tiene%20la%20pantalla%20rota.%20%C2%BFMe%20pueden%20dar%20precio%20y%20tiempo%3F" rel="noopener">📱 Enviar mi A17 por WhatsApp</a>
+-        <a class="btn btn--acc" href="../../#cotizador">Ir al cotizador</a>
++        <a class="btn btn--acc" href="/servicio#cotizador">Ir al cotizador</a>
+       </div>
+     </section>
+ 
+diff --git a/sitio-reparacion/nosotros.html b/sitio-reparacion/nosotros.html
+index ed40870..40a58aa 100644
+--- a/sitio-reparacion/nosotros.html
++++ b/sitio-reparacion/nosotros.html
+@@ -92,10 +92,10 @@ html{-webkit-text-size-adjust:100%}body{overflow-x:hidden}
+   <div class="wrap">
+     <a class="brand" href="/">TapaTech</a>
+     <nav class="navlinks" aria-label="Navegación">
+-      <a href="/#servicios" class="hide-s">Servicios</a>
+-      <a href="/#precios" class="hide-s">Precios</a>
+-      <a href="/#ubicacion" class="hide-s">Ubicación</a>
+-      <a href="/#cotizador">Cotizar gratis</a>
++      <a href="/servicio#servicios" class="hide-s">Servicios</a>
++      <a href="/servicio#precios" class="hide-s">Precios</a>
++      <a href="/servicio#ubicacion" class="hide-s">Ubicación</a>
++      <a href="/servicio#cotizador">Cotizar gratis</a>
+     </nav>
+   </div>
+ </header>
+@@ -148,8 +148,8 @@ html{-webkit-text-size-adjust:100%}body{overflow-x:hidden}
+     <p>Cuéntame qué le pasa a tu equipo. Te respondo yo, te doy rango honesto y, si quieres, hoy mismo lo dejamos funcionando.</p>
+     <div class="btns">
+       <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20Rafael!%20Vengo%20de%20tu%20p%C3%A1gina%20y%20quiero%20cotizar%20una%20reparaci%C3%B3n" rel="noopener" target="_blank">WhatsApp directo</a>
+-      <a class="btn btn--acc" href="/#cotizador">Cotizar en 60 segundos</a>
+-      <a class="btn btn--ghost" href="/#ubicacion">Cómo llegar al taller</a>
++      <a class="btn btn--acc" href="/servicio#cotizador">Cotizar en 60 segundos</a>
++      <a class="btn btn--ghost" href="/servicio#ubicacion">Cómo llegar al taller</a>
+     </div>
+   </div>
+ </div>
+diff --git a/sitio-reparacion/sw.js b/sitio-reparacion/sw.js
+index 144814b..4091470 100644
+--- a/sitio-reparacion/sw.js
++++ b/sitio-reparacion/sw.js
+@@ -9,7 +9,7 @@
+ /* ═══ AUTO-UPDATE: este service worker se revalida solo en cada navegación.
+    Cuando Vercel publica una nueva versión del sitio, la próxima visita ya
+    muestra los cambios (sin "sitio viejo" ni caché atrapada). ═══ */
+-const SW_VER = '2026-10-17-rutas-limpias-seo-8';
++const SW_VER = '2026-10-17-links-404-fix-9';
+ 
+ self.addEventListener('install', e => self.skipWaiting());
+ self.addEventListener('activate', e => e.waitUntil((async () => {
+diff --git a/sitio-reparacion/vercel.json b/sitio-reparacion/vercel.json
+index f579d3b..322d539 100644
+--- a/sitio-reparacion/vercel.json
++++ b/sitio-reparacion/vercel.json
+@@ -76,6 +76,14 @@
+       ]
+     }
+   ],
++  "redirects": [
++    { "source": "/mi-celular-se-mojo-que-hacer", "destination": "/blog/mi-celular-se-mojo-que-hacer/", "permanent": true },
++    { "source": "/celular-no-enciende-causas-y-soluciones", "destination": "/blog/celular-no-enciende-causas-y-soluciones/", "permanent": true },
++    { "source": "/no-carga-puerto-o-bateria", "destination": "/blog/no-carga-puerto-o-bateria/", "permanent": true },
++    { "source": "/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula", "destination": "/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/", "permanent": true },
++    { "source": "/samsung-a17-bloqueado-por-empresa-frp-knox-pago", "destination": "/blog/samsung-a17-bloqueado-por-empresa-frp-knox-pago/", "permanent": true },
++    { "source": "/samsung-galaxy-a17-pantalla-rota-precio", "destination": "/blog/samsung-galaxy-a17-pantalla-rota-precio/", "permanent": true }
++  ],
+   "rewrites": [
+     { "source": "/servicio", "destination": "/index.html" },
+     { "source": "/nosotros", "destination": "/nosotros.html" },
+-- 
+2.39.5
+
