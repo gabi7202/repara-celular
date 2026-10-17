@@ -1,0 +1,293 @@
+From f569f3781d7ab81db89b9af5c6bb665a6f5f448e Mon Sep 17 00:00:00 2001
+From: "qwen.ai[bot]" <qwenlm-intl@service.alibaba.com>
+Date: Sat, 17 Oct 2026 01:10:36 +0000
+Subject: [PATCH] =?UTF-8?q?Fix=20hamburguesa=20en=20web:=20bot=C3=B3n=20.b?=
+ =?UTF-8?q?urger=20oculto=20>900px=20en=20blog/posts=20(era=20visible=20e?=
+ =?UTF-8?q?=20inerte=20junto=20al=20logo);=20regla=20completa=20movida=20a?=
+ =?UTF-8?q?=20doc-v2.css=20+=20guards=20inline;=20botones=20WhatsApp/Agend?=
+ =?UTF-8?q?ar=20blancos=20y=20completos=20tambi=C3=A9n=20desde=20la=20hoja?=
+ =?UTF-8?q?;=20plantilla=20inject-chrome.py=20corregida;=20SW=5FVER=20burg?=
+ =?UTF-8?q?er-web-off-12?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ sitio-reparacion/404.html                     |  2 ++
+ sitio-reparacion/assets/doc-v2.css            | 19 +++++++++++++++++++
+ .../index.html                                | 19 +++++++++++++++++++
+ .../index.html                                |  2 ++
+ sitio-reparacion/blog/index.html              |  2 ++
+ .../mi-celular-se-mojo-que-hacer/index.html   | 19 +++++++++++++++++++
+ .../blog/no-carga-puerto-o-bateria/index.html | 19 +++++++++++++++++++
+ .../index.html                                | 19 +++++++++++++++++++
+ .../index.html                                |  2 ++
+ sitio-reparacion/privacidad.html              |  2 ++
+ sitio-reparacion/sw.js                        |  2 +-
+ sitio-reparacion/terminos.html                |  2 ++
+ sitio-reparacion/tools/inject-chrome.py       |  7 ++++++-
+ 13 files changed, 114 insertions(+), 2 deletions(-)
+
+diff --git a/sitio-reparacion/404.html b/sitio-reparacion/404.html
+index 60070d9..d89bbe9 100644
+--- a/sitio-reparacion/404.html
++++ b/sitio-reparacion/404.html
+@@ -15,6 +15,8 @@
+   .nf h1{font-size:clamp(4rem,18vw,9rem);line-height:.9;color:var(--acc);letter-spacing:-.06em}
+   .nf p{max-width:52ch;margin:14px auto 26px;color:var(--txt-2)}
+   .nf .btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
++
++@media(min-width:901px){.burger{display:none!important}}
+ </style>
+ <style>
+ /* Navegación unificada (inyectada por tools/inject-chrome.py) */
+diff --git a/sitio-reparacion/assets/doc-v2.css b/sitio-reparacion/assets/doc-v2.css
+index 9e60a4b..e598c95 100644
+--- a/sitio-reparacion/assets/doc-v2.css
++++ b/sitio-reparacion/assets/doc-v2.css
+@@ -52,6 +52,25 @@ a:hover{color:var(--acc)}
+ .btn--ghost{border-color:var(--line);color:var(--txt)}
+ .btn--ghost:hover{border-color:var(--acc)}
+ .btn--dark{background:var(--ink);color:#fff}
++/* Botón hamburguesa del blog/posts: solo en móvil (antes no existía la regla
++   base y el botón se veía SIEMPRE — inerte y rompiendo el encabezado en web). */
++.burger{display:none;margin-left:auto;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:transparent;cursor:pointer;place-items:center;color:var(--txt)}
++.burger:hover{border-color:var(--acc)}
++.hdr nav a.is-active{background:var(--acc-soft);color:var(--acc-ink)}
++@media(max-width:900px){
++  .burger{display:grid}
++  .hdr nav{position:absolute;top:62px;left:0;right:0;z-index:60;flex-direction:column;align-items:stretch;
++    background:var(--paper);border-bottom:1px solid var(--line);padding:10px 18px 18px;gap:4px;
++    box-shadow:0 18px 34px rgba(11,15,18,.14);transform:translateY(-140%);
++    transition:transform .26s cubic-bezier(.2,.8,.2,1);max-height:calc(100dvh - 62px);overflow:auto}
++  .hdr nav.is-open{transform:none}
++  .hdr nav a{padding:13px 12px;font-size:.98rem;border-radius:10px;display:block}
++  /* FIX botones del encabezado (web y móvil): texto BLANCO y tamaño completo. */
++  .hdr nav a.btn,.hdr nav a.btn:hover{color:#FFFFFF!important}
++  .hdr nav a.btn{display:inline-flex;justify-content:center;align-items:center;margin-top:8px;
++    padding:12px 24px;font-size:1rem;font-weight:800;line-height:1.1;
++    white-space:nowrap!important;flex:0 0 auto;width:auto;max-width:100%}
++}
+ @media(max-width:760px){.hdr nav a:not(.btn){display:none}}
+ 
+ /* Migas de pan */
+diff --git a/sitio-reparacion/blog/celular-no-enciende-causas-y-soluciones/index.html b/sitio-reparacion/blog/celular-no-enciende-causas-y-soluciones/index.html
+index e718e75..fdb3aec 100644
+--- a/sitio-reparacion/blog/celular-no-enciende-causas-y-soluciones/index.html
++++ b/sitio-reparacion/blog/celular-no-enciende-causas-y-soluciones/index.html
+@@ -65,6 +65,25 @@
+   ]
+ }
+ </script>
++<style>
++/* FIX: hamburguesa visible SOLO en móvil (<=900px). En web queda oculta para
++   no romper el encabezado con un botón sin acción. */
++.burger{display:none;margin-left:auto;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:transparent;cursor:pointer;place-items:center;color:var(--txt)}
++.burger:hover{border-color:var(--acc)}
++@media(max-width:900px){
++  .burger{display:grid}
++  .hdr nav{position:absolute;top:62px;left:0;right:0;z-index:60;flex-direction:column;align-items:stretch;
++    background:var(--paper);border-bottom:1px solid var(--line);padding:10px 18px 18px;gap:4px;
++    box-shadow:0 18px 34px rgba(11,15,18,.14);transform:translateY(-140%);
++    transition:transform .26s cubic-bezier(.2,.8,.2,1);max-height:calc(100dvh - 62px);overflow:auto}
++  .hdr nav.is-open{transform:none}
++  .hdr nav a{padding:13px 12px;font-size:.98rem;border-radius:10px;display:block}
++  .hdr nav a.btn,.hdr nav a.btn:hover{color:#FFFFFF!important}
++  .hdr nav a.btn{display:inline-flex;justify-content:center;align-items:center;margin-top:8px;
++    padding:12px 24px;font-size:1rem;font-weight:800;line-height:1.1;
++    white-space:nowrap!important;flex:0 0 auto;width:auto;max-width:100%}
++}
++</style>
+ </head>
+ <body>
+ <a class="skip" href="#main">Saltar al contenido</a>
+diff --git a/sitio-reparacion/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html b/sitio-reparacion/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html
+index 0018bbe..5bd9937 100644
+--- a/sitio-reparacion/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html
++++ b/sitio-reparacion/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html
+@@ -88,6 +88,8 @@
+     padding:12px 24px;font-size:1rem;font-weight:800;line-height:1.1;
+     white-space:nowrap!important;flex:0 0 auto;width:auto;max-width:100%}
+ }
++
++@media(min-width:901px){.burger{display:none!important}}
+ </style>
+ </head>
+ <body>
+diff --git a/sitio-reparacion/blog/index.html b/sitio-reparacion/blog/index.html
+index 4a567ae..73915fb 100644
+--- a/sitio-reparacion/blog/index.html
++++ b/sitio-reparacion/blog/index.html
+@@ -64,6 +64,8 @@
+     padding:12px 24px;font-size:1rem;font-weight:800;line-height:1.1;
+     white-space:nowrap!important;flex:0 0 auto;width:auto;max-width:100%}
+ }
++
++@media(min-width:901px){.burger{display:none!important}}
+ </style>
+ </head>
+ <body>
+diff --git a/sitio-reparacion/blog/mi-celular-se-mojo-que-hacer/index.html b/sitio-reparacion/blog/mi-celular-se-mojo-que-hacer/index.html
+index ee21afe..503ed77 100644
+--- a/sitio-reparacion/blog/mi-celular-se-mojo-que-hacer/index.html
++++ b/sitio-reparacion/blog/mi-celular-se-mojo-que-hacer/index.html
+@@ -65,6 +65,25 @@
+   ]
+ }
+ </script>
++<style>
++/* FIX: hamburguesa visible SOLO en móvil (<=900px). En web queda oculta para
++   no romper el encabezado con un botón sin acción. */
++.burger{display:none;margin-left:auto;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:transparent;cursor:pointer;place-items:center;color:var(--txt)}
++.burger:hover{border-color:var(--acc)}
++@media(max-width:900px){
++  .burger{display:grid}
++  .hdr nav{position:absolute;top:62px;left:0;right:0;z-index:60;flex-direction:column;align-items:stretch;
++    background:var(--paper);border-bottom:1px solid var(--line);padding:10px 18px 18px;gap:4px;
++    box-shadow:0 18px 34px rgba(11,15,18,.14);transform:translateY(-140%);
++    transition:transform .26s cubic-bezier(.2,.8,.2,1);max-height:calc(100dvh - 62px);overflow:auto}
++  .hdr nav.is-open{transform:none}
++  .hdr nav a{padding:13px 12px;font-size:.98rem;border-radius:10px;display:block}
++  .hdr nav a.btn,.hdr nav a.btn:hover{color:#FFFFFF!important}
++  .hdr nav a.btn{display:inline-flex;justify-content:center;align-items:center;margin-top:8px;
++    padding:12px 24px;font-size:1rem;font-weight:800;line-height:1.1;
++    white-space:nowrap!important;flex:0 0 auto;width:auto;max-width:100%}
++}
++</style>
+ </head>
+ <body>
+ <a class="skip" href="#main">Saltar al contenido</a>
+diff --git a/sitio-reparacion/blog/no-carga-puerto-o-bateria/index.html b/sitio-reparacion/blog/no-carga-puerto-o-bateria/index.html
+index b481821..56c81cf 100644
+--- a/sitio-reparacion/blog/no-carga-puerto-o-bateria/index.html
++++ b/sitio-reparacion/blog/no-carga-puerto-o-bateria/index.html
+@@ -65,6 +65,25 @@
+   ]
+ }
+ </script>
++<style>
++/* FIX: hamburguesa visible SOLO en móvil (<=900px). En web queda oculta para
++   no romper el encabezado con un botón sin acción. */
++.burger{display:none;margin-left:auto;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:transparent;cursor:pointer;place-items:center;color:var(--txt)}
++.burger:hover{border-color:var(--acc)}
++@media(max-width:900px){
++  .burger{display:grid}
++  .hdr nav{position:absolute;top:62px;left:0;right:0;z-index:60;flex-direction:column;align-items:stretch;
++    background:var(--paper);border-bottom:1px solid var(--line);padding:10px 18px 18px;gap:4px;
++    box-shadow:0 18px 34px rgba(11,15,18,.14);transform:translateY(-140%);
++    transition:transform .26s cubic-bezier(.2,.8,.2,1);max-height:calc(100dvh - 62px);overflow:auto}
++  .hdr nav.is-open{transform:none}
++  .hdr nav a{padding:13px 12px;font-size:.98rem;border-radius:10px;display:block}
++  .hdr nav a.btn,.hdr nav a.btn:hover{color:#FFFFFF!important}
++  .hdr nav a.btn{display:inline-flex;justify-content:center;align-items:center;margin-top:8px;
++    padding:12px 24px;font-size:1rem;font-weight:800;line-height:1.1;
++    white-space:nowrap!important;flex:0 0 auto;width:auto;max-width:100%}
++}
++</style>
+ </head>
+ <body>
+ <a class="skip" href="#main">Saltar al contenido</a>
+diff --git a/sitio-reparacion/blog/samsung-a17-bloqueado-por-empresa-frp-knox-pago/index.html b/sitio-reparacion/blog/samsung-a17-bloqueado-por-empresa-frp-knox-pago/index.html
+index 8080724..93c6830 100644
+--- a/sitio-reparacion/blog/samsung-a17-bloqueado-por-empresa-frp-knox-pago/index.html
++++ b/sitio-reparacion/blog/samsung-a17-bloqueado-por-empresa-frp-knox-pago/index.html
+@@ -65,6 +65,25 @@
+   ]
+ }
+ </script>
++<style>
++/* FIX: hamburguesa visible SOLO en móvil (<=900px). En web queda oculta para
++   no romper el encabezado con un botón sin acción. */
++.burger{display:none;margin-left:auto;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:transparent;cursor:pointer;place-items:center;color:var(--txt)}
++.burger:hover{border-color:var(--acc)}
++@media(max-width:900px){
++  .burger{display:grid}
++  .hdr nav{position:absolute;top:62px;left:0;right:0;z-index:60;flex-direction:column;align-items:stretch;
++    background:var(--paper);border-bottom:1px solid var(--line);padding:10px 18px 18px;gap:4px;
++    box-shadow:0 18px 34px rgba(11,15,18,.14);transform:translateY(-140%);
++    transition:transform .26s cubic-bezier(.2,.8,.2,1);max-height:calc(100dvh - 62px);overflow:auto}
++  .hdr nav.is-open{transform:none}
++  .hdr nav a{padding:13px 12px;font-size:.98rem;border-radius:10px;display:block}
++  .hdr nav a.btn,.hdr nav a.btn:hover{color:#FFFFFF!important}
++  .hdr nav a.btn{display:inline-flex;justify-content:center;align-items:center;margin-top:8px;
++    padding:12px 24px;font-size:1rem;font-weight:800;line-height:1.1;
++    white-space:nowrap!important;flex:0 0 auto;width:auto;max-width:100%}
++}
++</style>
+ </head>
+ <body>
+ <a class="skip" href="#main">Saltar al contenido</a>
+diff --git a/sitio-reparacion/blog/samsung-galaxy-a17-pantalla-rota-precio/index.html b/sitio-reparacion/blog/samsung-galaxy-a17-pantalla-rota-precio/index.html
+index 8bae03a..26a8bb7 100644
+--- a/sitio-reparacion/blog/samsung-galaxy-a17-pantalla-rota-precio/index.html
++++ b/sitio-reparacion/blog/samsung-galaxy-a17-pantalla-rota-precio/index.html
+@@ -84,6 +84,8 @@
+     padding:12px 24px;font-size:1rem;font-weight:800;line-height:1.1;
+     white-space:nowrap!important;flex:0 0 auto;width:auto;max-width:100%}
+ }
++
++@media(min-width:901px){.burger{display:none!important}}
+ </style>
+ </head>
+ <body>
+diff --git a/sitio-reparacion/privacidad.html b/sitio-reparacion/privacidad.html
+index a4bf71c..2b3db10 100644
+--- a/sitio-reparacion/privacidad.html
++++ b/sitio-reparacion/privacidad.html
+@@ -36,6 +36,8 @@
+ .cta-btns{display:flex;gap:8px;flex-wrap:wrap}
+ .ftr-legal{margin-top:26px;padding-top:18px;border-top:1px solid #22304E;font-size:.78rem;color:#8190A8}
+ @media(max-width:640px){.cta-mini{flex-direction:column;align-items:stretch}}
++
++@media(min-width:901px){.burger{display:none!important}}
+ </style>
+ </head>
+ <body>
+diff --git a/sitio-reparacion/sw.js b/sitio-reparacion/sw.js
+index 2c76960..104c3b3 100644
+--- a/sitio-reparacion/sw.js
++++ b/sitio-reparacion/sw.js
+@@ -9,7 +9,7 @@
+ /* ═══ AUTO-UPDATE: este service worker se revalida solo en cada navegación.
+    Cuando Vercel publica una nueva versión del sitio, la próxima visita ya
+    muestra los cambios (sin "sitio viejo" ni caché atrapada). ═══ */
+-const SW_VER = '2026-10-17-botones-hdr-blanco-11';
++const SW_VER = '2026-10-17-burger-web-off-12';
+ 
+ self.addEventListener('install', e => self.skipWaiting());
+ self.addEventListener('activate', e => e.waitUntil((async () => {
+diff --git a/sitio-reparacion/terminos.html b/sitio-reparacion/terminos.html
+index 099c267..08f2ed6 100644
+--- a/sitio-reparacion/terminos.html
++++ b/sitio-reparacion/terminos.html
+@@ -36,6 +36,8 @@
+ .cta-btns{display:flex;gap:8px;flex-wrap:wrap}
+ .ftr-legal{margin-top:26px;padding-top:18px;border-top:1px solid #22304E;font-size:.78rem;color:#8190A8}
+ @media(max-width:640px){.cta-mini{flex-direction:column;align-items:stretch}}
++
++@media(min-width:901px){.burger{display:none!important}}
+ </style>
+ </head>
+ <body>
+diff --git a/sitio-reparacion/tools/inject-chrome.py b/sitio-reparacion/tools/inject-chrome.py
+index a7b34ad..e178e28 100644
+--- a/sitio-reparacion/tools/inject-chrome.py
++++ b/sitio-reparacion/tools/inject-chrome.py
+@@ -115,8 +115,13 @@ EXTRA_CSS = '''
+     transition:transform .26s cubic-bezier(.2,.8,.2,1);max-height:calc(100dvh - 62px);overflow:auto}
+   .hdr nav.is-open{transform:none}
+   .hdr nav a{padding:13px 12px;font-size:.98rem;border-radius:10px;display:block}
+-  .hdr nav a.btn{display:flex;justify-content:center;margin-top:8px}
++    /* FIX botones del encabezado (web y móvil): texto BLANCO y tamaño completo. */
++  .hdr nav a.btn,.hdr nav a.btn:hover{color:#FFFFFF!important}
++  .hdr nav a.btn{display:inline-flex;justify-content:center;align-items:center;margin-top:8px;
++    padding:12px 24px;font-size:1rem;font-weight:800;line-height:1.1;
++    white-space:nowrap!important;flex:0 0 auto;width:auto;max-width:100%}
+ }
++@media(min-width:901px){.burger{display:none!important}}
+ .ftr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:26px;margin-top:26px}
+ .ftr-grid b{color:#fff;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+ .ftr-grid a{display:block;font-size:.88rem;margin-bottom:7px}
+-- 
+2.39.5
+
