@@ -1,0 +1,979 @@
+From 8b79a0216eaffcb1828f070be7d0a2241d709a3a Mon Sep 17 00:00:00 2001
+From: "qwen.ai[bot]" <qwenlm-intl@service.alibaba.com>
+Date: Sat, 17 Oct 2026 00:48:10 +0000
+Subject: [PATCH 1/2] =?UTF-8?q?SEO:=20navegaci=C3=B3n=20limpia=20/servicio?=
+ =?UTF-8?q?=20sin=20#,=20sitemap=20correcto,=20legales=20y=20nosotros=20no?=
+ =?UTF-8?q?=20indexados=20(meta=20+=20X-Robots-Tag=20+=20robots.txt),=20si?=
+ =?UTF-8?q?n=20ads?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ sitio-reparacion/assets/doc-v2.css            |  34 +++--
+ .../index.html                                |  44 ++-----
+ .../index.html                                |  57 ++-------
+ sitio-reparacion/blog/index.html              |  46 +------
+ .../mi-celular-se-mojo-que-hacer/index.html   |  44 ++-----
+ .../blog/no-carga-puerto-o-bateria/index.html |  44 ++-----
+ .../index.html                                |  44 ++-----
+ .../index.html                                |  54 ++------
+ sitio-reparacion/index.html                   | 121 +++++++++++-------
+ sitio-reparacion/nosotros.html                |   1 +
+ sitio-reparacion/privacidad.html              |   4 +-
+ sitio-reparacion/robots.txt                   |   8 ++
+ sitio-reparacion/sitemap.xml                  |  14 +-
+ sitio-reparacion/sw.js                        |   2 +-
+ sitio-reparacion/terminos.html                |   4 +-
+ sitio-reparacion/vercel.json                  |  22 ++++
+ 16 files changed, 199 insertions(+), 344 deletions(-)
+
+diff --git a/sitio-reparacion/assets/doc-v2.css b/sitio-reparacion/assets/doc-v2.css
+index edbed76..e0a96f7 100644
+--- a/sitio-reparacion/assets/doc-v2.css
++++ b/sitio-reparacion/assets/doc-v2.css
+@@ -2,18 +2,21 @@
+    Se sirve con caché de 1 año: las páginas internas cargan instantáneo. */
+ *,*::before,*::after{box-sizing:border-box}
+ *{margin:0}
++/* Paleta v4 unificada con la pantalla principal (index.html):
++   blanco → salmón suave, texto negro/grafito/gris, acento azul #4C5BD4, botones grafito #2B2B2B. */
+ :root{
+-  --ink:#0B1220;--paper:#fff;--paper-2:#F5F8FD;--txt:#0F172A;--txt-2:#334155;--txt-3:#5B6B85;
+-  --acc:#4C5BD4;--acc-ink:#3D4BBE;--acc-soft:#EFF1FB;--warn:#FFB020;--warn-soft:#FFF4DF;
+-  --line:#E6EAF0;--r-s:10px;--r-m:16px;--r-l:24px;
++  --ink:#111111;--ink-2:#1B1B1B;--ink-3:#262626;
++  --salmon:#FFB19E;
++  --paper:#FFFFFF;--paper-2:#FDF5F2;--paper-3:#FBEEE8;
++  --txt:#1A1A1A;--txt-2:#3A3A3A;--txt-3:#6E6E6E;
++  --acc:#4C5BD4;--on-acc:#FFFFFF;--acc-ink:#3D4BBE;--acc-soft:#EFF1FB;--acc-pale:#DCE0F5;
++  --rojo:#2B2B2B;--warn:#3A3A3A;--warn-soft:#EFEFEF;--danger:#C1493C;
++  --line:#EBDDD6;--r-s:10px;--r-m:16px;--r-l:24px;
+   --ff:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+   --ff-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+ }
+-@media(prefers-color-scheme:dark){:root{
+-  --paper:#0B1220;--paper-2:#101B33;--txt:#EAF0FB;--txt-2:#B4C0DA;--txt-3:#8190A8;
+-  --acc:#5B58F5;--acc-soft:#171549;--warn-soft:#2A2113;--line:#22304E}}
+-html{scroll-behavior:smooth;scroll-padding-top:80px;-webkit-text-size-adjust:100%}
+-body{font-family:var(--ff);background:var(--paper);color:var(--txt);line-height:1.7;font-size:clamp(15.5px,2.6vw,16.5px);-webkit-font-smoothing:antialiased;overflow-x:hidden}
++html{scroll-behavior:smooth;scroll-padding-top:80px;-webkit-text-size-adjust:100%;background:linear-gradient(180deg,#FFFFFF 0%,#FFFFFF 62%,var(--paper-2) 100%);min-height:100%}
++body{font-family:var(--ff);background:transparent;color:var(--txt);line-height:1.7;font-size:clamp(15.5px,2.6vw,16.5px);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+ img{max-width:100%;height:auto;display:block}
+ a{color:var(--acc-ink);text-decoration-thickness:1px;text-underline-offset:3px}
+ a:hover{color:var(--acc)}
+@@ -96,7 +99,7 @@ th,td{padding:11px 13px;border-bottom:1px solid var(--line);text-align:left}
+ thead th{background:var(--paper-2);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-3)}
+ td.num,th.num{font-family:var(--ff-mono);font-weight:700;white-space:nowrap}
+ .callout{border-left:4px solid var(--acc);background:var(--acc-soft);padding:16px 18px;border-radius:0 var(--r-m) var(--r-m) 0;margin:1.6em 0;font-size:.95rem}
+-.callout--warn{border-color:var(--warn);background:var(--warn-soft)}
++.callout--warn{border-color:var(--danger);background:#FDECEA}
+ .callout b{display:block;margin-bottom:4px}
+ blockquote{border-left:3px solid var(--line);padding-left:18px;margin:1.5em 0;color:var(--txt-2);font-style:italic}
+ .toc{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--r-l);padding:20px 22px;margin:1.6em 0}
+@@ -131,6 +134,19 @@ blockquote{border-left:3px solid var(--line);padding-left:18px;margin:1.5em 0;co
+ .ftr a:hover{color:var(--acc)}
+ .ftr .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+ .ftr b{color:#fff;display:block;margin-bottom:6px}
++
++/* Artículos relacionados (interlinking SEO dentro del blog) */
++.related{margin:2.4em 0 1em;border-top:2px solid var(--line);padding-top:26px}
++.related h2{font-size:1.15rem;letter-spacing:-.01em;margin:0 0 14px}
++.rel-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));list-style:none;margin:0;padding:0}
++.rel-grid li{margin:0}
++.rel-grid a{display:flex;flex-direction:column;gap:6px;height:100%;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--paper-2);text-decoration:none;color:var(--txt);transition:border-color .15s,transform .15s,box-shadow .15s}
++.rel-grid a:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 8px 18px rgba(17,17,17,.07)}
++.rel-grid a::before{content:attr(data-cat);font-size:.64rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--acc-ink)}
++.rel-grid a b{font-size:.92rem;line-height:1.35;font-weight:800;letter-spacing:-.01em}
++.rel-grid a span{font-size:.78rem;color:var(--txt-3);line-height:1.45}
++@media(max-width:640px){.rel-grid{grid-template-columns:1fr}}
++
+ .skip{position:absolute;left:-9999px}
+ .skip:focus{left:0;top:0;background:var(--acc);color:#FFFFFF;padding:12px 16px;z-index:99;border-radius:0 0 var(--r-s) 0}
+ :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+diff --git a/sitio-reparacion/blog/celular-no-enciende-causas-y-soluciones/index.html b/sitio-reparacion/blog/celular-no-enciende-causas-y-soluciones/index.html
+index 6d8314c..9c06a59 100644
+--- a/sitio-reparacion/blog/celular-no-enciende-causas-y-soluciones/index.html
++++ b/sitio-reparacion/blog/celular-no-enciende-causas-y-soluciones/index.html
+@@ -176,43 +176,19 @@
+       </div>
+     </section>
+ 
+-    <p style="margin-top:26px"><b>Seguir leyendo:</b> <a href="../mi-celular-se-mojo-que-hacer/">Se mojó: protocolo de emergencia</a> · <a href="../no-carga-puerto-o-bateria/">No carga: ¿puerto o batería?</a> · <a href="../cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/">Precios de pantallas 2026</a></p>
++    <nav class="related" aria-label="Artículos relacionados">
++      <h2>Artículos relacionados</h2>
++      <ul class="rel-grid">
++        <li><a href="../cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/" data-cat="Precios" rel="related"><b>¿Cuánto cuesta cambiar la pantalla en Tapachula?</b><span>Rangos Incell $600–$1,700 y OLED hasta $5,200 por marca.</span></a></li>
++        <li><a href="../mi-celular-se-mojo-que-hacer/" data-cat="Urgencia" rel="related"><b>Mi celular se mojó: qué hacer en 10 minutos</b><span>Protocolo de emergencia (y por qué el arroz no sirve).</span></a></li>
++        <li><a href="../no-carga-puerto-o-bateria/" data-cat="Energía" rel="related"><b>No carga: ¿puerto de carga o batería?</b><span>Cómo distinguir la falla antes de cotizar.</span></a></li>
++        <li><a href="../samsung-a17-bloqueado-por-empresa-frp-knox-pago/" data-cat="Software" rel="related"><b>Samsung A17 bloqueado por empresa o falta de pago</b><span>Qué significa FRP/Knox y qué puedes hacer legalmente.</span></a></li>
++        <li><a href="../samsung-galaxy-a17-pantalla-rota-precio/" data-cat="Precios" rel="related"><b>Samsung Galaxy A17 con pantalla rota: precio 2026</b><span>Costo real por calidad de pieza en Tapachula.</span></a></li>
++      </ul>
++    </nav>
+   </article>
+ </main>
+ 
+-<footer class="ftr">
+-  <div class="wrap">
+-    <div class="cta-mini">
+-      <div><b style="color:#fff;font-size:1.05rem">¿Listo para repararlo?</b>
+-        <p style="margin:4px 0 0">Diagnóstico gratis, precio cerrado por escrito y garantía de 30 días.</p></div>
+-      <div class="cta-btns">
+-        <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Quiero%20reparar%20mi%20equipo." rel="noopener">WhatsApp</a>
+-        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="tel:+529622889585">Llamar</a>
+-        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="../../#diagnostico">Agendar cita</a>
+-      </div>
+-    </div>
+-    <div class="ftr-grid">
+-      <div><b>TapaTech</b>Quinceava Avenida Sur esq. 18a Calle Oriente, Col. Los Naranjos<br>16 de Septiembre, C.P. 30705, Tapachula de Córdova y Ordóñez, Chis.<br><a href="tel:+529622889585">962 288 9585</a><br>
+-        <span style="font-size:.82rem">Lun a Sáb 9:00–19:00 corrido · Dom: urgencias por WhatsApp</span></div>
+-      <div><b>Servicios</b>
+-        <a href="../../#servicios">Cambio de pantalla</a><a href="../../#servicios">Batería y puerto de carga</a>
+-        <a href="../../#servicios">Equipos mojados</a><a href="../../#servicios">Laptops: SSD, RAM, formateo</a>
+-        <a href="../../#domicilio">Recolección a domicilio</a></div>
+-      <div><b>Información</b>
+-        <a href="../../#cotizador">Cotizador</a><a href="../../#precios">Lista de precios</a>
+-        <a href="../../#garantia">Garantía</a><a href="../../#faq">Preguntas frecuentes</a>
+-        <a href="../../#ubicacion">Ubicación y horario</a></div>
+-      <div><b>Sitio</b>
+-        <a href="../">Blog y guías</a><a href="../../nosotros.html">Nosotros (Cubatel)</a><a href="../../privacidad.html">Aviso de privacidad</a>
+-        <a href="../../terminos.html">Términos y garantía</a>
+-        <a href="https://www.google.com/maps/search/reparacion+de+celulares/@14.8934489,-92.2596839,15z?entry=ttu" target="_blank" rel="noopener">Google Maps</a></div>
+-    </div>
+-    <p class="ftr-legal">© <span id="year">2026</span> TapaTech Tapachula · Chiapas. Todos los derechos reservados.
+-      Precios en pesos mexicanos (MXN), sujetos a diagnóstico gratuito.</p>
+-  </div>
+-  <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+-</footer>
+-
+ <a class="wa-float" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Tengo%20una%20duda%20sobre%20una%20reparaci%C3%B3n." aria-label="Escribir por WhatsApp" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.6-1.1-4.3-3.8-4.4-4-.1-.2-1-1.4-1-2.7s.7-1.9.9-2.2c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 .9c.3.2.5.3.6.4 0 .2 0 .8-.2 1.4Z"/></svg></a>
+ </body>
+ </html>
+diff --git a/sitio-reparacion/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html b/sitio-reparacion/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html
+index 4b5f6d0..3e716df 100644
+--- a/sitio-reparacion/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html
++++ b/sitio-reparacion/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html
+@@ -68,7 +68,7 @@
+ </script>
+ <style>
+ /* Regla global: texto BLANCO sobre fondos oscuros — no aplica a botones/CTAs */
+-.ftr :not(.btn):not(a),.ftr a,.cta :not(.btn),.cta :not(.btn) a,.cta-mini :not(.btn),.cta-mini :not(.btn) a{color:#fff!important}
++.cta :not(.btn),.cta :not(.btn) a{color:#fff!important}
+ 
+ /* Navegación unificada (inyectada por tools/inject-chrome.py) */
+ .burger{display:none;margin-left:auto;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:transparent;cursor:pointer;place-items:center;color:var(--txt)}
+@@ -84,16 +84,6 @@
+   .hdr nav a{padding:13px 12px;font-size:.98rem;border-radius:10px;display:block}
+   .hdr nav a.btn{display:flex;justify-content:center;margin-top:8px}
+ }
+-.ftr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:26px;margin-top:26px}
+-.ftr-grid b{color:#fff;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+-.ftr-grid a{display:block;font-size:.88rem;margin-bottom:7px}
+-.ftr-grid div:first-child{font-size:.88rem;line-height:1.6}
+-.cta-mini{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+-  background:linear-gradient(120deg,rgba(76,91,212,.16),rgba(255,255,255,.03));
+-  border:1px solid rgba(0,0,0,.4);border-radius:20px;padding:18px 22px}
+-.cta-btns{display:flex;gap:8px;flex-wrap:wrap}
+-.ftr-legal{margin-top:26px;padding-top:18px;border-top:1px solid #22304E;font-size:.78rem;color:#8190A8}
+-@media(max-width:640px){.cta-mini{flex-direction:column;align-items:stretch}}
+ </style>
+ </head>
+ <body>
+@@ -274,43 +264,20 @@
+     </section>
+ 
+     <p class="note" style="font-size:.84rem;color:var(--txt-3)">Precios vigentes en octubre de 2026 para Tapachula, Chiapas. Los costos de repuestos cambian con la importación; confirma el precio del día por WhatsApp antes de acudir. Esta guía es informativa y no constituye una cotización formal.</p>
++
++    <nav class="related" aria-label="Artículos relacionados">
++      <h2>Artículos relacionados</h2>
++      <ul class="rel-grid">
++        <li><a href="../samsung-galaxy-a17-pantalla-rota-precio/" data-cat="Precios" rel="related"><b>Samsung Galaxy A17 con pantalla rota: precio 2026</b><span>Costo real por calidad de pieza en Tapachula.</span></a></li>
++        <li><a href="../celular-no-enciende-causas-y-soluciones/" data-cat="Diagnóstico" rel="related"><b>Mi celular no enciende: 8 causas y soluciones</b><span>Pruebas de 3 minutos antes de gastar dinero.</span></a></li>
++        <li><a href="../mi-celular-se-mojo-que-hacer/" data-cat="Urgencia" rel="related"><b>Mi celular se mojó: qué hacer en 10 minutos</b><span>Protocolo de emergencia (y por qué el arroz no sirve).</span></a></li>
++        <li><a href="../no-carga-puerto-o-bateria/" data-cat="Energía" rel="related"><b>No carga: ¿puerto de carga o batería?</b><span>Cómo distinguir la falla antes de cotizar.</span></a></li>
++        <li><a href="../samsung-a17-bloqueado-por-empresa-frp-knox-pago/" data-cat="Software" rel="related"><b>Samsung A17 bloqueado por empresa o falta de pago</b><span>Qué significa FRP/Knox y qué puedes hacer legalmente.</span></a></li>
++      </ul>
++    </nav>
+   </article>
+ </main>
+ 
+-<footer class="ftr">
+-  <div class="wrap">
+-    <div class="cta-mini">
+-      <div><b style="color:#fff;font-size:1.05rem">¿Listo para repararlo?</b>
+-        <p style="margin:4px 0 0">Diagnóstico gratis, precio cerrado por escrito y garantía de 30 días.</p></div>
+-      <div class="cta-btns">
+-        <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Quiero%20reparar%20mi%20equipo." rel="noopener">WhatsApp</a>
+-        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="tel:+529622889585">Llamar</a>
+-        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="../../#diagnostico">Agendar cita</a>
+-      </div>
+-    </div>
+-    <div class="ftr-grid">
+-      <div><b>TapaTech</b>Quinceava Avenida Sur esq. 18a Calle Oriente, Col. Los Naranjos<br>16 de Septiembre, C.P. 30705, Tapachula de Córdova y Ordóñez, Chis.<br><a href="tel:+529622889585">962 288 9585</a><br>
+-        <span style="font-size:.82rem">Lun a Sáb 9:00–19:00 corrido · Dom: urgencias por WhatsApp</span></div>
+-      <div><b>Servicios</b>
+-        <a href="../../#servicios">Cambio de pantalla</a><a href="../../#servicios">Batería y puerto de carga</a>
+-        <a href="../../#servicios">Equipos mojados</a><a href="../../#servicios">Laptops: SSD, RAM, formateo</a>
+-        <a href="../../#servicios">Xbox / PS / Switch</a><a href="../../#domicilio">Recolección a domicilio</a></div>
+-      <div><b>Información</b>
+-        <a href="../../#cotizador">Cotizador</a><a href="../../#precios">Lista de precios</a>
+-        <a href="../../#garantia">Garantía</a><a href="../../#proceso">Cómo trabajamos</a>
+-        <a href="../../#mitos">Mitos de reparación</a><a href="../../#faq">Preguntas frecuentes</a>
+-        <a href="../../#ubicacion">Ubicación y horario</a></div>
+-      <div><b>Sitio</b>
+-        <a href="../../blog/">Blog y guías</a><a href="../../privacidad.html">Aviso de privacidad</a>
+-        <a href="../../terminos.html">Términos y garantía</a><a href="../../admin.html">Panel del taller</a>
+-        <a href="https://maps.app.goo.gl/RMnSieAbZH7mSWLS7" target="_blank" rel="noopener">Google Maps</a></div>
+-    </div>
+-    <p class="ftr-legal">© <span id="year">2026</span> TapaTech Tapachula · Chiapas. Todos los derechos reservados.
+-      Precios en pesos mexicanos (MXN), sujetos a diagnóstico gratuito.</p>
+-  </div>
+-  <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+-</footer>
+-
+ <a class="wa-float" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Le%C3%AD%20la%20gu%C3%ADa%20de%20pantallas%20y%20quiero%20cotizar." aria-label="Escribir por WhatsApp" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.6-1.1-4.3-3.8-4.4-4-.1-.2-1-1.4-1-2.7s.7-1.9.9-2.2c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 .9c.3.2.5.3.6.4 0 .2 0 .8-.2 1.4Z"/></svg></a>
+ </body>
+ </html>
+diff --git a/sitio-reparacion/blog/index.html b/sitio-reparacion/blog/index.html
+index 3ac2fed..ff2fe55 100644
+--- a/sitio-reparacion/blog/index.html
++++ b/sitio-reparacion/blog/index.html
+@@ -43,7 +43,7 @@
+ </script>
+ <style>
+ /* Regla global: texto BLANCO sobre fondos oscuros — no aplica a botones/CTAs */
+-.ftr :not(.btn):not(a),.ftr a,.cta :not(.btn),.cta :not(.btn) a,.cta-mini :not(.btn),.cta-mini :not(.btn) a{color:#fff!important}
++.cta :not(.btn),.cta :not(.btn) a{color:#fff!important}
+ 
+ /* Navegación unificada (inyectada por tools/inject-chrome.py) */
+ .burger{display:none;margin-left:auto;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:transparent;cursor:pointer;place-items:center;color:var(--txt)}
+@@ -59,16 +59,6 @@
+   .hdr nav a{padding:13px 12px;font-size:.98rem;border-radius:10px;display:block}
+   .hdr nav a.btn{display:flex;justify-content:center;margin-top:8px}
+ }
+-.ftr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:26px;margin-top:26px}
+-.ftr-grid b{color:#fff;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+-.ftr-grid a{display:block;font-size:.88rem;margin-bottom:7px}
+-.ftr-grid div:first-child{font-size:.88rem;line-height:1.6}
+-.cta-mini{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+-  background:linear-gradient(120deg,rgba(76,91,212,.16),rgba(255,255,255,.03));
+-  border:1px solid rgba(0,0,0,.16);border-radius:20px;padding:18px 22px}
+-.cta-btns{display:flex;gap:8px;flex-wrap:wrap}
+-.ftr-legal{margin-top:26px;padding-top:18px;border-top:1px solid #22304E;font-size:.78rem;color:#8190A8}
+-@media(max-width:640px){.cta-mini{flex-direction:column;align-items:stretch}}
+ </style>
+ </head>
+ <body>
+@@ -189,40 +179,6 @@
+   </section>
+ </main>
+ 
+-<footer class="ftr">
+-  <div class="wrap">
+-    <div class="cta-mini">
+-      <div><b style="color:#fff;font-size:1.05rem">¿Listo para repararlo?</b>
+-        <p style="margin:4px 0 0">Diagnóstico gratis, precio cerrado por escrito y garantía de 30 días.</p></div>
+-      <div class="cta-btns">
+-        <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Quiero%20reparar%20mi%20equipo." rel="noopener">WhatsApp</a>
+-        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="tel:+529622889585">Llamar</a>
+-        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="../#diagnostico">Agendar cita</a>
+-      </div>
+-    </div>
+-    <div class="ftr-grid">
+-      <div><b>TapaTech</b>Quinceava Avenida Sur esq. 18a Calle Oriente, Col. Los Naranjos<br>16 de Septiembre, C.P. 30705, Tapachula de Córdova y Ordóñez, Chis.<br><a href="tel:+529622889585">962 288 9585</a><br>
+-        <span style="font-size:.82rem">Lun a Sáb 9:00–19:00 corrido · Dom: urgencias por WhatsApp</span></div>
+-      <div><b>Servicios</b>
+-        <a href="../#servicios">Cambio de pantalla</a><a href="../#servicios">Batería y puerto de carga</a>
+-        <a href="../#servicios">Equipos mojados</a><a href="../#servicios">Laptops: SSD, RAM, formateo</a>
+-        <a href="../#servicios">Xbox / PS / Switch</a><a href="../#domicilio">Recolección a domicilio</a></div>
+-      <div><b>Información</b>
+-        <a href="../#cotizador">Cotizador</a><a href="../#precios">Lista de precios</a>
+-        <a href="../#garantia">Garantía</a><a href="../#proceso">Cómo trabajamos</a>
+-        <a href="../#mitos">Mitos de reparación</a><a href="../#faq">Preguntas frecuentes</a>
+-        <a href="../#ubicacion">Ubicación y horario</a></div>
+-      <div><b>Sitio</b>
+-        <a href="../blog/">Blog y guías</a><a href="../privacidad.html">Aviso de privacidad</a>
+-        <a href="../terminos.html">Términos y garantía</a><a href="../admin.html">Panel del taller</a>
+-        <a href="https://maps.app.goo.gl/RMnSieAbZH7mSWLS7" target="_blank" rel="noopener">Google Maps</a></div>
+-    </div>
+-    <p class="ftr-legal">© <span id="year">2026</span> TapaTech Tapachula · Chiapas. Todos los derechos reservados.
+-      Precios en pesos mexicanos (MXN), sujetos a diagnóstico gratuito.</p>
+-  </div>
+-  <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+-</footer>
+-
+ <a class="wa-float" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Tengo%20una%20duda%20sobre%20una%20reparaci%C3%B3n." aria-label="Escribir por WhatsApp" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.6-1.1-4.3-3.8-4.4-4-.1-.2-1-1.4-1-2.7s.7-1.9.9-2.2c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 .9c.3.2.5.3.6.4 0 .2 0 .8-.2 1.4Z"/></svg></a>
+ </body>
+ </html>
+diff --git a/sitio-reparacion/blog/mi-celular-se-mojo-que-hacer/index.html b/sitio-reparacion/blog/mi-celular-se-mojo-que-hacer/index.html
+index 666faba..8390048 100644
+--- a/sitio-reparacion/blog/mi-celular-se-mojo-que-hacer/index.html
++++ b/sitio-reparacion/blog/mi-celular-se-mojo-que-hacer/index.html
+@@ -183,43 +183,19 @@
+       </div>
+     </section>
+ 
+-    <p style="margin-top:26px"><b>Seguir leyendo:</b> <a href="../cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/">Precios reales de pantallas 2026</a> · <a href="../celular-no-enciende-causas-y-soluciones/">Celular que no enciende: causas</a> · <a href="../no-carga-puerto-o-bateria/">No carga: ¿puerto o batería?</a></p>
++    <nav class="related" aria-label="Artículos relacionados">
++      <h2>Artículos relacionados</h2>
++      <ul class="rel-grid">
++        <li><a href="../cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/" data-cat="Precios" rel="related"><b>¿Cuánto cuesta cambiar la pantalla en Tapachula?</b><span>Rangos Incell $600–$1,700 y OLED hasta $5,200 por marca.</span></a></li>
++        <li><a href="../celular-no-enciende-causas-y-soluciones/" data-cat="Diagnóstico" rel="related"><b>Mi celular no enciende: 8 causas y soluciones</b><span>Pruebas de 3 minutos antes de gastar dinero.</span></a></li>
++        <li><a href="../no-carga-puerto-o-bateria/" data-cat="Energía" rel="related"><b>No carga: ¿puerto de carga o batería?</b><span>Cómo distinguir la falla antes de cotizar.</span></a></li>
++        <li><a href="../samsung-a17-bloqueado-por-empresa-frp-knox-pago/" data-cat="Software" rel="related"><b>Samsung A17 bloqueado por empresa o falta de pago</b><span>Qué significa FRP/Knox y qué puedes hacer legalmente.</span></a></li>
++        <li><a href="../samsung-galaxy-a17-pantalla-rota-precio/" data-cat="Precios" rel="related"><b>Samsung Galaxy A17 con pantalla rota: precio 2026</b><span>Costo real por calidad de pieza en Tapachula.</span></a></li>
++      </ul>
++    </nav>
+   </article>
+ </main>
+ 
+-<footer class="ftr">
+-  <div class="wrap">
+-    <div class="cta-mini">
+-      <div><b style="color:#fff;font-size:1.05rem">¿Listo para repararlo?</b>
+-        <p style="margin:4px 0 0">Diagnóstico gratis, precio cerrado por escrito y garantía de 30 días.</p></div>
+-      <div class="cta-btns">
+-        <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Quiero%20reparar%20mi%20equipo." rel="noopener">WhatsApp</a>
+-        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="tel:+529622889585">Llamar</a>
+-        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="../../#diagnostico">Agendar cita</a>
+-      </div>
+-    </div>
+-    <div class="ftr-grid">
+-      <div><b>TapaTech</b>Quinceava Avenida Sur esq. 18a Calle Oriente, Col. Los Naranjos<br>16 de Septiembre, C.P. 30705, Tapachula de Córdova y Ordóñez, Chis.<br><a href="tel:+529622889585">962 288 9585</a><br>
+-        <span style="font-size:.82rem">Lun a Sáb 9:00–19:00 corrido · Dom: urgencias por WhatsApp</span></div>
+-      <div><b>Servicios</b>
+-        <a href="../../#servicios">Cambio de pantalla</a><a href="../../#servicios">Batería y puerto de carga</a>
+-        <a href="../../#servicios">Equipos mojados</a><a href="../../#servicios">Laptops: SSD, RAM, formateo</a>
+-        <a href="../../#domicilio">Recolección a domicilio</a></div>
+-      <div><b>Información</b>
+-        <a href="../../#cotizador">Cotizador</a><a href="../../#precios">Lista de precios</a>
+-        <a href="../../#garantia">Garantía</a><a href="../../#faq">Preguntas frecuentes</a>
+-        <a href="../../#ubicacion">Ubicación y horario</a></div>
+-      <div><b>Sitio</b>
+-        <a href="../">Blog y guías</a><a href="../../nosotros.html">Nosotros (Cubatel)</a><a href="../../privacidad.html">Aviso de privacidad</a>
+-        <a href="../../terminos.html">Términos y garantía</a>
+-        <a href="https://www.google.com/maps/search/reparacion+de+celulares/@14.8934489,-92.2596839,15z?entry=ttu" target="_blank" rel="noopener">Google Maps</a></div>
+-    </div>
+-    <p class="ftr-legal">© <span id="year">2026</span> TapaTech Tapachula · Chiapas. Todos los derechos reservados.
+-      Precios en pesos mexicanos (MXN), sujetos a diagnóstico gratuito.</p>
+-  </div>
+-  <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+-</footer>
+-
+ <a class="wa-float" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Tengo%20una%20duda%20sobre%20una%20reparaci%C3%B3n." aria-label="Escribir por WhatsApp" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.6-1.1-4.3-3.8-4.4-4-.1-.2-1-1.4-1-2.7s.7-1.9.9-2.2c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 .9c.3.2.5.3.6.4 0 .2 0 .8-.2 1.4Z"/></svg></a>
+ </body>
+ </html>
+diff --git a/sitio-reparacion/blog/no-carga-puerto-o-bateria/index.html b/sitio-reparacion/blog/no-carga-puerto-o-bateria/index.html
+index f4b65d7..13ce74f 100644
+--- a/sitio-reparacion/blog/no-carga-puerto-o-bateria/index.html
++++ b/sitio-reparacion/blog/no-carga-puerto-o-bateria/index.html
+@@ -161,43 +161,19 @@
+       </div>
+     </section>
+ 
+-    <p style="margin-top:26px"><b>Seguir leyendo:</b> <a href="../celular-no-enciende-causas-y-soluciones/">Celular que no enciende</a> · <a href="../mi-celular-se-mojo-que-hacer/">Celular mojado: primeros auxilios</a> · <a href="../cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/">Precios de pantallas 2026</a></p>
++    <nav class="related" aria-label="Artículos relacionados">
++      <h2>Artículos relacionados</h2>
++      <ul class="rel-grid">
++        <li><a href="../cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/" data-cat="Precios" rel="related"><b>¿Cuánto cuesta cambiar la pantalla en Tapachula?</b><span>Rangos Incell $600–$1,700 y OLED hasta $5,200 por marca.</span></a></li>
++        <li><a href="../celular-no-enciende-causas-y-soluciones/" data-cat="Diagnóstico" rel="related"><b>Mi celular no enciende: 8 causas y soluciones</b><span>Pruebas de 3 minutos antes de gastar dinero.</span></a></li>
++        <li><a href="../mi-celular-se-mojo-que-hacer/" data-cat="Urgencia" rel="related"><b>Mi celular se mojó: qué hacer en 10 minutos</b><span>Protocolo de emergencia (y por qué el arroz no sirve).</span></a></li>
++        <li><a href="../samsung-a17-bloqueado-por-empresa-frp-knox-pago/" data-cat="Software" rel="related"><b>Samsung A17 bloqueado por empresa o falta de pago</b><span>Qué significa FRP/Knox y qué puedes hacer legalmente.</span></a></li>
++        <li><a href="../samsung-galaxy-a17-pantalla-rota-precio/" data-cat="Precios" rel="related"><b>Samsung Galaxy A17 con pantalla rota: precio 2026</b><span>Costo real por calidad de pieza en Tapachula.</span></a></li>
++      </ul>
++    </nav>
+   </article>
+ </main>
+ 
+-<footer class="ftr">
+-  <div class="wrap">
+-    <div class="cta-mini">
+-      <div><b style="color:#fff;font-size:1.05rem">¿Listo para repararlo?</b>
+-        <p style="margin:4px 0 0">Diagnóstico gratis, precio cerrado por escrito y garantía de 30 días.</p></div>
+-      <div class="cta-btns">
+-        <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Quiero%20reparar%20mi%20equipo." rel="noopener">WhatsApp</a>
+-        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="tel:+529622889585">Llamar</a>
+-        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="../../#diagnostico">Agendar cita</a>
+-      </div>
+-    </div>
+-    <div class="ftr-grid">
+-      <div><b>TapaTech</b>Quinceava Avenida Sur esq. 18a Calle Oriente, Col. Los Naranjos<br>16 de Septiembre, C.P. 30705, Tapachula de Córdova y Ordóñez, Chis.<br><a href="tel:+529622889585">962 288 9585</a><br>
+-        <span style="font-size:.82rem">Lun a Sáb 9:00–19:00 corrido · Dom: urgencias por WhatsApp</span></div>
+-      <div><b>Servicios</b>
+-        <a href="../../#servicios">Cambio de pantalla</a><a href="../../#servicios">Batería y puerto de carga</a>
+-        <a href="../../#servicios">Equipos mojados</a><a href="../../#servicios">Laptops: SSD, RAM, formateo</a>
+-        <a href="../../#domicilio">Recolección a domicilio</a></div>
+-      <div><b>Información</b>
+-        <a href="../../#cotizador">Cotizador</a><a href="../../#precios">Lista de precios</a>
+-        <a href="../../#garantia">Garantía</a><a href="../../#faq">Preguntas frecuentes</a>
+-        <a href="../../#ubicacion">Ubicación y horario</a></div>
+-      <div><b>Sitio</b>
+-        <a href="../">Blog y guías</a><a href="../../nosotros.html">Nosotros (Cubatel)</a><a href="../../privacidad.html">Aviso de privacidad</a>
+-        <a href="../../terminos.html">Términos y garantía</a>
+-        <a href="https://www.google.com/maps/search/reparacion+de+celulares/@14.8934489,-92.2596839,15z?entry=ttu" target="_blank" rel="noopener">Google Maps</a></div>
+-    </div>
+-    <p class="ftr-legal">© <span id="year">2026</span> TapaTech Tapachula · Chiapas. Todos los derechos reservados.
+-      Precios en pesos mexicanos (MXN), sujetos a diagnóstico gratuito.</p>
+-  </div>
+-  <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+-</footer>
+-
+ <a class="wa-float" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Tengo%20una%20duda%20sobre%20una%20reparaci%C3%B3n." aria-label="Escribir por WhatsApp" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.6-1.1-4.3-3.8-4.4-4-.1-.2-1-1.4-1-2.7s.7-1.9.9-2.2c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 .9c.3.2.5.3.6.4 0 .2 0 .8-.2 1.4Z"/></svg></a>
+ </body>
+ </html>
+diff --git a/sitio-reparacion/blog/samsung-a17-bloqueado-por-empresa-frp-knox-pago/index.html b/sitio-reparacion/blog/samsung-a17-bloqueado-por-empresa-frp-knox-pago/index.html
+index 1baa891..4549754 100644
+--- a/sitio-reparacion/blog/samsung-a17-bloqueado-por-empresa-frp-knox-pago/index.html
++++ b/sitio-reparacion/blog/samsung-a17-bloqueado-por-empresa-frp-knox-pago/index.html
+@@ -184,43 +184,19 @@
+       </div>
+     </section>
+ 
+-    <p style="margin-top:26px"><b>Seguir leyendo:</b> <a href="../celular-no-enciende-causas-y-soluciones/">Mi celular no enciende: causas y precios</a> · <a href="../no-carga-puerto-o-bateria/">No carga: ¿puerto o batería?</a> · <a href="../cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/">Precios de pantallas 2026</a></p>
++    <nav class="related" aria-label="Artículos relacionados">
++      <h2>Artículos relacionados</h2>
++      <ul class="rel-grid">
++        <li><a href="../cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/" data-cat="Precios" rel="related"><b>¿Cuánto cuesta cambiar la pantalla en Tapachula?</b><span>Rangos Incell $600–$1,700 y OLED hasta $5,200 por marca.</span></a></li>
++        <li><a href="../celular-no-enciende-causas-y-soluciones/" data-cat="Diagnóstico" rel="related"><b>Mi celular no enciende: 8 causas y soluciones</b><span>Pruebas de 3 minutos antes de gastar dinero.</span></a></li>
++        <li><a href="../mi-celular-se-mojo-que-hacer/" data-cat="Urgencia" rel="related"><b>Mi celular se mojó: qué hacer en 10 minutos</b><span>Protocolo de emergencia (y por qué el arroz no sirve).</span></a></li>
++        <li><a href="../no-carga-puerto-o-bateria/" data-cat="Energía" rel="related"><b>No carga: ¿puerto de carga o batería?</b><span>Cómo distinguir la falla antes de cotizar.</span></a></li>
++        <li><a href="../samsung-galaxy-a17-pantalla-rota-precio/" data-cat="Precios" rel="related"><b>Samsung Galaxy A17 con pantalla rota: precio 2026</b><span>Costo real por calidad de pieza en Tapachula.</span></a></li>
++      </ul>
++    </nav>
+   </article>
+ </main>
+ 
+-<footer class="ftr">
+-  <div class="wrap">
+-    <div class="cta-mini">
+-      <div><b style="color:#fff;font-size:1.05rem">¿Listo para repararlo?</b>
+-        <p style="margin:4px 0 0">Diagnóstico gratis, precio cerrado por escrito y garantía de 30 días.</p></div>
+-      <div class="cta-btns">
+-        <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Quiero%20reparar%20mi%20equipo." rel="noopener">WhatsApp</a>
+-        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="tel:+529622889585">Llamar</a>
+-        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="../../#diagnostico">Agendar cita</a>
+-      </div>
+-    </div>
+-    <div class="ftr-grid">
+-      <div><b>TapaTech</b>Quinceava Avenida Sur esq. 18a Calle Oriente, Col. Los Naranjos<br>16 de Septiembre, C.P. 30705, Tapachula de Córdova y Ordóñez, Chis.<br><a href="tel:+529622889585">962 288 9585</a><br>
+-        <span style="font-size:.82rem">Lun a Sáb 9:00–19:00 corrido · Dom: urgencias por WhatsApp</span></div>
+-      <div><b>Servicios</b>
+-        <a href="../../#servicios">Cambio de pantalla</a><a href="../../#servicios">Batería y puerto de carga</a>
+-        <a href="../../#servicios">Equipos mojados</a><a href="../../#servicios">Laptops: SSD, RAM, formateo</a>
+-        <a href="../../#domicilio">Recolección a domicilio</a></div>
+-      <div><b>Información</b>
+-        <a href="../../#cotizador">Cotizador</a><a href="../../#precios">Lista de precios</a>
+-        <a href="../../#garantia">Garantía</a><a href="../../#faq">Preguntas frecuentes</a>
+-        <a href="../../#ubicacion">Ubicación y horario</a></div>
+-      <div><b>Sitio</b>
+-        <a href="../">Blog y guías</a><a href="../../nosotros.html">Nosotros (Cubatel)</a><a href="../../privacidad.html">Aviso de privacidad</a>
+-        <a href="../../terminos.html">Términos y garantía</a>
+-        <a href="https://www.google.com/maps/search/reparacion+de+celulares/@14.8934489,-92.2596839,15z?entry=ttu" target="_blank" rel="noopener">Google Maps</a></div>
+-    </div>
+-    <p class="ftr-legal">© <span id="year">2026</span> TapaTech Tapachula · Chiapas. Todos los derechos reservados.
+-      Precios en pesos mexicanos (MXN), sujetos a diagnóstico gratuito.</p>
+-  </div>
+-  <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+-</footer>
+-
+ <a class="wa-float" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Tengo%20una%20duda%20sobre%20una%20reparaci%C3%B3n." aria-label="Escribir por WhatsApp" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.6-1.1-4.3-3.8-4.4-4-.1-.2-1-1.4-1-2.7s.7-1.9.9-2.2c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 .9c.3.2.5.3.6.4 0 .2 0 .8-.2 1.4Z"/></svg></a>
+ </body>
+ </html>
+diff --git a/sitio-reparacion/blog/samsung-galaxy-a17-pantalla-rota-precio/index.html b/sitio-reparacion/blog/samsung-galaxy-a17-pantalla-rota-precio/index.html
+index ade8903..69e64bb 100644
+--- a/sitio-reparacion/blog/samsung-galaxy-a17-pantalla-rota-precio/index.html
++++ b/sitio-reparacion/blog/samsung-galaxy-a17-pantalla-rota-precio/index.html
+@@ -80,16 +80,6 @@
+   .hdr nav a{padding:13px 12px;font-size:.98rem;border-radius:10px;display:block}
+   .hdr nav a.btn{display:flex;justify-content:center;margin-top:8px}
+ }
+-.ftr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:26px;margin-top:26px}
+-.ftr-grid b{color:#fff;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+-.ftr-grid a{display:block;font-size:.88rem;margin-bottom:7px}
+-.ftr-grid div:first-child{font-size:.88rem;line-height:1.6}
+-.cta-mini{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+-  background:linear-gradient(120deg,rgba(37,99,235,.14),rgba(255,255,255,.03));
+-  border:1px solid rgba(37,99,235,.28);border-radius:20px;padding:18px 22px}
+-.cta-btns{display:flex;gap:8px;flex-wrap:wrap}
+-.ftr-legal{margin-top:26px;padding-top:18px;border-top:1px solid #22304E;font-size:.78rem;color:#8190A8}
+-@media(max-width:640px){.cta-mini{flex-direction:column;align-items:stretch}}
+ </style>
+ </head>
+ <body>
+@@ -198,43 +188,19 @@
+       </div>
+     </section>
+ 
+-    <p style="margin-top:26px"><b>Seguir leyendo:</b> <a href="../cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/">Precios de pantallas 2026 por marca</a> · <a href="../no-carga-puerto-o-bateria/">No carga: puerto o batería</a> · <a href="../celular-no-enciende-causas-y-soluciones/">Celular que no enciende</a></p>
++    <nav class="related" aria-label="Artículos relacionados">
++      <h2>Artículos relacionados</h2>
++      <ul class="rel-grid">
++        <li><a href="../cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/" data-cat="Precios" rel="related"><b>¿Cuánto cuesta cambiar la pantalla en Tapachula?</b><span>Rangos Incell $600–$1,700 y OLED hasta $5,200 por marca.</span></a></li>
++        <li><a href="../celular-no-enciende-causas-y-soluciones/" data-cat="Diagnóstico" rel="related"><b>Mi celular no enciende: 8 causas y soluciones</b><span>Pruebas de 3 minutos antes de gastar dinero.</span></a></li>
++        <li><a href="../mi-celular-se-mojo-que-hacer/" data-cat="Urgencia" rel="related"><b>Mi celular se mojó: qué hacer en 10 minutos</b><span>Protocolo de emergencia (y por qué el arroz no sirve).</span></a></li>
++        <li><a href="../no-carga-puerto-o-bateria/" data-cat="Energía" rel="related"><b>No carga: ¿puerto de carga o batería?</b><span>Cómo distinguir la falla antes de cotizar.</span></a></li>
++        <li><a href="../samsung-a17-bloqueado-por-empresa-frp-knox-pago/" data-cat="Software" rel="related"><b>Samsung A17 bloqueado por empresa o falta de pago</b><span>Qué significa FRP/Knox y qué puedes hacer legalmente.</span></a></li>
++      </ul>
++    </nav>
+   </article>
+ </main>
+ 
+-<footer class="ftr">
+-  <div class="wrap">
+-    <div class="cta-mini">
+-      <div><b style="color:#fff;font-size:1.05rem">¿Listo para repararlo?</b>
+-        <p style="margin:4px 0 0">Diagnóstico gratis, precio cerrado por escrito y garantía de 30 días.</p></div>
+-      <div class="cta-btns">
+-        <a class="btn btn--wa" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Quiero%20reparar%20mi%20equipo." rel="noopener">WhatsApp</a>
+-        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="tel:+529622889585">Llamar</a>
+-        <a class="btn btn--ghost" style="border-color:#2A3E66;color:#EAF0FB" href="../../#diagnostico">Agendar cita</a>
+-      </div>
+-    </div>
+-    <div class="ftr-grid">
+-      <div><b>TapaTech</b>Quinceava Avenida Sur esq. 18a Calle Oriente, Col. Los Naranjos<br>16 de Septiembre, C.P. 30705, Tapachula de Córdova y Ordóñez, Chis.<br><a href="tel:+529622889585">962 288 9585</a><br>
+-        <span style="font-size:.82rem">Lun a Sáb 9:00–19:00 corrido · Dom: urgencias por WhatsApp</span></div>
+-      <div><b>Servicios</b>
+-        <a href="../../#servicios">Cambio de pantalla</a><a href="../../#servicios">Batería y puerto de carga</a>
+-        <a href="../../#servicios">Equipos mojados</a><a href="../../#servicios">Laptops: SSD, RAM, formateo</a>
+-        <a href="../../#servicios">Xbox / PS / Switch</a><a href="../../#domicilio">Recolección a domicilio</a></div>
+-      <div><b>Información</b>
+-        <a href="../../#cotizador">Cotizador</a><a href="../../#precios">Lista de precios</a>
+-        <a href="../../#garantia">Garantía</a><a href="../../#faq">Preguntas frecuentes</a>
+-        <a href="../../#ubicacion">Ubicación y horario</a></div>
+-      <div><b>Sitio</b>
+-        <a href="../">Blog y guías</a><a href="../../nosotros.html">Nosotros (Cubatel)</a><a href="../../privacidad.html">Aviso de privacidad</a>
+-        <a href="../../terminos.html">Términos y garantía</a>
+-        <a href="https://www.google.com/maps/search/reparacion+de+celulares/@14.8934489,-92.2596839,15z?entry=ttu" target="_blank" rel="noopener">Google Maps</a></div>
+-    </div>
+-    <p class="ftr-legal">© <span id="year">2026</span> TapaTech Tapachula · Chiapas. Todos los derechos reservados.
+-      Precios en pesos mexicanos (MXN), sujetos a diagnóstico gratuito.</p>
+-  </div>
+-  <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+-</footer>
+-
+ <a class="wa-float" href="https://wa.me/529622889585?text=%C2%A1Hola%20TapaTech!%20Tengo%20una%20duda%20sobre%20una%20reparaci%C3%B3n." aria-label="Escribir por WhatsApp" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.6-1.1-4.3-3.8-4.4-4-.1-.2-1-1.4-1-2.7s.7-1.9.9-2.2c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 .9c.3.2.5.3.6.4 0 .2 0 .8-.2 1.4Z"/></svg></a>
+ </body>
+ </html>
+diff --git a/sitio-reparacion/index.html b/sitio-reparacion/index.html
+index d3b235d..9327336 100644
+--- a/sitio-reparacion/index.html
++++ b/sitio-reparacion/index.html
+@@ -888,6 +888,10 @@ html[data-theme="dark"] .voz-sorp-head b{color:var(--lupita)}
+ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+ @media print{.logo-mark::after{display:none}}
+ </style>
++<link rel="stylesheet" href="assets/doc-v2.css">
++<style>
++:root{--ink:#111111;--paper-2:#FDF5F2;--txt:#1A1A1A;--txt-2:#3A3A3A;--txt-3:#6E6E6E;--line:#EBDDD6}
++</style>
+ </head>
+ <body>
+ <a class="skip" href="#contenido">Saltar al contenido principal</a>
+@@ -898,7 +902,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+   <div class="wrap">
+     <span class="status"><span class="dot" id="stDot" aria-hidden="true"></span><span id="stTxt">Abierto ahora · cierra 7:00 pm</span></span>
+     <span class="topbar-links">
+-      <a href="#domicilio" class="hide-s">Recolección a domicilio</a>
++      <a href="/servicio#domicilio" class="hide-s">Recolección a domicilio</a>
+       <a href="tel:+529622889585" data-trk="call_click_topbar"><b>962 288 9585</b></a>
+     </span>
+   </div>
+@@ -912,16 +916,16 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+       <span>TapaTech<small>Tapachula · Chiapas</small></span>
+     </a>
+     <nav class="nav" id="nav" aria-label="Navegación principal">
+-      <a href="#servicios">Servicios</a>
+-      <a href="#precios">Precios</a>
+-      <a href="#resenas">Reseñas</a>
+-      <a href="nosotros.html">Nosotros</a>
+-      <a href="#ubicacion">Ubicación</a>
+-      <a href="#faq">Preguntas</a>
++      <a href="/servicio#servicios">Servicios</a>
++      <a href="/servicio#precios">Precios</a>
++      <a href="/servicio#resenas">Reseñas</a>
++      <a href="/nosotros">Nosotros</a>
++      <a href="/servicio#ubicacion">Ubicación</a>
++      <a href="/servicio#faq">Preguntas</a>
+     </nav>
+     <div class="hdr-cta">
+       <a class="btn btn--wa btn--sm" id="waHdr" href="#" rel="noopener" data-trk="wa_click_header" aria-label="Escribir por WhatsApp"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.6-1.1-4.3-3.8-4.4-4-.1-.2-1-1.4-1-2.7s.7-1.9.9-2.2c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 .9c.3.2.5.3.6.4 0 .2 0 .8-.2 1.4Z"/></svg><span class="lbl">WhatsApp</span></a>
+-      <a class="btn btn--acc btn--sm" id="waHdrCot" href="#cotizador"><span class="lbl">Cotizar gratis</span></a>
++      <a class="btn btn--acc btn--sm" id="waHdrCot" href="/servicio#cotizador"><span class="lbl">Cotizar gratis</span></a>
+       <button class="icon-btn burger" id="burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav">
+         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+       </button>
+@@ -945,7 +949,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Pieza probada frente a ti</li>
+       </ul>
+       <div class="btn-row hero-cta">
+-        <a class="btn btn--acc btn--lg" href="#cotizador" data-trk="hero_cotizar">Cotizar mi equipo en 60 segundos
++        <a class="btn btn--acc btn--lg" href="/servicio#cotizador" data-trk="hero_cotizar">Cotizar mi equipo en 60 segundos
+           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+         </a>
+         <a class="btn btn--wa btn--lg" id="waHero" href="#" data-trk="wa_click_hero" rel="noopener">
+@@ -1087,7 +1091,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+           <div style="padding:20px">
+             <h3>Taller abierto: puedes ver cómo trabajamos</h3>
+             <p>Mesa antiderrapante, estación de calor, microscopio y herramientas reales. No somos un puesto que “prueba a ver si pega”: cada reparación se documenta con fotos antes y después.</p>
+-            <a class="btn btn--ghost btn--sm mt-m" href="#garantia" data-trk="ver_garantia">Ver nuestras promesas</a>
++            <a class="btn btn--ghost btn--sm mt-m" href="/servicio#garantia" data-trk="ver_garantia">Ver nuestras promesas</a>
+           </div>
+         </div>
+         <div class="card" style="padding:0;overflow:hidden">
+@@ -1104,7 +1108,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+     </div>
+     <div class="strip rv">
+       <div><h3>¿No sabes qué tiene tu equipo?</h3><p>Diagnóstico gratuito en 15–30 minutos con precio cerrado por escrito antes de tocar nada. Sin cita y sin compromiso.</p></div>
+-      <div class="btn-row"><a class="btn btn--acc" href="#diagnostico" data-trk="strip_servicios_agendar">Diagnóstico gratis ahora</a><a class="btn btn--wa" id="waStrip1" href="#" rel="noopener" data-trk="wa_click_strip_servicios">Preguntar por WhatsApp</a></div>
++      <div class="btn-row"><a class="btn btn--acc" href="/servicio#diagnostico" data-trk="strip_servicios_agendar">Diagnóstico gratis ahora</a><a class="btn btn--wa" id="waStrip1" href="#" rel="noopener" data-trk="wa_click_strip_servicios">Preguntar por WhatsApp</a></div>
+     </div>
+   </div>
+ </section>
+@@ -1326,7 +1330,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+         </ul>
+         <div class="btn-row mt-m">
+           <a class="btn btn--wa" id="waDom" href="#" data-trk="wa_click_domicilio" rel="noopener">Pedir recolección a domicilio</a>
+-          <a class="btn btn--ghost" href="#ubicacion" data-trk="ver_ubicacion">Prefiero llevarlo yo</a>
++          <a class="btn btn--ghost" href="/servicio#ubicacion" data-trk="ver_ubicacion">Prefiero llevarlo yo</a>
+         </div>
+         <p class="note mt-m"><b>Zonas con cobertura habitual:</b> Centro, Las Flores, Los Naranjos, Bonanza, San José, Linda Vista, Fraccionamiento El Rey, Cumbres, Tinajas, Benito Juárez, 16 de Septiembre y Periférico. Fuera de la zona urbana (Puerto Madero, Huehuetán, Cacahoatán, Tuxtla Chico) cotizamos el envío por WhatsApp.</p>
+       </div>
+@@ -1382,7 +1386,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+           <li style="min-width:0"><b>Puerto de carga, cámara, bocina, equipo mojado, microsoldadura, laptops y consolas</b><br><small style="color:#333">También los reparamos: usa el cotizador o mándanos el modelo por WhatsApp y te damos el aproximado al instante.</small></li>
+         </ul>
+         <p class="note mt-m">Siempre te daremos la mejor calidad y el mejor precio. Si tu caso sale más barato, se cobra menos.</p>
+-        <a class="btn btn--acc mt-m" href="#cotizador" data-trk="precios_a_cotizador">Cotizar mi modelo exacto</a>
++        <a class="btn btn--acc mt-m" href="/servicio#cotizador" data-trk="precios_a_cotizador">Cotizar mi modelo exacto</a>
+       </div>
+       <div class="rv" data-d="1">
+         <h3 style="margin-bottom:14px">¿Pantalla premium o económica? La diferencia honesta</h3>
+@@ -1409,13 +1413,13 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+           </div>
+         </div>
+         <p class="note mt-m">Te mostramos las dos piezas físicamente antes de decidir, y te decimos cuál conviene según tu modelo y cuánto piensas conservar el equipo. Nunca instalamos algo que no aprobaste.</p>
+-        <a class="btn btn--ghost mt-m" href="#cotizador">Ver el aproximado de mi modelo</a>
++        <a class="btn btn--ghost mt-m" href="/servicio#cotizador">Ver el aproximado de mi modelo</a>
+       </div>
+     </div>
+     <p class="note mt-l" style="max-width:80ch">Los repuestos de telefonía se importan y su precio cambia según disponibilidad y tipo de cambio. Por eso el cotizador muestra aproximados "desde": tu precio cerrado y por escrito lo recibes en el diagnóstico gratuito, y no se modifica después aunque la pieza suba.</p>
+     <div class="strip rv">
+       <div><h3>Precio cerrado antes de empezar</h3><p>El monto que apruebas es el que pagas. Si aparece algo más, te llamamos con foto y tú decides.</p></div>
+-      <div class="btn-row"><a class="btn btn--acc" href="#cotizador" data-trk="strip_precios_cotizar">Cotizar mi modelo exacto</a><a class="btn btn--ghost" href="tel:+529622889585" data-trk="call_click_strip_precios">Llamar al taller</a></div>
++      <div class="btn-row"><a class="btn btn--acc" href="/servicio#cotizador" data-trk="strip_precios_cotizar">Cotizar mi modelo exacto</a><a class="btn btn--ghost" href="tel:+529622889585" data-trk="call_click_strip_precios">Llamar al taller</a></div>
+     </div>
+   </div>
+ </section>
+@@ -1450,13 +1454,13 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+         <p><b>No quitamos reportes de robo o extravío</b> ni liberamos equipos de procedencia dudosa. Pedimos identificación y, en equipos de segunda mano, comprobante de compra. Trabajamos desbloqueos y liberaciones comerciales legítimas, con registro.</p>
+         <p class="note mt-s">Esto protege a nuestros clientes: un equipo con reporte puede quedar inutilizable y perder su valor de reventa.</p>
+         <div class="btn-row mt-m">
+-          <a class="btn btn--acc btn--sm" href="#diagnostico" data-trk="garantia_a_form">Quiero mi diagnóstico gratis</a>
++          <a class="btn btn--acc btn--sm" href="/servicio#diagnostico" data-trk="garantia_a_form">Quiero mi diagnóstico gratis</a>
+         </div>
+       </div>
+     </div>
+     <div class="strip rv">
+       <div><h3>Trae tu equipo hoy, sal funcionando</h3><p>Pantallas y baterías en 40–60 minutos mientras esperas. También vamos por él a tu casa o trabajo.</p></div>
+-      <div class="btn-row"><a class="btn btn--acc" href="#cotizador" data-trk="strip_garantia_cotizar">Cotizar mi equipo</a><a class="btn btn--wa" id="waStrip2" href="#" rel="noopener" data-trk="wa_click_strip_garantia">Pedir recolección a domicilio</a></div>
++      <div class="btn-row"><a class="btn btn--acc" href="/servicio#cotizador" data-trk="strip_garantia_cotizar">Cotizar mi equipo</a><a class="btn btn--wa" id="waStrip2" href="#" rel="noopener" data-trk="wa_click_strip_garantia">Pedir recolección a domicilio</a></div>
+     </div>
+   </div>
+ </section>
+@@ -1491,8 +1495,8 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+       <a class="btn btn--acc" href="https://www.google.com/maps/search/reparacion+de+celulares/@14.8934489,-92.2596839,15z?entry=ttu" target="_blank" rel="noopener" data-trk="dejar_resena">Dejar mi reseña</a>
+     </div>
+     <div class="strip rv">
+-      <div><h3>Sé el siguiente cliente contento</h3><p>Diagnóstico gratis, pieza probada frente a ti y garantía escrita de 30 días con folio. Detrás del mostrador hay un solo responsable: <b>Rafael Ortiz, “Cubatel”</b>, con más de 15 años reparando celulares en Tapachula — <a href="nosotros.html">conoce su historia →</a></p></div>
+-      <div class="btn-row"><a class="btn btn--acc" href="#diagnostico" data-trk="strip_resenas_agendar">Quiero mi diagnóstico</a><a class="btn btn--ghost" href="https://www.google.com/maps/search/reparacion+de+celulares/@14.8934489,-92.2596839,15z?entry=ttu" target="_blank" rel="noopener" data-trk="strip_resenas_maps">Ver reseñas en Google</a></div>
++      <div><h3>Sé el siguiente cliente contento</h3><p>Diagnóstico gratis, pieza probada frente a ti y garantía escrita de 30 días con folio. Detrás del mostrador hay un solo responsable: <b>Rafael Ortiz, “Cubatel”</b>, con más de 15 años reparando celulares en Tapachula — <a href="/nosotros">conoce su historia →</a></p></div>
++      <div class="btn-row"><a class="btn btn--acc" href="/servicio#diagnostico" data-trk="strip_resenas_agendar">Quiero mi diagnóstico</a><a class="btn btn--ghost" href="https://www.google.com/maps/search/reparacion+de+celulares/@14.8934489,-92.2596839,15z?entry=ttu" target="_blank" rel="noopener" data-trk="strip_resenas_maps">Ver reseñas en Google</a></div>
+     </div>
+   </div>
+ </section>
+@@ -1620,7 +1624,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+               <input type="hidden" id="l-hora" name="cita_hora" value="">
+             </div>
+             <label class="consent"><input type="checkbox" id="l-ok" name="consentimiento" required>
+-              <span>Acepto el <a href="privacidad.html">aviso de privacidad</a> y que me contacten por WhatsApp o teléfono sobre esta solicitud. No compartimos tus datos con terceros ni te enviamos publicidad.</span></label>
++              <span>Acepto el <a href="/privacidad">aviso de privacidad</a> y que me contacten por WhatsApp o teléfono sobre esta solicitud. No compartimos tus datos con terceros ni te enviamos publicidad.</span></label>
+           </div>
+ 
+           <div class="wiz-nav">
+@@ -1657,7 +1661,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+         <details><summary>¿Reparan laptops y consolas, o solo celulares?</summary><div class="faq-body">Las tres cosas en el mismo taller. Laptops Windows y Mac: formateo, SSD, RAM, limpieza y pasta térmica, pantallas, teclados, bisagras y recuperación de información. Consolas: Xbox One/Series, PS4/PS5 y Switch — puerto HDMI, no enciende, fuente de poder, lector de discos, drift de joysticks y sobrecalentamiento.</div></details>
+         <details><summary>¿Puedo pagar con tarjeta o transferencia?</summary><div class="faq-body">Sí. Aceptamos efectivo, tarjeta de débito y crédito, y transferencia o depósito. En servicio a domicilio el pago es contra entrega, cuando ya probaste el equipo funcionando.</div></details>
+         <details><summary>¿Necesito cita?</summary><div class="faq-body">No es obligatoria, puedes llegar directo. Pero si escribes por WhatsApp antes, apartamos la pieza y te atendemos sin espera. Para servicio express el mismo día sí conviene agendar.</div></details>
+-        <details><summary>¿Quién repara mi celular? ¿Sigue siendo el mismo técnico?</summary><div class="faq-body">Sí. Tu equipo pasa por las manos de <b>Rafael Ortiz</b>, técnico cubano avecindado en Tapachula con <b>más de 15 años</b> reparando celulares — muchos clientes de toda la vida lo conocen como <b>“Cubatel”</b>. Antes estábamos en el centro; nos mudamos a Los Naranjos para seguir dándote el precio más bajo sin sacrificar calidad. Un solo responsable, de principio a fin: <a href="nosotros.html">conoce la historia completa aquí</a>.</div></details>
++        <details><summary>¿Quién repara mi celular? ¿Sigue siendo el mismo técnico?</summary><div class="faq-body">Sí. Tu equipo pasa por las manos de <b>Rafael Ortiz</b>, técnico cubano avecindado en Tapachula con <b>más de 15 años</b> reparando celulares — muchos clientes de toda la vida lo conocen como <b>“Cubatel”</b>. Antes estábamos en el centro; nos mudamos a Los Naranjos para seguir dándote el precio más bajo sin sacrificar calidad. Un solo responsable, de principio a fin: <a href="/nosotros">conoce la historia completa aquí</a>.</div></details>
+         <details><summary>¿Quitan reportes de robo o liberan cualquier equipo?</summary><div class="faq-body"><b>No quitamos reportes de robo o extravío.</b> Hacemos liberaciones comerciales legítimas y recuperación de acceso con identificación y, cuando aplica, comprobante de compra. Queda registro del servicio.</div></details>
+       </div>
+       <aside class="rv" data-d="1">
+@@ -1747,7 +1751,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+       <div class="btn-row">
+         <a class="btn btn--wa" id="waFooter" href="#" rel="noopener" data-trk="wa_click_footer">WhatsApp ahora</a>
+         <a class="btn btn--ghost" href="tel:+529622889585" data-trk="call_click_footer">Llamar al taller</a>
+-        <a class="btn btn--ghost" href="#diagnostico" data-trk="footer_agendar">Agendar cita</a>
++        <a class="btn btn--ghost" href="/servicio#diagnostico" data-trk="footer_agendar">Agendar cita</a>
+       </div>
+     </div>
+     <div class="ftr-grid">
+@@ -1762,41 +1766,41 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+       <div>
+         <h4>Servicios</h4>
+         <ul>
+-          <li><a href="#servicios">Reparación de celulares</a></li>
+-          <li><a href="#servicios">Cambio de pantalla</a></li>
+-          <li><a href="#servicios">Cambio de batería</a></li>
+-          <li><a href="#servicios">Puerto de carga</a></li>
+-          <li><a href="#servicios">Equipos mojados</a></li>
+-          <li><a href="#servicios">Liberación y software</a></li>
+-          <li><a href="#servicios">Reparación de laptops</a></li>
+-          <li><a href="#servicios">Reparación de Xbox y PS</a></li>
+-          <li><a href="#domicilio">Servicio a domicilio</a></li>
++          <li><a href="/servicio#servicios">Reparación de celulares</a></li>
++          <li><a href="/servicio#servicios">Cambio de pantalla</a></li>
++          <li><a href="/servicio#servicios">Cambio de batería</a></li>
++          <li><a href="/servicio#servicios">Puerto de carga</a></li>
++          <li><a href="/servicio#servicios">Equipos mojados</a></li>
++          <li><a href="/servicio#servicios">Liberación y software</a></li>
++          <li><a href="/servicio#servicios">Reparación de laptops</a></li>
++          <li><a href="/servicio#servicios">Reparación de Xbox y PS</a></li>
++          <li><a href="/servicio#domicilio">Servicio a domicilio</a></li>
+         </ul>
+       </div>
+       <div>
+         <h4>Información</h4>
+         <ul>
+-          <li><a href="#cotizador">Cotizador de precios</a></li>
+-          <li><a href="#precios">Lista de precios</a></li>
+-          <li><a href="#garantia">Garantía y políticas</a></li>
+-          <li><a href="nosotros.html">Conoce a Rafael “Cubatel” Ortiz</a></li>
+-          <li><a href="#proceso">Cómo trabajamos</a></li>
++          <li><a href="/servicio#cotizador">Cotizador de precios</a></li>
++          <li><a href="/servicio#precios">Lista de precios</a></li>
++          <li><a href="/servicio#garantia">Garantía y políticas</a></li>
++          <li><a href="/nosotros">Conoce a Rafael “Cubatel” Ortiz</a></li>
++          <li><a href="/servicio#proceso">Cómo trabajamos</a></li>
+           
+-          <li><a href="#faq">Preguntas frecuentes</a></li>
++          <li><a href="/servicio#faq">Preguntas frecuentes</a></li>
+           <li><a href="blog/">Blog y guías</a></li>
+-          <li><a href="#ubicacion">Ubicación y horario</a></li>
++          <li><a href="/servicio#ubicacion">Ubicación y horario</a></li>
+         </ul>
+       </div>
+       <div>
+         <h4>Zonas atendidas</h4>
+         <ul>
+-          <li><a href="#ubicacion">Tapachula Centro</a></li>
+-          <li><a href="#domicilio">Las Flores y Bonanza</a></li>
+-          <li><a href="#domicilio">Los Naranjos y San José</a></li>
+-          <li><a href="#domicilio">Linda Vista y Cumbres</a></li>
+-          <li><a href="#domicilio">Puerto Madero</a></li>
+-          <li><a href="#domicilio">Huehuetán y Tuxtla Chico</a></li>
+-          <li><a href="#domicilio">Cacahoatán y Suchiate</a></li>
++          <li><a href="/servicio#ubicacion">Tapachula Centro</a></li>
++          <li><a href="/servicio#domicilio">Las Flores y Bonanza</a></li>
++          <li><a href="/servicio#domicilio">Los Naranjos y San José</a></li>
++          <li><a href="/servicio#domicilio">Linda Vista y Cumbres</a></li>
++          <li><a href="/servicio#domicilio">Puerto Madero</a></li>
++          <li><a href="/servicio#domicilio">Huehuetán y Tuxtla Chico</a></li>
++          <li><a href="/servicio#domicilio">Cacahoatán y Suchiate</a></li>
+         </ul>
+         <h4 class="mt-l">Síguenos</h4>
+         <ul style="grid-template-columns:1fr 1fr;display:grid;gap:8px">
+@@ -1809,7 +1813,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+     </div>
+     <div class="ftr-bottom">
+       <span>© <span id="year">2026</span> TapaTech Tapachula. Todos los derechos reservados.</span>
+-      <span><a href="privacidad.html">Aviso de privacidad</a> · <a href="terminos.html">Términos y garantía</a> · <a href="#faq">FAQ</a></span>
++      <span><a href="/privacidad">Aviso de privacidad</a> · <a href="/terminos">Términos y garantía</a> · <a href="/servicio#faq">FAQ</a></span>
+     </div>
+   </div>
+ </footer>
+@@ -1818,7 +1822,7 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
+ <nav class="dock" aria-label="Acciones rápidas">
+   <a href="tel:+529622889585" data-trk="call_click_dock">
+     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5c0 8.3 6.7 15 15 15l1.8-3.6-4.3-2.1-1.9 1.9a12.4 12.4 0 0 1-5.8-5.8l1.9-1.9L8.6 4.2 4 5Z"/></svg>Llamar</a>
+-  <a class="d-cta" href="#cotizador" data-trk="dock_cotizar">
++  <a class="d-cta" href="/servicio#cotizador" data-trk="dock_cotizar">
+     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 9h5M7 13h10M7 17h7"/></svg>Cotizar</a>
+   <a class="d-wa" id="waDock" href="#" rel="noopener" data-trk="wa_click_dock">
+     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.6-1.1-4.3-3.8-4.4-4-.1-.2-1-1.4-1-2.7s.7-1.9.9-2.2c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 .9c.3.2.5.3.6.4 0 .2 0 .8-.2 1.4Z"/></svg>WhatsApp</a>
+@@ -3425,6 +3429,29 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
+   </div>
+ </aside>
+ 
++<!-- ══════════════ NAV /servicio (URL limpia sin #) ══════════════
++     Las rutas "/servicio#seccion" sirven esta misma página. Aquí se
++     restaura el ancla visible y se hace scroll suave a la sección,
++     con fallback inmediato si el JS no llegara a ejecutar. -->
++<script>
++(function(){
++  try{
++    var p = location.pathname.replace(/\/+$/,'');
++    if(p === '/servicio' || p.endsWith('/servicio')){
++      var h = location.hash;
++      if(!h){ history.replaceState(null,'',location.pathname + '#servicios'); h = '#servicios'; }
++      setTimeout(function(){
++        try{
++          var el = document.querySelector(h);
++          if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
++        }catch(e){}
++      }, 120);
++    }
++  }catch(e){}
++})();
++</script>
++
++<noscript><style>html{scroll-behavior:auto}</style></noscript>
+ 
+ </body>
+ </html>
+diff --git a/sitio-reparacion/nosotros.html b/sitio-reparacion/nosotros.html
+index 1cc290b..ed40870 100644
+--- a/sitio-reparacion/nosotros.html
++++ b/sitio-reparacion/nosotros.html
+@@ -6,6 +6,7 @@
+ <title>Rafael Ortiz — 15+ años reparando celulares en Tapachula | TapaTech (antes Cubatel)</title>
+ <meta name="description" content="Soy Rafael Ortiz, cubano radicado en Tapachula, técnico de celulares desde hace más de 15 años y fundador de TapaTech (conocido antes como Cubatel). Conoce mi historia, por qué salimos del centro y cómo trabajo con garantía que no te obliga a reclamar.">
+ <link rel="canonical" href="https://reparaciondecelulares.vercel.app/nosotros">
++<meta name="robots" content="noindex,follow">
+ <meta property="og:type" content="profile">
+ <meta property="og:title" content="Rafael Ortiz — 15+ años reparando celulares en Tapachula | TapaTech">
+ <meta property="og:description" content="Cubano en México, +15 años reparando equipos móviles. Fundador de TapaTech, antes conocido como Cubatel. Trabajos garantizados: no necesitas reclamar por el mismo problema.">
+diff --git a/sitio-reparacion/privacidad.html b/sitio-reparacion/privacidad.html
+index 644fc9d..a4bf71c 100644
+--- a/sitio-reparacion/privacidad.html
++++ b/sitio-reparacion/privacidad.html
+@@ -4,8 +4,8 @@
+ <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>Aviso de privacidad | TapaTech Tapachula</title>
+ <meta name="description" content="Aviso de privacidad de TapaTech Tapachula: qué datos recabamos, para qué los usamos, cómo ejercer tus derechos ARCO y cómo protegemos tu información al reparar tu equipo.">
+-<link rel="canonical" href="https://reparaciondecelulares.vercel.app/privacidad.html">
+-<meta name="robots" content="index,follow">
++<link rel="canonical" href="https://reparaciondecelulares.vercel.app/privacidad">
++<meta name="robots" content="noindex,follow">
+ <link rel="icon" href="favicon.svg" type="image/svg+xml">
+ <link rel="stylesheet" href="assets/doc-v2.css">
+ <style>
+diff --git a/sitio-reparacion/robots.txt b/sitio-reparacion/robots.txt
+index bf95725..409a871 100644
+--- a/sitio-reparacion/robots.txt
++++ b/sitio-reparacion/robots.txt
+@@ -6,6 +6,14 @@ Disallow: /admin
+ Disallow: /api/
+ Disallow: /datos/
+ Disallow: /tools/
++# Páginas legales e "acerca de" no indexadas (doble capa junto a meta robots + X-Robots-Tag)
++Disallow: /nosotros
++Disallow: /nosotros.html
++Disallow: /privacidad
++Disallow: /privacidad.html
++Disallow: /terminos
++Disallow: /terminos.html
++Disallow: /tarjeta-lupita.html
+ 
+ # ⚠️ Cambia reparaciondecelulares.vercel.app por tu dominio real al desplegar
+ Sitemap: https://reparaciondecelulares.vercel.app/sitemap.xml
+diff --git a/sitio-reparacion/sitemap.xml b/sitio-reparacion/sitemap.xml
+index 9765e2a..a9b3843 100644
+--- a/sitio-reparacion/sitemap.xml
++++ b/sitio-reparacion/sitemap.xml
+@@ -19,7 +19,7 @@
+     <priority>0.8</priority>
+   </url>
+   <url>
+-    <loc>https://reparaciondecelulares.vercel.app/nosotros.html</loc>
++    <loc>https://reparaciondecelulares.vercel.app/nosotros</loc>
+     <lastmod>2026-10-15</lastmod>
+     <changefreq>monthly</changefreq>
+     <priority>0.9</priority>
+@@ -60,16 +60,4 @@
+     <changefreq>monthly</changefreq>
+     <priority>0.7</priority>
+   </url>
+-  <url>
+-    <loc>https://reparaciondecelulares.vercel.app/privacidad.html</loc>
+-    <lastmod>2026-10-14</lastmod>
+-    <changefreq>yearly</changefreq>
+-    <priority>0.3</priority>
+-  </url>
+-  <url>
+-    <loc>https://reparaciondecelulares.vercel.app/terminos.html</loc>
+-    <lastmod>2026-10-14</lastmod>
+-    <changefreq>yearly</changefreq>
+-    <priority>0.3</priority>
+-  </url>
+ </urlset>
+diff --git a/sitio-reparacion/sw.js b/sitio-reparacion/sw.js
+index 12d8d12..144814b 100644
+--- a/sitio-reparacion/sw.js
++++ b/sitio-reparacion/sw.js
+@@ -9,7 +9,7 @@
+ /* ═══ AUTO-UPDATE: este service worker se revalida solo en cada navegación.
+    Cuando Vercel publica una nueva versión del sitio, la próxima visita ya
+    muestra los cambios (sin "sitio viejo" ni caché atrapada). ═══ */
+-const SW_VER = '2026-10-17-carga-diferida-6';
++const SW_VER = '2026-10-17-rutas-limpias-seo-8';
+ 
+ self.addEventListener('install', e => self.skipWaiting());
+ self.addEventListener('activate', e => e.waitUntil((async () => {
+diff --git a/sitio-reparacion/terminos.html b/sitio-reparacion/terminos.html
+index 8038510..099c267 100644
+--- a/sitio-reparacion/terminos.html
++++ b/sitio-reparacion/terminos.html
+@@ -4,8 +4,8 @@
+ <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>Términos del servicio y política de garantía | TapaTech Tapachula</title>
+ <meta name="description" content="Política de garantía de 30 días, condiciones del servicio de reparación, reglas del servicio a domicilio, boletos con folio y exclusiones. TapaTech Tapachula.">
+-<link rel="canonical" href="https://reparaciondecelulares.vercel.app/terminos.html">
+-<meta name="robots" content="index,follow">
++<link rel="canonical" href="https://reparaciondecelulares.vercel.app/terminos">
++<meta name="robots" content="noindex,follow">
+ <link rel="icon" href="favicon.svg" type="image/svg+xml">
+ <link rel="stylesheet" href="assets/doc-v2.css">
+ <style>
+diff --git a/sitio-reparacion/vercel.json b/sitio-reparacion/vercel.json
+index eba7dd8..f579d3b 100644
+--- a/sitio-reparacion/vercel.json
++++ b/sitio-reparacion/vercel.json
+@@ -29,6 +29,24 @@
+         { "key": "Referrer-Policy", "value": "no-referrer" }
+       ]
+     },
++    {
++      "source": "/nosotros(.html)?",
++      "headers": [
++        { "key": "X-Robots-Tag", "value": "noindex, follow" }
++      ]
++    },
++    {
++      "source": "/privacidad(.html)?",
++      "headers": [
++        { "key": "X-Robots-Tag", "value": "noindex, follow" }
++      ]
++    },
++    {
++      "source": "/terminos(.html)?",
++      "headers": [
++        { "key": "X-Robots-Tag", "value": "noindex, follow" }
++      ]
++    },
+     {
+       "source": "/sw.js",
+       "headers": [
+@@ -59,6 +77,10 @@
+     }
+   ],
+   "rewrites": [
++    { "source": "/servicio", "destination": "/index.html" },
++    { "source": "/nosotros", "destination": "/nosotros.html" },
++    { "source": "/privacidad", "destination": "/privacidad.html" },
++    { "source": "/terminos", "destination": "/terminos.html" },
+     { "source": "/boleto", "destination": "/index.html" },
+     { "source": "/admin", "destination": "/admin.html" }
+   ]
+-- 
+2.39.5
+
