@@ -39,6 +39,12 @@ a:hover{color:var(--acc)}
 .hdr nav{margin-left:auto;display:flex;gap:6px;align-items:center}
 .hdr nav a{padding:9px 12px;border-radius:999px;text-decoration:none;font-size:.86rem;font-weight:600;color:var(--txt-2)}
 .hdr nav a:hover{background:var(--paper-2);color:var(--txt)}
+/* FIX botones del encabezado (blog + posts): el color gris lo ganaba la regla
+   genérica ".hdr nav a" por especificidad. Ahora los botones SIEMPRE llevan
+   texto BLANCO y se agrandan para que "WhatsApp"/"Agendar" entren completos. */
+.hdr nav a.btn,.hdr nav a.btn:hover{color:#FFFFFF!important}
+.hdr nav a.btn{padding:11px 20px;font-size:.95rem;font-weight:800;line-height:1.1;
+  white-space:nowrap!important;flex:0 0 auto;letter-spacing:-.01em}
 .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 20px;border-radius:999px;font-weight:800;font-size:.9rem;text-decoration:none;border:2px solid transparent;cursor:pointer;transition:transform .15s,box-shadow .15s;white-space:normal;overflow-wrap:anywhere;max-width:100%}
 .btn--acc{background:var(--acc);color:#FFFFFF;box-shadow:0 6px 18px rgba(76,91,212,.3)}
 .btn--acc:hover{transform:translateY(-2px);color:#FFFFFF}
