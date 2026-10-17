@@ -65,6 +65,25 @@
   ]
 }
 </script>
+<style>
+/* FIX: hamburguesa visible SOLO en móvil (<=900px). En web queda oculta para
+   no romper el encabezado con un botón sin acción. */
+.burger{display:none;margin-left:auto;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:transparent;cursor:pointer;place-items:center;color:var(--txt)}
+.burger:hover{border-color:var(--acc)}
+@media(max-width:900px){
+  .burger{display:grid}
+  .hdr nav{position:absolute;top:62px;left:0;right:0;z-index:60;flex-direction:column;align-items:stretch;
+    background:var(--paper);border-bottom:1px solid var(--line);padding:10px 18px 18px;gap:4px;
+    box-shadow:0 18px 34px rgba(11,15,18,.14);transform:translateY(-140%);
+    transition:transform .26s cubic-bezier(.2,.8,.2,1);max-height:calc(100dvh - 62px);overflow:auto}
+  .hdr nav.is-open{transform:none}
+  .hdr nav a{padding:13px 12px;font-size:.98rem;border-radius:10px;display:block}
+  .hdr nav a.btn,.hdr nav a.btn:hover{color:#FFFFFF!important}
+  .hdr nav a.btn{display:inline-flex;justify-content:center;align-items:center;margin-top:8px;
+    padding:12px 24px;font-size:1rem;font-weight:800;line-height:1.1;
+    white-space:nowrap!important;flex:0 0 auto;width:auto;max-width:100%}
+}
+</style>
 </head>
 <body>
 <a class="skip" href="#main">Saltar al contenido</a>
