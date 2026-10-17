@@ -1,0 +1,29 @@
+From 1403d1047cd5f11bf0da00d3a236f041d7eb13ef Mon Sep 17 00:00:00 2001
+From: "qwen.ai[bot]" <qwenlm-intl@service.alibaba.com>
+Date: Sat, 17 Oct 2026 00:48:23 +0000
+Subject: [PATCH 2/2] =?UTF-8?q?SEO:=20quitar=20/nosotros=20del=20sitemap?=
+ =?UTF-8?q?=20(p=C3=A1gina=20no=20indexable)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ sitio-reparacion/sitemap.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sitio-reparacion/sitemap.xml b/sitio-reparacion/sitemap.xml
+index a9b3843..e129f5d 100644
+--- a/sitio-reparacion/sitemap.xml
++++ b/sitio-reparacion/sitemap.xml
+@@ -19,7 +19,7 @@
+     <priority>0.8</priority>
+   </url>
+   <url>
+-    <loc>https://reparaciondecelulares.vercel.app/nosotros</loc>
++    <!-- nosotros: no indexada (meta robots + X-Robots-Tag) -->
+     <lastmod>2026-10-15</lastmod>
+     <changefreq>monthly</changefreq>
+     <priority>0.9</priority>
+-- 
+2.39.5
+
