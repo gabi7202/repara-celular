@@ -30,6 +30,24 @@
       ]
     },
     {
+      "source": "/nosotros(.html)?",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, follow" }
+      ]
+    },
+    {
+      "source": "/privacidad(.html)?",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, follow" }
+      ]
+    },
+    {
+      "source": "/terminos(.html)?",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, follow" }
+      ]
+    },
+    {
       "source": "/sw.js",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
@@ -59,6 +77,10 @@
     }
   ],
   "rewrites": [
+    { "source": "/servicio", "destination": "/index.html" },
+    { "source": "/nosotros", "destination": "/nosotros.html" },
+    { "source": "/privacidad", "destination": "/privacidad.html" },
+    { "source": "/terminos", "destination": "/terminos.html" },
     { "source": "/boleto", "destination": "/index.html" },
     { "source": "/admin", "destination": "/admin.html" }
   ]
