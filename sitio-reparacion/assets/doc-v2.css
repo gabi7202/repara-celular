@@ -2,18 +2,21 @@
    Se sirve con caché de 1 año: las páginas internas cargan instantáneo. */
 *,*::before,*::after{box-sizing:border-box}
 *{margin:0}
+/* Paleta v4 unificada con la pantalla principal (index.html):
+   blanco → salmón suave, texto negro/grafito/gris, acento azul #4C5BD4, botones grafito #2B2B2B. */
 :root{
-  --ink:#0B1220;--paper:#fff;--paper-2:#F5F8FD;--txt:#0F172A;--txt-2:#334155;--txt-3:#5B6B85;
-  --acc:#4C5BD4;--acc-ink:#3D4BBE;--acc-soft:#EFF1FB;--warn:#FFB020;--warn-soft:#FFF4DF;
-  --line:#E6EAF0;--r-s:10px;--r-m:16px;--r-l:24px;
+  --ink:#111111;--ink-2:#1B1B1B;--ink-3:#262626;
+  --salmon:#FFB19E;
+  --paper:#FFFFFF;--paper-2:#FDF5F2;--paper-3:#FBEEE8;
+  --txt:#1A1A1A;--txt-2:#3A3A3A;--txt-3:#6E6E6E;
+  --acc:#4C5BD4;--on-acc:#FFFFFF;--acc-ink:#3D4BBE;--acc-soft:#EFF1FB;--acc-pale:#DCE0F5;
+  --rojo:#2B2B2B;--warn:#3A3A3A;--warn-soft:#EFEFEF;--danger:#C1493C;
+  --line:#EBDDD6;--r-s:10px;--r-m:16px;--r-l:24px;
   --ff:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
   --ff-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
-@media(prefers-color-scheme:dark){:root{
-  --paper:#0B1220;--paper-2:#101B33;--txt:#EAF0FB;--txt-2:#B4C0DA;--txt-3:#8190A8;
-  --acc:#5B58F5;--acc-soft:#171549;--warn-soft:#2A2113;--line:#22304E}}
-html{scroll-behavior:smooth;scroll-padding-top:80px;-webkit-text-size-adjust:100%}
-body{font-family:var(--ff);background:var(--paper);color:var(--txt);line-height:1.7;font-size:clamp(15.5px,2.6vw,16.5px);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html{scroll-behavior:smooth;scroll-padding-top:80px;-webkit-text-size-adjust:100%;background:linear-gradient(180deg,#FFFFFF 0%,#FFFFFF 62%,var(--paper-2) 100%);min-height:100%}
+body{font-family:var(--ff);background:transparent;color:var(--txt);line-height:1.7;font-size:clamp(15.5px,2.6vw,16.5px);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 img{max-width:100%;height:auto;display:block}
 a{color:var(--acc-ink);text-decoration-thickness:1px;text-underline-offset:3px}
 a:hover{color:var(--acc)}
@@ -36,6 +39,12 @@ a:hover{color:var(--acc)}
 .hdr nav{margin-left:auto;display:flex;gap:6px;align-items:center}
 .hdr nav a{padding:9px 12px;border-radius:999px;text-decoration:none;font-size:.86rem;font-weight:600;color:var(--txt-2)}
 .hdr nav a:hover{background:var(--paper-2);color:var(--txt)}
+/* FIX botones del encabezado (blog + posts): el color gris lo ganaba la regla
+   genérica ".hdr nav a" por especificidad. Ahora los botones SIEMPRE llevan
+   texto BLANCO y se agrandan para que "WhatsApp"/"Agendar" entren completos. */
+.hdr nav a.btn,.hdr nav a.btn:hover{color:#FFFFFF!important}
+.hdr nav a.btn{padding:11px 20px;font-size:.95rem;font-weight:800;line-height:1.1;
+  white-space:nowrap!important;flex:0 0 auto;letter-spacing:-.01em}
 .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 20px;border-radius:999px;font-weight:800;font-size:.9rem;text-decoration:none;border:2px solid transparent;cursor:pointer;transition:transform .15s,box-shadow .15s;white-space:normal;overflow-wrap:anywhere;max-width:100%}
 .btn--acc{background:var(--acc);color:#FFFFFF;box-shadow:0 6px 18px rgba(76,91,212,.3)}
 .btn--acc:hover{transform:translateY(-2px);color:#FFFFFF}
@@ -43,6 +52,25 @@ a:hover{color:var(--acc)}
 .btn--ghost{border-color:var(--line);color:var(--txt)}
 .btn--ghost:hover{border-color:var(--acc)}
 .btn--dark{background:var(--ink);color:#fff}
+/* Botón hamburguesa del blog/posts: solo en móvil (antes no existía la regla
+   base y el botón se veía SIEMPRE — inerte y rompiendo el encabezado en web). */
+.burger{display:none;margin-left:auto;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:transparent;cursor:pointer;place-items:center;color:var(--txt)}
+.burger:hover{border-color:var(--acc)}
+.hdr nav a.is-active{background:var(--acc-soft);color:var(--acc-ink)}
+@media(max-width:900px){
+  .burger{display:grid}
+  .hdr nav{position:absolute;top:62px;left:0;right:0;z-index:60;flex-direction:column;align-items:stretch;
+    background:var(--paper);border-bottom:1px solid var(--line);padding:10px 18px 18px;gap:4px;
+    box-shadow:0 18px 34px rgba(11,15,18,.14);transform:translateY(-140%);
+    transition:transform .26s cubic-bezier(.2,.8,.2,1);max-height:calc(100dvh - 62px);overflow:auto}
+  .hdr nav.is-open{transform:none}
+  .hdr nav a{padding:13px 12px;font-size:.98rem;border-radius:10px;display:block}
+  /* FIX botones del encabezado (web y móvil): texto BLANCO y tamaño completo. */
+  .hdr nav a.btn,.hdr nav a.btn:hover{color:#FFFFFF!important}
+  .hdr nav a.btn{display:inline-flex;justify-content:center;align-items:center;margin-top:8px;
+    padding:12px 24px;font-size:1rem;font-weight:800;line-height:1.1;
+    white-space:nowrap!important;flex:0 0 auto;width:auto;max-width:100%}
+}
 @media(max-width:760px){.hdr nav a:not(.btn){display:none}}
 
 /* Migas de pan */
@@ -96,7 +124,7 @@ th,td{padding:11px 13px;border-bottom:1px solid var(--line);text-align:left}
 thead th{background:var(--paper-2);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-3)}
 td.num,th.num{font-family:var(--ff-mono);font-weight:700;white-space:nowrap}
 .callout{border-left:4px solid var(--acc);background:var(--acc-soft);padding:16px 18px;border-radius:0 var(--r-m) var(--r-m) 0;margin:1.6em 0;font-size:.95rem}
-.callout--warn{border-color:var(--warn);background:var(--warn-soft)}
+.callout--warn{border-color:var(--danger);background:#FDECEA}
 .callout b{display:block;margin-bottom:4px}
 blockquote{border-left:3px solid var(--line);padding-left:18px;margin:1.5em 0;color:var(--txt-2);font-style:italic}
 .toc{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--r-l);padding:20px 22px;margin:1.6em 0}
@@ -131,6 +159,19 @@ blockquote{border-left:3px solid var(--line);padding-left:18px;margin:1.5em 0;co
 .ftr a:hover{color:var(--acc)}
 .ftr .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .ftr b{color:#fff;display:block;margin-bottom:6px}
+
+/* Artículos relacionados (interlinking SEO dentro del blog) */
+.related{margin:2.4em 0 1em;border-top:2px solid var(--line);padding-top:26px}
+.related h2{font-size:1.15rem;letter-spacing:-.01em;margin:0 0 14px}
+.rel-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));list-style:none;margin:0;padding:0}
+.rel-grid li{margin:0}
+.rel-grid a{display:flex;flex-direction:column;gap:6px;height:100%;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--paper-2);text-decoration:none;color:var(--txt);transition:border-color .15s,transform .15s,box-shadow .15s}
+.rel-grid a:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 8px 18px rgba(17,17,17,.07)}
+.rel-grid a::before{content:attr(data-cat);font-size:.64rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--acc-ink)}
+.rel-grid a b{font-size:.92rem;line-height:1.35;font-weight:800;letter-spacing:-.01em}
+.rel-grid a span{font-size:.78rem;color:var(--txt-3);line-height:1.45}
+@media(max-width:640px){.rel-grid{grid-template-columns:1fr}}
+
 .skip{position:absolute;left:-9999px}
 .skip:focus{left:0;top:0;background:var(--acc);color:#FFFFFF;padding:12px 16px;z-index:99;border-radius:0 0 var(--r-s) 0}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}

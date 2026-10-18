@@ -115,8 +115,13 @@ EXTRA_CSS = '''
     transition:transform .26s cubic-bezier(.2,.8,.2,1);max-height:calc(100dvh - 62px);overflow:auto}
   .hdr nav.is-open{transform:none}
   .hdr nav a{padding:13px 12px;font-size:.98rem;border-radius:10px;display:block}
-  .hdr nav a.btn{display:flex;justify-content:center;margin-top:8px}
+    /* FIX botones del encabezado (web y móvil): texto BLANCO y tamaño completo. */
+  .hdr nav a.btn,.hdr nav a.btn:hover{color:#FFFFFF!important}
+  .hdr nav a.btn{display:inline-flex;justify-content:center;align-items:center;margin-top:8px;
+    padding:12px 24px;font-size:1rem;font-weight:800;line-height:1.1;
+    white-space:nowrap!important;flex:0 0 auto;width:auto;max-width:100%}
 }
+@media(min-width:901px){.burger{display:none!important}}
 .ftr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:26px;margin-top:26px}
 .ftr-grid b{color:#fff;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
 .ftr-grid a{display:block;font-size:.88rem;margin-bottom:7px}
