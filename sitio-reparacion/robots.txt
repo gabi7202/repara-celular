@@ -6,6 +6,14 @@ Disallow: /admin
 Disallow: /api/
 Disallow: /datos/
 Disallow: /tools/
+# Páginas legales e "acerca de" no indexadas (doble capa junto a meta robots + X-Robots-Tag)
+Disallow: /nosotros
+Disallow: /nosotros.html
+Disallow: /privacidad
+Disallow: /privacidad.html
+Disallow: /terminos
+Disallow: /terminos.html
+Disallow: /tarjeta-lupita.html
 
 # ⚠️ Cambia reparaciondecelulares.vercel.app por tu dominio real al desplegar
 Sitemap: https://reparaciondecelulares.vercel.app/sitemap.xml
