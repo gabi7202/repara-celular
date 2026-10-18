@@ -81,6 +81,7 @@ module.exports = async function handler(req, res) {
     let code = e.code || 'error';
     if (e.groqStatus === 401 || e.groqStatus === 403) code = 'clave_invalida';
     else if (e.groqStatus === 429) code = 'limite_groq';
+    else if (e.groqStatus === 404 && /does not exist|do not have access|model_not_found/i.test(e.message || '')) code = 'modelo_no_disponible';
     else if (/groq_/.test(e.message || '')) code = 'groq_fallo';
     return json(res, status >= 400 && status < 600 ? status : 500, { ok:false, error: code, detalle: (e.message || '').slice(0, 240) });
   }

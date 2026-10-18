@@ -775,10 +775,13 @@ async function hablarRemoto(segs, motor) {
 
 function elegirMotor() {
   var orden = (CFG.tts && CFG.tts.ordenMotores) || ['webhook', 'groq', 'navegador'];
+  /* breaker: si el TTS remoto ya falló en esta conversación (tts_502, tts_429…),
+     no lo seguimos golpeando frase tras frase — voz del navegador por ahora. */
+  var caido = W.__lupitaTtsCaido && (Date.now() - W.__lupitaTtsCaido < 10 * 60 * 1000);
   for (var i = 0; i < orden.length; i++) {
     var m = orden[i];
-    if (m === 'webhook' && CFG.tts && CFG.tts.webhook && CFG.tts.webhook.url) return 'webhook';
-    if (m === 'groq') return 'groq';           /* el proxy decide si hay clave; si falla, caemos al navegador */
+    if (m === 'webhook' && !caido && CFG.tts && CFG.tts.webhook && CFG.tts.webhook.url) return 'webhook';
+    if (m === 'groq'){ if (!caido) return 'groq'; }           /* el proxy decide si hay clave; si falla, caemos al navegador */
     if (m === 'navegador' && W.speechSynthesis) return 'navegador';
   }
   return W.speechSynthesis ? 'navegador' : null;
@@ -824,6 +827,10 @@ async function hablar(texto) {
   } catch (e) {
     log('TTS ' + motor + ' falló, uso el navegador:', e.message);
     track('voz_tts_fallo', { motor: motor || 'ninguno', error: String(e.message || e).slice(0, 60) });
+    /* El audio remoto está caído (502/429/red): NO lo reintentemos segmento por
+       segmento en cada frase — el resto de la conversación usa la voz del
+       navegador hasta que Lupita se reinicie. */
+    if (/tts_/.test(String(e && e.message))) W.__lupitaTtsCaido = Date.now();
     try { await hablarNavegador(segs); } catch (e2) { /* el subtítulo ya está en pantalla */ }
   }
   setEstado(idleTxt());
@@ -1000,6 +1007,22 @@ async function manejarError(e) {
   }
   else if (/llm_(401|403|503)/.test(m)) msg = 'El asistente aún no tiene conectada la IA en este servidor. Mientras tanto, cotiza en el sitio o escríbenos por WhatsApp.';
   else if (/llm_429/.test(m)) msg = 'Estamos atendiendo a varias personas a la vez. Intenta en unos segundos o escríbenos por WhatsApp.';
+  /* El modelo preferido fue jubilado o esta cuenta no tiene acceso a él:
+     el servidor ya probó sus respaldos; si aun así llegó aquí, degrada con
+     aviso claro (y pista técnica solo para el dueño en /admin). */
+  else if (/modelo_no_disponible|llm_404/.test(m)){
+    msg = 'La inteligencia artificial del taller cambió de cerebro por hoy.[[p:250]] Igual puedo ayudarte, o escríbenos por WhatsApp y te atendemos rapidito.';
+    try {
+      var pinG = W.localStorage && localStorage.getItem('tt_admin_pin');
+      if (location.pathname.indexOf('admin') >= 0 && pinG){
+        pintarBurbuja('sys', '⚙️ Groq respondió 404 model_not_found: el modelo de datos/agente.json → llm.modelo ya no existe en esta cuenta. Actualízalo a uno vigente (p. ej. llama-3.3-70b-versatile) o verifica los modelos disponibles en console.groq.com/models.');
+      }
+    } catch(e){}
+    track('voz_modelo_no_disponible', { detalle: String(m).slice(0, 160) });
+    setEstado(idleTxt());
+    pintarBurbuja('bot', msg);
+    return;
+  }
   else if (/llm_|Failed to fetch|NetworkError/.test(m)) msg = 'Se perdió la conexión con el asistente. Revisa tu internet o sigue por WhatsApp.';
   else if (/tts_|webhook_/.test(m)) msg = 'Tuve un problema con el audio, pero aquí está la respuesta escrita.';
   pintarBurbuja('error', msg);

@@ -30,17 +30,12 @@
   "shortcuts": [
     {
       "name": "Cotizar reparación",
-      "url": "/#cotizador",
+      "url": "/?shortcut=cotizar#cotizador",
       "description": "Calcula el precio de tu reparación"
     },
     {
-      "name": "WhatsApp",
-      "url": "https://wa.me/529622889585",
-      "description": "Escribir al taller"
-    },
-    {
       "name": "Servicio a domicilio",
-      "url": "/#domicilio",
+      "url": "/?shortcut=domicilio#domicilio",
       "description": "Recolección y entrega en Tapachula"
     }
   ]

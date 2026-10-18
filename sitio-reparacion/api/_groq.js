@@ -28,6 +28,10 @@ const GROQ = 'https://api.groq.com/openai/v1';
    model ...", que engaña porque parece problema de tamaño del prompt.
    Por eso: se mantienen como primer candidato, y si Groq responde 413/404/
    model_not_found, chatConFallback salta automáticamente al siguiente. */
+/* Nombres canónicos con prefijo de proveedor: Groq responde 404
+   "The model `meta-llama/llama-4-maverick...` does not exist or you do not
+   have access to it" a los alias SIN prefijo (p. ej. "llama-4-maverick-17b-128e-instruct").
+   Por eso aquí solo van nombres completos; sanearModelo reescribe los cortos. */
 const CANDIDATOS_CHAT = [
   'openai/gpt-oss-120b',
   'llama-3.3-70b-versatile',
@@ -50,6 +54,15 @@ const ALIAS_RETIrados = {
   'llama-3.3-70b-instruct': 'llama-3.3-70b-versatile',
   'whisper-large-v3-turbo-20241113': 'whisper-large-v3-turbo'
 };
+/** Alias SIN prefijo de proveedor que Groq rechaza con 404 "does not exist or
+    you do not have access": el nombre canónico exige el prefijo (meta-llama/…,
+    moonshotai/…). Cualquier variante con guiones/barras raras se normaliza aquí. */
+const PREFIJOS_MODELO = {
+  'llama-4-scout-17b-16e-instruct': 'meta-llama/llama-4-scout-17b-16e-instruct',
+  'llama-4-maverick-17b-128e-instruct': 'meta-llama/llama-4-maverick-17b-128e-instruct',
+  'kimi-k2-instruct-0905': 'moonshotai/kimi-k2-instruct-0905',
+  'kimi-k2-0905-preview': 'moonshotai/kimi-k2-instruct-0905'
+};
 /** Normaliza nombres jubilados/alias al modelo vigente equivalente. */
 function sanearModelo(m){
   const s = String(m || '').trim();
@@ -58,6 +71,10 @@ function sanearModelo(m){
   /* gpt-oss-120b → openai/gpt-oss-120b (nombre canónico con prefijo) */
   const oss = s.match(/^(?:openai\/)?(gpt-oss-(?:120b|20b))$/i);
   if (oss) return 'openai/' + oss[1].toLowerCase();
+  /* sin prefijo y coincide un alias conocido (p. ej. "llama-4-maverick-17b-128e-instruct"
+     o "Llama-4-Maverick…"): se agrega el prefijo del proveedor para evitar el 404 */
+  const clave = s.toLowerCase().replace(/\s+/g, '-');
+  if (!s.includes('/') && PREFIJOS_MODELO[clave]) return PREFIJOS_MODELO[clave];
   return ALIAS_RETIrados[s.toLowerCase()] || s;
 }
 /* cache en memoria de la instancia: modelo que ya respondió bien */
@@ -146,7 +163,11 @@ async function chatConFallback(payloadBase, preferido, key){
            señal típica) → NO reintentar: saltar al siguiente candidato. */
         if (s === 404 || s === 400 || s === 422 || s === 413) break;
         if (esReintentable(e) && intento === 0){ await sleep(s === 429 ? 700 : 400); continue; } /* reintenta el mismo */
-        throw e;                                                  /* 401 definitivo tras retry, red, etc. */
+        /* 401/403 DEFINITIVO tras el retry: la clave existe pero puede no
+           tener acceso a ESTE modelo ("does not exist or you do not have
+           access") → probar el siguiente candidato antes de rendirse. */
+        if ((s === 401 || s === 403) && i < lista.length - 1){ continue; }
+        throw e;                                                  /* red u otro error real */
       }
     }
   }
@@ -174,6 +195,8 @@ async function sttConFallback(formFactory, preferido, key){
         const s = e.groqStatus;
         if (s === 404 || s === 400 || s === 422 || s === 413) break;   /* modelo retirado: siguiente */
         if (esReintentable(e) && intento === 0){ await sleep(s === 429 ? 900 : 500); continue; }
+        /* 401/403 definitivo: puede ser "sin acceso a ESTE modelo" → probar el siguiente */
+        if ((s === 401 || s === 403) && i < lista.length - 1){ continue; }
         throw e;
       }
     }

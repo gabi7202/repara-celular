@@ -321,7 +321,15 @@ const server = http.createServer(async (req, res) => {
         uso: d.usage || null, modelo: d._modelo_usado || '', json_format: jsonFormat }, req);
     } catch(e){
       const s = e.groqStatus || e.status || 502;
-      const code = (s === 401 || s === 403) ? 'clave_invalida' : s === 429 ? 'limite_groq' : 'groq_fallo';
+      /* 404 de Groq con "model_not_found" (modelo jubilado o sin acceso para
+         esta cuenta) NO es un fallo del servidor: se reporta como 404 real,
+         estable y con código propio, para que el navegador lo registre como
+         modelo_no_disponible en vez del confuso llm_404_groq_fallo. */
+      const modelNotFound = s === 404 && /does not exist|do not have access|model_not_found/i.test(String(e.message || ''));
+      const code = (s === 401 || s === 403) ? 'clave_invalida'
+        : s === 429 ? 'limite_groq'
+        : modelNotFound ? 'modelo_no_disponible'
+        : 'groq_fallo';
       log('groq chat falló:', s, String(e.message).slice(0,160));
       return json(res, s >= 400 && s < 600 ? s : 502, { ok:false, error:code, detalle:String(e.message).slice(0,200) }, req);
     }
