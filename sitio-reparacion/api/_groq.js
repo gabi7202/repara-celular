@@ -29,28 +29,33 @@ const GROQ = 'https://api.groq.com/openai/v1';
 
 /* Candidatos por rol, del preferido al respaldo. Si algún día Groq jubila uno,
    solo agrega/quíta nombres aquí — o cámbialos en datos/agente.json.
-   ACTUALIZADO OCT-2026 (4): orden final tras verificar contra la API pública
-   console.groq.com/openai/v1/models (no requiere clave) + corre de errores:
-   • llama-3.3-70b-versatile PRIMERO: vigente, soporta tools + response_format
-     json_object y es el valor de datos/agente.json → coincide exactamente con
-     lo que pide el navegador, así que NUNCA puede devolver 404 model_not_found.
-   • gpt-oss-120b SEGUNDO: sigue vivo pero su 413 de cuota en on_demand
-     interrumpe tool-calls a mitad de conversación → solo como respaldo.
-   • meta-llama/llama-4-maverick-17b-128e-instruct AL FINAL: fue el modelo que
-     el deploy viejo pedía sin prefijo y devolvía 404; si alguna cuenta aún lo
-     acepta funciona, pero ya nunca es preferido ni primero. */
+   ACTUALIZADO 18-OCT-2026 (5): verificado contra console.groq.com/docs/models.
+   • openai/gpt-oss-20b PRIMERO: vigente y es el modelo que el dueño tiene en
+     uso (así lo pidió explícitamente). Se usa con su nombre canónico con
+     prefijo "openai/" para que Groq no devuelva 404 por alias sin prefijo.
+   • llama-3.3-70b-versatile SEGUNDO: respaldo vigente, soporta tools +
+     response_format json_object.
+   • meta-llama/llama-4-maverick-17b-128e-instruct FUE RETIRADO para esta
+     cuenta (devolvía 404 "does not exist or you do not have access") → fuera
+     de los candidatos; sanearModelo aún reescribe sus alias por compatibilidad. */
 /* Nombres canónicos con prefijo de proveedor: Groq responde 404
    "The model `meta-llama/llama-4-maverick...` does not exist or you do not
    have access to it" a los alias SIN prefijo (p. ej. "llama-4-maverick-17b-128e-instruct").
    Por eso aquí solo van nombres completos; sanearModelo reescribe los cortos. */
 const CANDIDATOS_CHAT = [
-  'llama-3.3-70b-versatile',
-  'openai/gpt-oss-120b',
-  'llama-3.1-8b-instant',
-  'moonshotai/kimi-k2-instruct-0905',
-  'meta-llama/llama-4-scout-17b-16e-instruct',
-  'meta-llama/llama-4-maverick-17b-128e-instruct'
+  'openai/gpt-oss-20b',           /* PREFERIDO (verificado 18-oct-2026 en console.groq.com/docs/models; el dueño lo tiene en uso) */
+  'llama-3.3-70b-versatile',      /* respaldo vigente: soporta tools + response_format json_object */
+  'llama-3.1-8b-instant',         /* respaldo rápido */
+  'openai/gpt-oss-120b'           /* vigente pero su 413 de cuota interrumpe tool-calls → solo último recurso */
 ];
+/* meta-llama/llama-4-scout y meta-llama/llama-4-maverick SALIERON de la lista:
+   Groq los retiró para esta cuenta (404 "does not exist or you do not have
+   access"). OJO (fix 18-oct-2026): antes sanearModelo les agregaba el prefijo
+   "meta-llama/" y los reenviaba tal cual → el 404 volvía idéntico. Ahora
+   CUALQUIER variante de maverick/scout/kimi se REASIGNA a openai/gpt-oss-20b
+   (modelo vigente elegido por el dueño). Ya es imposible que este sitio le
+   pida a Groq un modelo jubilado, aunque llegue una config vieja o cacheada. */
+const MODELOS_MUERTOS_A_GPTOSS = /^(?:meta-llama\/)?llama-4-(?:maverick|scout)|^(?:moonshotai\/)?kimi-k2/i;
 const CANDIDATOS_STT = [
   'whisper-large-v3-turbo',
   'whisper-large-v3'
@@ -65,28 +70,23 @@ const ALIAS_RETIrados = {
   'llama-3.3-70b-instruct': 'llama-3.3-70b-versatile',
   'whisper-large-v3-turbo-20241113': 'whisper-large-v3-turbo'
 };
-/** Alias SIN prefijo de proveedor que Groq rechaza con 404 "does not exist or
-    you do not have access": el nombre canónico exige el prefijo (meta-llama/…,
-    moonshotai/…). Cualquier variante con guiones/barras raras se normaliza aquí. */
-const PREFIJOS_MODELO = {
-  'llama-4-scout-17b-16e-instruct': 'meta-llama/llama-4-scout-17b-16e-instruct',
-  'llama-4-maverick-17b-128e-instruct': 'meta-llama/llama-4-maverick-17b-128e-instruct',
-  'kimi-k2-instruct-0905': 'moonshotai/kimi-k2-instruct-0905',
-  'kimi-k2-0905-preview': 'moonshotai/kimi-k2-instruct-0905'
-};
-/** Normaliza nombres jubilados/alias al modelo vigente equivalente. */
+/** Normaliza nombres jubilados/alias al modelo vigente equivalente.
+    Regla de oro (fix 18-oct-2026): los modelos RETIRADOS no se reescriben a su
+    forma "canónica" muerta — se reasignan a openai/gpt-oss-20b. Así un 404 por
+    maverick/scout/kimi es estructuralmente imposible, venga la config de donde
+    venga (agente.json cacheado, cliente viejo, admin desactualizado). */
 function sanearModelo(m){
-  const s = String(m || '').trim();
+  let s = String(m || '').trim();
   if (!s) return '';
   if (ALIAS_RETIrados[s]) return ALIAS_RETIrados[s];
-  /* gpt-oss-120b → openai/gpt-oss-120b (nombre canónico con prefijo) */
-  const oss = s.match(/^(?:openai\/)?(gpt-oss-(?:120b|20b))$/i);
-  if (oss) return 'openai/' + oss[1].toLowerCase();
-  /* sin prefijo y coincide un alias conocido (p. ej. "llama-4-maverick-17b-128e-instruct"
-     o "Llama-4-Maverick…"): se agrega el prefijo del proveedor para evitar el 404 */
+  /* cualquier variante (con o sin prefijo, mayúsculas, alias cortos) de los
+     modelos retirados → gpt-oss-20b */
   const clave = s.toLowerCase().replace(/\s+/g, '-');
-  if (!s.includes('/') && PREFIJOS_MODELO[clave]) return PREFIJOS_MODELO[clave];
-  return ALIAS_RETIrados[s.toLowerCase()] || s;
+  if (MODELOS_MUERTOS_A_GPTOSS.test(clave)) return 'openai/gpt-oss-20b';
+  /* gpt-oss-120b / gpt-oss-20b → openai/gpt-oss-… (nombre canónico con prefijo) */
+  const oss = clave.match(/^(?:openai\/)?(gpt-oss-(?:120b|20b))$/);
+  if (oss) return 'openai/' + oss[1];
+  return ALIAS_RETIrados[clave] || s;
 }
 /* cache en memoria de la instancia: modelo que ya respondió bien */
 let chatOk = null, sttOk = null;

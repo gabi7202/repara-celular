@@ -11,7 +11,8 @@
   },
   "llm": {
     "proveedor": "groq",
-    "modelo": "llama-3.3-70b-versatile",
+    "modelo": "openai/gpt-oss-20b",
+    "_modelos": "Verificado 18-oct-2026 contra console.groq.com/docs/models: openai/gpt-oss-20b (preferido, en uso del dueño), llama-3.3-70b-versatile y llama-3.1-8b-instant siguen vigentes; meta-llama/llama-4-maverick-17b-128e-instruct ya NO está disponible para esta cuenta (devolvía 404). Si Groq jubila gpt-oss-20b, el servidor hace fallback solo a la lista vigente de api/_groq.js.",
     "modeloRapido": "llama-3.1-8b-instant",
     "temperature": 0.45,
     "maxTokens": 260,
