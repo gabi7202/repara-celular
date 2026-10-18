@@ -65,9 +65,14 @@
     gs.async = true;
     gs.src = 'https://www.googletagmanager.com/gtag/js?id=' + GID;
     document.body.appendChild(gs);
-    /* 2) AdSense (async + crossorigin, igual que la etiqueta oficial) */
+    /* 2) AdSense — ETIQUETA OFICIAL: <script async src=...> SIN crossorigin.
+       FIX OCT-2026: el atributo crossOrigin='anonymous' hacia que el navegador
+       exigiera cabeceras CORS a pagead2.googlesyndication.com; Google no las
+       envía en esa ruta y el script moría con "Failed to load resource"
+       (el error que se veía como bloqueo). Sin crossorigin carga normal.
+       (ERR_BLOCKED_BY_CLIENT aparte: eso solo lo produce un adblocker local.) */
     var ad = document.createElement('script');
-    ad.async = true; ad.crossOrigin = 'anonymous';
+    ad.async = true;
     ad.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + APUB;
     document.body.appendChild(ad);
   }
