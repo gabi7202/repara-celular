@@ -1048,15 +1048,30 @@ async function cargarConfig() {
   if (!r.ok) throw new Error('cfg_' + r.status);
   CFG = await r.json();
   /* Blindaje contra modelos jubilados: Groq renombra/retira modelos sin avisar.
-     Ojo (oct-2026): los openai/gpt-oss-* SIGUEN VIVOS en Groq — la app Android
-     los usa; su 413 es cuota agotada, no modelo retirado, y el servidor ya
-     hace fallback solo. Aquí solo corregimos alias que sí desaparecieron y
-     normalizamos gpt-oss sin prefijo a su nombre canónico "openai/...". */
+     Verificado 18-oct-2026 en console.groq.com/docs/models: openai/gpt-oss-20b
+     y gpt-oss-120b SIGUEN VIVOS (el dueño usa gpt-oss-20b → es el preferido en
+     datos/agente.json); lo que Groq retiró para esta cuenta fue
+     meta-llama/llama-4-maverick (404 "does not exist or you do not have
+     access") — ya no está ni en la config ni en los candidatos del servidor.
+     Aquí solo corregimos alias que sí desaparecieron y normalizamos los
+     nombres sin prefijo a su forma canónica "proveedor/modelo". */
   var MODELOS_RETIrados = /^llama-3\.1-70b-versatile$|^llama-3\.3-70b-instruct$/i;
+  /* Alias SIN prefijo de proveedor que Groq rechaza con 404 "does not exist or
+     you do not have access": el nombre canónico exige el prefijo. Mismas tablas
+     que api/_groq.js (sanearModelo) — el servidor ya sanea, pero el navegador
+     también para no gastar un viaje perdido ni mostrar errores crudos. */
+  var PREFIJOS_MODELO = {
+    'llama-4-scout-17b-16e-instruct': 'meta-llama/llama-4-scout-17b-16e-instruct',
+    'llama-4-maverick-17b-128e-instruct': 'meta-llama/llama-4-maverick-17b-128e-instruct',
+    'kimi-k2-instruct-0905': 'moonshotai/kimi-k2-instruct-0905',
+    'gpt-oss-20b': 'openai/gpt-oss-20b',
+    'gpt-oss-120b': 'openai/gpt-oss-120b'
+  };
   function canonModelo(m){
     var s = String(m || '').trim();
-    var oss = s.match(/^(?:openai\/)?(gpt-oss-(?:120b|20b))$/i);
-    return oss ? 'openai/' + oss[1].toLowerCase() : s;
+    var clave = s.toLowerCase().replace(/\s+/g, '-');
+    if (!s.includes('/') && PREFIJOS_MODELO[clave]) return PREFIJOS_MODELO[clave];
+    return s;
   }
   function sanearCfg(){
     try {

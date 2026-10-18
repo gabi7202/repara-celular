@@ -41,9 +41,9 @@ module.exports = async function handler(req, res) {
     if (/^es[-_]/i.test(voz) || !/^[A-Z][a-z]+$/.test(voz)) voz = 'Jennifer';           /* voz Edge → usa la default de PlayAI */
     if (estilo && !ESTILOS_VALIDOS.includes(estilo)) estilo = null;
     const modelos = [];
-    /* sanear: si el navegador/admin pide un modelo retirado (p. ej. los
-       "openai/gpt-oss-*" que Groq jubiló y que devolvían groq_413), lo
-       descartamos y usamos los candidatos vigentes de PlayAI. */
+    /* sanear: el TTS de Groq SOLO entiende modelos PlayAI ("playai-tts" /
+       "playai-tts-flash"). Si el cliente pide cualquier otro (p. ej. un LLM de
+       chat como openai/gpt-oss-20b), se descarta y se fuerza playai-tts. */
     const mCliente = sanearModelo(b.modelo);
     if (mCliente && /^playai/i.test(mCliente)) modelos.push(String(mCliente).slice(0, 60));
     modelos.push('playai-tts');

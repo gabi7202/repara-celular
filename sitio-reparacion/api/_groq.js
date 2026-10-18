@@ -29,28 +29,29 @@ const GROQ = 'https://api.groq.com/openai/v1';
 
 /* Candidatos por rol, del preferido al respaldo. Si algún día Groq jubila uno,
    solo agrega/quíta nombres aquí — o cámbialos en datos/agente.json.
-   ACTUALIZADO OCT-2026 (4): orden final tras verificar contra la API pública
-   console.groq.com/openai/v1/models (no requiere clave) + corre de errores:
-   • llama-3.3-70b-versatile PRIMERO: vigente, soporta tools + response_format
-     json_object y es el valor de datos/agente.json → coincide exactamente con
-     lo que pide el navegador, así que NUNCA puede devolver 404 model_not_found.
-   • gpt-oss-120b SEGUNDO: sigue vivo pero su 413 de cuota en on_demand
-     interrumpe tool-calls a mitad de conversación → solo como respaldo.
-   • meta-llama/llama-4-maverick-17b-128e-instruct AL FINAL: fue el modelo que
-     el deploy viejo pedía sin prefijo y devolvía 404; si alguna cuenta aún lo
-     acepta funciona, pero ya nunca es preferido ni primero. */
+   ACTUALIZADO 18-OCT-2026 (5): verificado contra console.groq.com/docs/models.
+   • openai/gpt-oss-20b PRIMERO: vigente y es el modelo que el dueño tiene en
+     uso (así lo pidió explícitamente). Se usa con su nombre canónico con
+     prefijo "openai/" para que Groq no devuelva 404 por alias sin prefijo.
+   • llama-3.3-70b-versatile SEGUNDO: respaldo vigente, soporta tools +
+     response_format json_object.
+   • meta-llama/llama-4-maverick-17b-128e-instruct FUE RETIRADO para esta
+     cuenta (devolvía 404 "does not exist or you do not have access") → fuera
+     de los candidatos; sanearModelo aún reescribe sus alias por compatibilidad. */
 /* Nombres canónicos con prefijo de proveedor: Groq responde 404
    "The model `meta-llama/llama-4-maverick...` does not exist or you do not
    have access to it" a los alias SIN prefijo (p. ej. "llama-4-maverick-17b-128e-instruct").
    Por eso aquí solo van nombres completos; sanearModelo reescribe los cortos. */
 const CANDIDATOS_CHAT = [
-  'llama-3.3-70b-versatile',
-  'openai/gpt-oss-120b',
-  'llama-3.1-8b-instant',
-  'moonshotai/kimi-k2-instruct-0905',
-  'meta-llama/llama-4-scout-17b-16e-instruct',
-  'meta-llama/llama-4-maverick-17b-128e-instruct'
+  'openai/gpt-oss-20b',           /* PREFERIDO (verificado 18-oct-2026 en console.groq.com/docs/models; el dueño lo tiene en uso) */
+  'llama-3.3-70b-versatile',      /* respaldo vigente: soporta tools + response_format json_object */
+  'llama-3.1-8b-instant',         /* respaldo rápido */
+  'openai/gpt-oss-120b'           /* vigente pero su 413 de cuota interrumpe tool-calls → solo último recurso */
 ];
+/* meta-llama/llama-4-scout y meta-llama/llama-4-maverick SALIERON de la lista:
+   Groq los retiró para esta cuenta (404 "does not exist or you do not have
+   access"). sanearModelo sigue reescribiendo los alias sin prefijo por si un
+   cliente viejo los pide, pero ya NUNCA se usan como candidatos. */
 const CANDIDATOS_STT = [
   'whisper-large-v3-turbo',
   'whisper-large-v3'
