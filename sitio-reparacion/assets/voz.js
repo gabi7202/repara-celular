@@ -1060,17 +1060,17 @@ async function cargarConfig() {
      you do not have access": el nombre canónico exige el prefijo. Mismas tablas
      que api/_groq.js (sanearModelo) — el servidor ya sanea, pero el navegador
      también para no gastar un viaje perdido ni mostrar errores crudos. */
-  var PREFIJOS_MODELO = {
-    'llama-4-scout-17b-16e-instruct': 'meta-llama/llama-4-scout-17b-16e-instruct',
-    'llama-4-maverick-17b-128e-instruct': 'meta-llama/llama-4-maverick-17b-128e-instruct',
-    'kimi-k2-instruct-0905': 'moonshotai/kimi-k2-instruct-0905',
-    'gpt-oss-20b': 'openai/gpt-oss-20b',
-    'gpt-oss-120b': 'openai/gpt-oss-120b'
-  };
+  /* Fix 18-oct-2026: llama-4-maverick/scout/kimi-k2 fueron RETIRADOS para esta
+     cuenta (Groq devuelve 404 "does not exist or you do not have access").
+     Antes solo se les agregaba el prefijo y se reenviaban -> mismo 404. Ahora
+     CUALQUIER variante se reasigna localmente a openai/gpt-oss-20b, el modelo
+     vigente en uso del dueño. El navegador ni gasta el viaje perdido. */
+  var MODELOS_MUERTOS_A_GPTOSS = /^(?:meta-llama\/)?llama-4-(?:maverick|scout)|^(?:moonshotai\/)?kimi-k2/i;
   function canonModelo(m){
     var s = String(m || '').trim();
     var clave = s.toLowerCase().replace(/\s+/g, '-');
-    if (!s.includes('/') && PREFIJOS_MODELO[clave]) return PREFIJOS_MODELO[clave];
+    if (MODELOS_MUERTOS_A_GPTOSS.test(clave)) return 'openai/gpt-oss-20b';
+    if (!s.includes('/') && /^gpt-oss-(?:20b|120b)$/.test(clave)) return 'openai/' + clave;
     return s;
   }
   function sanearCfg(){
