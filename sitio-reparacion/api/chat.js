@@ -57,12 +57,15 @@ module.exports = async function handler(req, res) {
     };
     let d = null, usatoJsonFormat = true;
     try {
-      d = await chatConFallback(Object.assign({ response_format:{ type:'json_object' } }, payloadBase), b.modelo, key);
+      /* FIX OCT-2026: se pasa `req` para que el cliente Groq pueda probar todas
+         las claves candidatas si la primera falla (deploy preview sin env) */
+      d = await chatConFallback(Object.assign({ response_format:{ type:'json_object' } }, payloadBase), b.modelo, key, req);
     } catch(e){
+      if (e.code === 'sin_clave') throw e;   /* error de config: no disfrazarlo de "groq_fallo" en el retry */
       /* si el fallo fue por response_format (400) u otro del primer intento,
          reintentamos sin formato JSON — la normalización local cubre el resto */
       usatoJsonFormat = false;
-      d = await chatConFallback(payloadBase, b.modelo, key);
+      d = await chatConFallback(payloadBase, b.modelo, key, req);
     }
     const msg = (d.choices && d.choices[0] && d.choices[0].message) || {};
     const sal = parseSalida(msg.content || '');
@@ -79,8 +82,10 @@ module.exports = async function handler(req, res) {
     const status = e.status || e.groqStatus || 500;
     /* Traducimos los códigos feos a un código estable que voz.js sabe explicar */
     let code = e.code || 'error';
+    if (e.code === 'sin_clave'){ return json(res, 503, { ok:false, error:'sin_clave', detalle: (e.message || '').slice(0, 240) }); }
     if (e.groqStatus === 401 || e.groqStatus === 403) code = 'clave_invalida';
     else if (e.groqStatus === 429) code = 'limite_groq';
+    else if (e.groqStatus === 404 && /does not exist|do not have access|model_not_found/i.test(e.message || '')) code = 'modelo_no_disponible';
     else if (/groq_/.test(e.message || '')) code = 'groq_fallo';
     return json(res, status >= 400 && status < 600 ? status : 500, { ok:false, error: code, detalle: (e.message || '').slice(0, 240) });
   }

@@ -1,7 +1,7 @@
 /* POST /api/tts → 1) webhook TTS gratuito (Edge neuronal es-MX) o 2) PlayAI vía Groq.
    Devuelve audio binario listo para reproducir. */
 const { json, groqKey } = require('./_lib');
-const { sanearModelo } = require('./_groq');
+const { sanearModelo, clavesGroq } = require('./_groq');
 const GROQ = 'https://api.groq.com/openai/v1';
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST'){ res.setHeader('Allow','POST'); return json(res, 405, { ok:false }); }
@@ -25,7 +25,13 @@ module.exports = async function handler(req, res) {
         }
       } catch(e){ /* caemos a Groq */ }
     }
-    const key = groqKey(req);
+    /* FIX OCT-2026: probar todas las claves candidatas (env agente → env
+       estándar → header reenviado) antes de rendirse; un deploy preview con la
+       env mal scoping ya no muere en el primer 401/503 si otra variable sí la trae. */
+    const claves = clavesGroq(req);
+    let key;
+    if (claves.length) key = claves[0];
+    else { try { key = groqKey(req); } catch(e){ return json(res, e.status || 503, { ok:false, error:e.code || 'sin_clave', detalle:String(e.message).slice(0,240) }); } }
     /* PlayAI exige voces INGLESES con `style`. Si llega una voz es-MX (Dalia…) o
        un estilo inválido, Groq responde 4xx y el TTS moría entero. Normalizamos: */
     const VOCES_PLAYAI = ['Chipmunk','Doodle','Caramel','Juniper','Stephen','Peter','Peanut','Bodega','Felix','Mango','Eric','Snips','Skye','Plaid','Astern'];
@@ -43,6 +49,9 @@ module.exports = async function handler(req, res) {
     modelos.push('playai-tts');
     const uniq = modelos.filter((v, i, a) => a.indexOf(v) === i);
     let r = null, ultimoTxt = '';
+    /* FIX OCT-2026: si la primera clave recibe 401/403, probar las claves
+       candidatas restantes antes de rendirse (env mal scoping en preview). */
+    const colaClaves = claves.length ? claves.slice(1) : [];
     for (let intento = 0; intento < 4 && !r; intento++){
       const payload = { model: uniq[Math.min(intento, uniq.length - 1)], voice: voz,
         response_format: String(b.formato || 'mp3'), input: texto };
@@ -52,8 +61,10 @@ module.exports = async function handler(req, res) {
       if (rr.ok){ r = rr; break; }
       ultimoTxt = (await rr.text().catch(() => '')).slice(0, 180);
       const s = rr.status;
+      if ((s === 401 || s === 403) && colaClaves.length){ key = colaClaves.shift(); intento--; continue; }
       if (s === 404 || s === 400 || s === 422) continue;                                  /* modelo/voz no existe: siguiente vuelta corrige */
       if ((s === 429 || s >= 500) && intento < 3){ await new Promise(z => setTimeout(z, 500)); continue; } /* sobrecarga: reintenta */
+      if (s === 401 || s === 403){ const e = new Error('groq_' + s + ': ' + ultimoTxt); e.status = 503; e.code = 'sin_clave'; throw e; }
       const e = new Error('groq_' + s + ': ' + ultimoTxt); e.status = 502; e.code = 'groq_fallo'; throw e;
     }
     if (!r){ const e = new Error('groq_tts_no_disponible: ' + ultimoTxt); e.status = 502; e.code = 'groq_fallo'; throw e; }

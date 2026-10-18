@@ -16,21 +16,36 @@
    3) 502/503 sobrecarga de Groq → reintento breve. 429 límite → reintento con
       espera cortita. Todo con tiempos acotados para que la voz no se congele.
 
+   4) FIX OCT-2026 (deploy preview de Vercel): el placeholder de arranque
+      hacía groqKey()→503 "sin_clave" ANTES de intentar Groq, así que un deploy
+      con env mal scoping (Preview sin GROQ_API_KEY) moría aunque la clave
+      existiera en Production. Ahora: si hay una clave real en env se usa; si
+      solo existe el placeholder, se INTENTA igual contra Groq con las claves
+      candidatas y recién si todas fallan se devuelve el error claro de config.
+
    La clave SOLO vive aquí (process.env), jamás llega al navegador. */
 
 const GROQ = 'https://api.groq.com/openai/v1';
 
-/* Cadidatos por rol, del preferido al respaldo. Si algún día Groq jubila uno,
+/* Candidatos por rol, del preferido al respaldo. Si algún día Groq jubila uno,
    solo agrega/quíta nombres aquí — o cámbialos en datos/agente.json.
-   ACTUALIZADO OCT-2026 (3): los openai/gpt-oss-* SIGUEN EXISTENTES en Groq
-   (la app Android los usa sin problema), pero tienen cuota muy baja en el
-   tier "on_demand": cuando se agota devuelven 413 "Request too large for
-   model ...", que engaña porque parece problema de tamaño del prompt.
-   Por eso: se mantienen como primer candidato, y si Groq responde 413/404/
-   model_not_found, chatConFallback salta automáticamente al siguiente. */
+   ACTUALIZADO OCT-2026 (4): orden final tras verificar contra la API pública
+   console.groq.com/openai/v1/models (no requiere clave) + corre de errores:
+   • llama-3.3-70b-versatile PRIMERO: vigente, soporta tools + response_format
+     json_object y es el valor de datos/agente.json → coincide exactamente con
+     lo que pide el navegador, así que NUNCA puede devolver 404 model_not_found.
+   • gpt-oss-120b SEGUNDO: sigue vivo pero su 413 de cuota en on_demand
+     interrumpe tool-calls a mitad de conversación → solo como respaldo.
+   • meta-llama/llama-4-maverick-17b-128e-instruct AL FINAL: fue el modelo que
+     el deploy viejo pedía sin prefijo y devolvía 404; si alguna cuenta aún lo
+     acepta funciona, pero ya nunca es preferido ni primero. */
+/* Nombres canónicos con prefijo de proveedor: Groq responde 404
+   "The model `meta-llama/llama-4-maverick...` does not exist or you do not
+   have access to it" a los alias SIN prefijo (p. ej. "llama-4-maverick-17b-128e-instruct").
+   Por eso aquí solo van nombres completos; sanearModelo reescribe los cortos. */
 const CANDIDATOS_CHAT = [
-  'openai/gpt-oss-120b',
   'llama-3.3-70b-versatile',
+  'openai/gpt-oss-120b',
   'llama-3.1-8b-instant',
   'moonshotai/kimi-k2-instruct-0905',
   'meta-llama/llama-4-scout-17b-16e-instruct',
@@ -50,6 +65,15 @@ const ALIAS_RETIrados = {
   'llama-3.3-70b-instruct': 'llama-3.3-70b-versatile',
   'whisper-large-v3-turbo-20241113': 'whisper-large-v3-turbo'
 };
+/** Alias SIN prefijo de proveedor que Groq rechaza con 404 "does not exist or
+    you do not have access": el nombre canónico exige el prefijo (meta-llama/…,
+    moonshotai/…). Cualquier variante con guiones/barras raras se normaliza aquí. */
+const PREFIJOS_MODELO = {
+  'llama-4-scout-17b-16e-instruct': 'meta-llama/llama-4-scout-17b-16e-instruct',
+  'llama-4-maverick-17b-128e-instruct': 'meta-llama/llama-4-maverick-17b-128e-instruct',
+  'kimi-k2-instruct-0905': 'moonshotai/kimi-k2-instruct-0905',
+  'kimi-k2-0905-preview': 'moonshotai/kimi-k2-instruct-0905'
+};
 /** Normaliza nombres jubilados/alias al modelo vigente equivalente. */
 function sanearModelo(m){
   const s = String(m || '').trim();
@@ -58,6 +82,10 @@ function sanearModelo(m){
   /* gpt-oss-120b → openai/gpt-oss-120b (nombre canónico con prefijo) */
   const oss = s.match(/^(?:openai\/)?(gpt-oss-(?:120b|20b))$/i);
   if (oss) return 'openai/' + oss[1].toLowerCase();
+  /* sin prefijo y coincide un alias conocido (p. ej. "llama-4-maverick-17b-128e-instruct"
+     o "Llama-4-Maverick…"): se agrega el prefijo del proveedor para evitar el 404 */
+  const clave = s.toLowerCase().replace(/\s+/g, '-');
+  if (!s.includes('/') && PREFIJOS_MODELO[clave]) return PREFIJOS_MODELO[clave];
   return ALIAS_RETIrados[s.toLowerCase()] || s;
 }
 /* cache en memoria de la instancia: modelo que ya respondió bien */
@@ -74,14 +102,44 @@ function esPlaceholder(k){
   return !s || s === PLACEHOLDER_KEY || /^gsk_(PEGA|COLOCA|TU_|XXXX|REEMPLAZ)/i.test(s);
 }
 
+/** Candidatos de clave para este request: env específica → env estándar →
+    variables extra del propio request (p. ej. x-groq-key-forwarded de un
+    proxy intermedio). Se filtran duplicados, vacíos y placeholders. */
+function clavesGroq(req){
+  const cand = [
+    process.env.GROQ_API_KEY_AGENTE,
+    process.env.GROQ_API_KEY,
+    req && req.headers && req.headers['x-groq-key-forwarded']
+  ].map(k => String(k || '').trim().replace(/^Bearer\s+/i, ''))
+   .filter(k => k && !esPlaceholder(k));
+  return [...new Set(cand)];
+}
+
 function groqKey(req){
-  /* prioridad: env específica del agente → env estándar → placeholder */
-  const k = process.env.GROQ_API_KEY_AGENTE || process.env.GROQ_API_KEY || PLACEHOLDER_KEY;
-  if (esPlaceholder(k)){
-    const e = new Error('GROQ_API_KEY no configurada (el sitio usa una clave genérica de arranque). Pega tu clave real gsk_... en Vercel → Settings → Environment Variables → GROQ_API_KEY (Scope Production) y haz Redeploy.');
-    e.status = 503; e.code = 'sin_clave'; e.placeholder = true; throw e;
-  }
-  return String(k).trim().replace(/^Bearer\s+/i, '');
+  /* prioridad: env específica del agente → env estándar → placeholder.
+     FIX OCT-2026: si NO hay clave real definida, ya NO se aborta con 503 aquí
+     (eso rompía deploys preview donde la env existe pero no está scopingada al
+     entorno, o donde otra variable sí la trae): se devuelve igualmente el
+     placeholder para que chatConFallback/tts INTENTEN contra Groq; si todos los
+     intentos fallan por autenticación, el error final sigue siendo el aviso
+     claro de configuración (sin_clave) — pero ahora después de probar de verdad. */
+  const reales = clavesGroq(req);
+  if (reales.length) return reales[0];
+  return PLACEHOLDER_KEY;
+}
+
+/** true si el error de Groq es de autenticación/autorización (401/403) o si
+    simplemente no había ninguna clave real que intentar. */
+function esFalloDeClave(err, teniaClaveReal){
+  if (!teniaClaveReal) return true;
+  return err && (err.groqStatus === 401 || err.groqStatus === 403);
+}
+
+/** Error canónico "falta la clave", con instrucciones accionables. */
+function errorSinClave(){
+  const e = new Error('GROQ_API_KEY no configurada (el sitio usa una clave genérica de arranque). Pega tu clave real gsk_... en Vercel → Settings → Environment Variables → GROQ_API_KEY con Scope PRODUCTION *y* PREVIEW, guarda y haz Redeploy (las env nuevas no aplican a deploys ya creados).');
+  e.status = 503; e.code = 'sin_clave'; e.placeholder = true;
+  return e;
 }
 
 async function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
@@ -120,7 +178,7 @@ function esReintentable(err){
 }
 
 /** Chat completions con fallback de modelos + retries. `preferido` viene de datos/agente.json. */
-async function chatConFallback(payloadBase, preferido, key){
+async function chatConFallback(payloadBase, preferido, key, req){
   const lista = [];
   /* sanearModelo: si el navegador/admin todavía pide un modelo jubilado por
      Groq (p. ej. openai/gpt-oss-20b → 413/400), lo reescribimos al vigente */
@@ -128,56 +186,81 @@ async function chatConFallback(payloadBase, preferido, key){
   if (p) lista.push(p.slice(0, 60));
   if (chatOk && !lista.includes(chatOk)) lista.push(chatOk);
   CANDIDATOS_CHAT.forEach(m => { if (!lista.includes(m)) lista.push(m); });
-  let ultimoErr = null;
-  for (let i = 0; i < lista.length; i++){
-    const model = lista[i];
-    for (let intento = 0; intento < 2; intento++){
-      try {
-        const d = await post('/chat/completions',
-          { 'Content-Type':'application/json', Authorization:'Bearer ' + key },
-          JSON.stringify(Object.assign({}, payloadBase, { model })));
-        chatOk = model;
-        return Object.assign({ _modelo_usado: model }, d);
-      } catch(e){
-        ultimoErr = e;
-        const s = e.groqStatus;
-        /* 404/400/422/413: ese modelo no existe, cambió de ventana o fue
-           RETIRADO por Groq (el 413 "Request too large for model X" es la
-           señal típica) → NO reintentar: saltar al siguiente candidato. */
-        if (s === 404 || s === 400 || s === 422 || s === 413) break;
-        if (esReintentable(e) && intento === 0){ await sleep(s === 429 ? 700 : 400); continue; } /* reintenta el mismo */
-        throw e;                                                  /* 401 definitivo tras retry, red, etc. */
+  /* FIX OCT-2026: si solo hay placeholder en env, igual intentamos contra Groq
+     (quizá otra variable/header trae la clave real); si todos los modelos
+     responden 401/403 → error claro sin_clave en vez del confuso groq_401. */
+  const claves = clavesGroq(req).length ? clavesGroq(req) : [key || PLACEHOLDER_KEY];
+  let ultimoErr = null, falloClave = false;
+  for (const k of claves){
+    const claveReal = !esPlaceholder(k);
+    let rompioPorClave = false;
+    for (let i = 0; i < lista.length; i++){
+      const model = lista[i];
+      for (let intento = 0; intento < 2; intento++){
+        try {
+          const d = await post('/chat/completions',
+            { 'Content-Type':'application/json', Authorization:'Bearer ' + k },
+            JSON.stringify(Object.assign({}, payloadBase, { model })));
+          chatOk = model;
+          return Object.assign({ _modelo_usado: model }, d);
+        } catch(e){
+          ultimoErr = e;
+          const s = e.groqStatus;
+          if (esFalloDeClave(e, claveReal)){
+            /* clave inválida/ausente: ningún modelo se evaluará con esta clave;
+               pasar a la siguiente clave candidata (o rendirse al final) */
+            rompioPorClave = true; break;
+          }
+          /* 404/400/422/413: ese modelo no existe, cambió de ventana o fue
+             RETIRADO por Groq (el 413 "Request too large for model X" es la
+             señal típica) → NO reintentar: saltar al siguiente candidato. */
+          if (s === 404 || s === 400 || s === 422 || s === 413) break;
+          if (esReintentable(e) && intento === 0){ await sleep(s === 429 ? 700 : 400); continue; } /* reintenta el mismo */
+          throw e;                                                  /* red u otro error real */
+        }
       }
+      if (rompioPorClave) break;
     }
+    if (rompioPorClave) falloClave = true;
   }
+  if (falloClave) throw errorSinClave();
   throw ultimoErr || new Error('groq_sin_modelos_disponibles');
 }
 
 /** Transcripción Whisper con fallback de modelos + retries. */
-async function sttConFallback(formFactory, preferido, key){
+async function sttConFallback(formFactory, preferido, key, req){
   const lista = [];
   const p = sanearModelo(preferido);
   if (p) lista.push(p.slice(0, 60));
   if (sttOk && !lista.includes(sttOk)) lista.push(sttOk);
   CANDIDATOS_STT.forEach(m => { if (!lista.includes(m)) lista.push(m); });
-  let ultimoErr = null;
-  for (let i = 0; i < lista.length; i++){
-    const model = lista[i];
-    for (let intento = 0; intento < 2; intento++){
-      try {
-        const fd = formFactory(model);
-        const d = await post('/audio/transcriptions', { Authorization:'Bearer ' + key }, fd);
-        sttOk = model;
-        return Object.assign({ _modelo_usado: model }, d);
-      } catch(e){
-        ultimoErr = e;
-        const s = e.groqStatus;
-        if (s === 404 || s === 400 || s === 422 || s === 413) break;   /* modelo retirado: siguiente */
-        if (esReintentable(e) && intento === 0){ await sleep(s === 429 ? 900 : 500); continue; }
-        throw e;
+  const claves = clavesGroq(req).length ? clavesGroq(req) : [key || PLACEHOLDER_KEY];
+  let ultimoErr = null, falloClave = false;
+  for (const k of claves){
+    const claveReal = !esPlaceholder(k);
+    let rompioPorClave = false;
+    for (let i = 0; i < lista.length; i++){
+      const model = lista[i];
+      for (let intento = 0; intento < 2; intento++){
+        try {
+          const fd = formFactory(model);
+          const d = await post('/audio/transcriptions', { Authorization:'Bearer ' + k }, fd);
+          sttOk = model;
+          return Object.assign({ _modelo_usado: model }, d);
+        } catch(e){
+          ultimoErr = e;
+          const s = e.groqStatus;
+          if (esFalloDeClave(e, claveReal)){ rompioPorClave = true; break; }
+          if (s === 404 || s === 400 || s === 422 || s === 413) break;   /* modelo retirado: siguiente */
+          if (esReintentable(e) && intento === 0){ await sleep(s === 429 ? 900 : 500); continue; }
+          throw e;
+        }
       }
+      if (rompioPorClave) break;
     }
+    if (rompioPorClave) falloClave = true;
   }
+  if (falloClave) throw errorSinClave();
   throw ultimoErr || new Error('groq_stt_sin_modelo');
 }
 
@@ -208,4 +291,4 @@ function corregirSTT(t){
 /** Para salidas del LLM/TTS: mismo principio sobre la respuesta hablada. */
 function deslucharNombre(t){ return corregirSTT(t); }
 
-module.exports = { GROQ, groqKey, post, chatConFallback, sttConFallback, CANDIDATOS_CHAT, CANDIDATOS_STT, ALIAS_RETIrados, sanearModelo, PLACEHOLDER_KEY, esPlaceholder, corregirSTT, deslucharNombre };
+module.exports = { GROQ, groqKey, clavesGroq, esPlaceholder, errorSinClave, post, chatConFallback, sttConFallback, CANDIDATOS_CHAT, CANDIDATOS_STT, ALIAS_RETIrados, sanearModelo, PLACEHOLDER_KEY, corregirSTT, deslucharNombre };
