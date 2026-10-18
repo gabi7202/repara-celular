@@ -29,7 +29,7 @@ const { URL } = require('url');
 /* Lupita: mismo cliente Groq resiliente (fallback de modelos + retries) que las
    funciones de Vercel. Los archivos _ no se enrutan como endpoint en Vercel y
    aquí solo se requieren como librería — cero duplicación de lógica. */
-const { groqKey, chatConFallback, sttConFallback, sanearModelo } = require('./api/_groq');
+const { groqKey, clavesGroq, chatConFallback, sttConFallback, sanearModelo } = require('./api/_groq');
 const { cotizarServer, parseSalida } = require('./api/_agente');
 
 /* Carga .env sin dependencias (dotenv-style): claves → process.env.
@@ -312,8 +312,8 @@ const server = http.createServer(async (req, res) => {
     };
     try {
       let d = null, jsonFormat = true;
-      try { d = await chatConFallback(Object.assign({ response_format:{ type:'json_object' } }, payloadBase), body.modelo, key); }
-      catch(e){ jsonFormat = false; d = await chatConFallback(payloadBase, body.modelo, key); }
+      try { d = await chatConFallback(Object.assign({ response_format:{ type:'json_object' } }, payloadBase), body.modelo, key, req); }
+      catch(e){ if (e.code === 'sin_clave') throw e; jsonFormat = false; d = await chatConFallback(payloadBase, body.modelo, key, req); }
       const msg = (d.choices && d.choices[0] && d.choices[0].message) || {};
       const sal = parseSalida(msg.content || '');
       log('chat', msg.tool_calls ? 'tool_calls:' + msg.tool_calls.map(t=>t.function.name).join(',') : (sal.decir||'').slice(0,60).replace(/\n/g,' '), '· modelo', d._modelo_usado);
@@ -356,7 +356,7 @@ const server = http.createServer(async (req, res) => {
       return fd;
     };
     try {
-      const d = await sttConFallback(formFactory, body.modelo || 'whisper-large-v3-turbo', key);
+      const d = await sttConFallback(formFactory, body.modelo || 'whisper-large-v3-turbo', key, req);
       log('stt', (d.text || '').slice(0, 70), '· modelo', d._modelo_usado);
       return json(res, 200, { ok:true, text: d.text || '', idioma: d.language || 'es', modelo: d._modelo_usado || '' }, req);
     } catch(e){
@@ -390,6 +390,8 @@ const server = http.createServer(async (req, res) => {
        Sanear modelos retirados: si el cliente pide uno jubilado (p. ej. openai/gpt-oss-*),
        se fuerza 'playai-tts' (los 4xx ya hacían caer el TTS entero con groq_fallo/502). */
     let key; try { key = groqKey(req); } catch(e){ return json(res, e.status || 503, { ok:false, error:e.code || 'sin_clave' }, req); }
+    const clavesTts = clavesGroq(req); if (clavesTts.length) key = clavesTts[0];
+    const colaClavesTts = clavesTts.slice(1);
     const ESTILOS_VALIDOS = ['Cheerful','Sincere','Efficient','Lively'];
     let voz = String(body.voice || 'Jennifer');
     let estilo = body.style ? String(body.style).slice(0,30) : null;
@@ -408,10 +410,11 @@ const server = http.createServer(async (req, res) => {
         if (rr.ok){ r = rr; break; }
         ultimoTxt = (await rr.text().catch(()=>'')).slice(0,180);
         const s = rr.status;
+        if ((s === 401 || s === 403) && colaClavesTts.length){ key = colaClavesTts.shift(); intento--; continue; }
         if (s === 404 || s === 400 || s === 422) continue;
         if ((s === 429 || s >= 500) && intento < 3){ await new Promise(z => setTimeout(z, 500)); continue; }
         log('groq tts', s, ultimoTxt.slice(0,140));
-        return json(res, 502, { ok:false, error:'groq_fallo', detalle: ultimoTxt }, req);
+        return json(res, (s === 401 || s === 403) ? 503 : 502, { ok:false, error:(s === 401 || s === 403) ? 'sin_clave' : 'groq_fallo', detalle: ultimoTxt }, req);
       }
       if (!r) return json(res, 502, { ok:false, error:'groq_fallo', detalle: ultimoTxt }, req);
       const buf = Buffer.from(await r.arrayBuffer());

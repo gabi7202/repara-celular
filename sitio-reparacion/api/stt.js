@@ -34,7 +34,7 @@ module.exports = async function handler(req, res) {
       fd.append('prompt', String(b.vocabulario || PROMPT_VOCABULARIO).slice(0, 400));
       return fd;
     };
-    const d = await sttConFallback(formFactory, b.modelo || 'whisper-large-v3-turbo', key);
+    const d = await sttConFallback(formFactory, b.modelo || 'whisper-large-v3-turbo', key, req);
     /* capa final: si aun así escribió "tapatech", se corrige antes de devolverlo */
     const txt = corregirSTT(d.text || '');
     return json(res, 200, { ok:true, text: txt, idioma: d.language || 'es', modelo: d._modelo_usado || '' });
