@@ -1,12 +1,12 @@
 # TapaTech — Sitio de reparación de celulares (plantilla lista para cliente)
 
 Sitio de una sola página + blog, **HTML/CSS/JS puro, sin build, sin dependencias, sin terceros**.
-Diseñado para convertir por WhatsApp, rankear en Google Maps/búsquedas locales y quedar
-**listo para recibir un agente de voz con IA en ~2 meses** sin rehacer nada.
+Diseñado para convertir por WhatsApp y rankear en Google Maps/búsquedas locales. Incluye a Lupita,
+un asistente de voz con IA que opera mediante la API de Groq.
 
 ```
 Prueba rápida: abre index.html en el navegador. Funciona sin servidor.
-Servidor local:  cd sitio-reparacion && python3 -m http.server 8080  → http://localhost:8080
+Servidor local: ejecuta `npm run dev` dentro de `sitio-reparacion` → http://127.0.0.1:3000
 ```
 
 ---
@@ -23,10 +23,10 @@ principal de `index.html` (línea ~1410). Cambia ahí y luego repasa los textos.
 | 3 | WhatsApp | `CONFIG.whatsapp` (solo dígitos, con 52) | `529622889585` |
 | 4 | Dominio | `CONFIG.dominio` + canonical + og:url + sitemap + robots | `TU-DOMINIO` |
 | 5 | Dirección y referencia | `CONFIG.direccion` + sección Ubicación + footer + JSON-LD | `Quinceava Avenida Sur esq. 18a Calle Oriente, Col. Los Naranjos` |
-| 6 | Google Maps | `CONFIG.mapsUrl`, `CONFIG.mapsEmbed` + JSON-LD `hasMap`/`sameAs` | `TU-ENLACE-DE-GOOGLE-MAPS` |
+| 6 | Google Maps | `CONFIG.mapsUrl`, `CONFIG.mapsEmbed` + JSON-LD `hasMap` | `TU-ENLACE-DE-GOOGLE-MAPS` |
 | 7 | Horarios | `CONFIG.horarios` (0=domingo … 6=sábado, formato 24 h) + texto en Ubicación | `horarios` |
 | 8 | Coordenadas | JSON-LD `geo` + `og:image` si cambia el mapa | `14.889124` |
-| 9 | Redes sociales | `sameAs` del JSON-LD + footer | `TU-PERFIL`, `TU-PAGINA` |
+| 9 | Redes sociales | Facebook de Rafael Ortiz está enlazado en el footer y en `founder.sameAs`; añade otros perfiles solo al verificarlos | `TU-PERFIL`, `TU-PAGINA` |
 | 10 | Precios | `CATALOGO` (cotizador) + tabla de `#precios` + `datos/servicios.json` | `precios:` |
 | 11 | Reseñas | sección `#resenas` — **pon reseñas reales de Google**, con nombre real | `María R.` |
 | 12 | Fotos | `assets/hero.webp`, `taller.webp`, `consolas.webp`, `antes-despues.webp`, `og-cover.jpg` | — |
@@ -56,7 +56,7 @@ sitio-reparacion/
 │   └── chat.js  stt.js  tts.js            ← proxy de Groq (la clave nunca va al navegador)
 ├── supabase/schema.sql   ← tablas, índices, RLS y vistas para Postgres administrado
 ├── .env.example          ← GROQ_API_KEY, TTS_WEBHOOK, ADMIN_PIN, SUPABASE_*, LEAD_WEBHOOK
-├── favicon.svg (226 B) · manifest.webmanifest · robots.txt · sitemap.xml · vercel.json · 404.html
+├── favicon.svg (226 B) · manifest.webmanifest · robots.txt · sitemap.xml · llms.txt · vercel.json · 404.html
 ├── privacidad.html       ← aviso de privacidad (INAI) + tratamiento de datos del equipo
 ├── terminos.html         ← garantía, exclusiones, abandono de equipo, ética de software
 ├── datos/
@@ -157,12 +157,14 @@ y lo reenvía solo** cuando vuelve la conexión: no se pierde ninguna solicitud.
 
 ```bash
 cd sitio-reparacion
-ADMIN_PIN=un-pin-largo-y-secreto node server.js      # http://localhost:3000
-# panel:  http://localhost:3000/admin.html
+ADMIN_PIN=un-pin-largo-y-secreto node server.js      # http://127.0.0.1:3000
+# panel:  http://127.0.0.1:3000/admin.html
 # datos:  data/leads.jsonl  (+ data/backup-AAAA-MM-DD.jsonl)
 ```
-Opcionales: `PORT`, `LEAD_WEBHOOK` (Slack, Google Sheets o WhatsApp Cloud API: recibe cada lead al
-instante), `CORS_ORIGINS`. En producción ponlo detrás de Caddy/nginx o usa el modo B para tener HTTPS.
+Opcionales: `PORT`, `HOST` (por defecto `127.0.0.1`; configura `0.0.0.0` si el servidor debe
+aceptar conexiones de otros equipos), `LEAD_WEBHOOK` (Slack, Google Sheets o WhatsApp Cloud API:
+recibe cada lead al instante), `CORS_ORIGINS`. En producción ponlo detrás de Caddy/nginx o usa el
+modo B para tener HTTPS.
 
 ### Modo B — Vercel + Supabase
 
@@ -253,8 +255,8 @@ mensaje ya escrito** con el mismo folio que quedó en la base de datos. Así pue
 8. 6 tiras de CTA al final de cada sección, con el mensaje adecuado al contexto.
 9. Asistente de 3 pasos (falla → modelo → contacto) con WhatsApp, llamada o **cita con día y hora**.
 10. Solicitud de recolección a domicilio con colonia.
-11. Modal de oferta por intención de salida (desktop) o 60 % de scroll (móvil), 1 vez por sesión y
-    7 días de silencio si lo cierran.
+11. Aviso centrado de recolección a domicilio después de avanzar 480 px o 65 % de la altura visible,
+    una vez por sesión y con 24 horas de silencio si se cierra.
 12. Mapa con fachada + "Cómo llegar" y "Copiar dirección".
 13. CTA en el pie con WhatsApp, llamada y agendar.
 14. Enlaces de reseñas a Google para dejar reseña (prueba social que se retroalimenta).
@@ -266,32 +268,31 @@ Todo empuja eventos a `dataLayer` (`lead_enviado`, `boleto_generado`, `oferta_ac
 `wa_click_*`, `call_click_*`, `servicio_cotizar`, `wizard_paso`, `cita_*`), así puedes ver qué CTA
 convierte y quitar los que estorben.
 
-## 6. Agente de voz con IA ("Lupita") — Groq + STT + TTS neuronal gratis
+## 6. Agente de voz con IA ("Lupita") — Groq + STT + Edge TTS
 
 Ya está **implementado y probado**, no es un espacio reservado. La persona habla por el micrófono
 (con permiso del navegador y aviso visible), el sitio transcribe, Groq responde y una voz neuronal
-en español de México lee la respuesta **con pausas, ritmo y entonación reales**.
+en español de México lee la respuesta.
 
 ### Arquitectura
 
 ```
- micrófono ──▶ STT ──▶ /api/chat (Groq llama-3.3-70b) ──▶ texto con marcas de prosodia ──▶ parser ──▶ TTS ──▶ audio por segmentos
+ micrófono ──▶ STT ──▶ /api/chat (Groq openai/gpt-oss-20b) ──▶ texto puntuado ──▶ /api/tts (Edge TTS) ──▶ audio
     ▲                   │ herramientas: cotizar, registrar_lead, agendar_cita, estado_abierto,
     └── barge-in ───────┘               verificar_folio, enviar_whatsapp   (se ejecutan en el navegador)
 ```
 
 | Pieza | Qué se usa | Costo | Dónde se configura |
 |---|---|---|---|
-| **LLM** | Groq `llama-3.3-70b-versatile` (o `llama-3.1-8b-instant`) | Gratis con límite; luego ~USD $0.05–0.60/M tokens | `datos/agente.json → llm` |
+| **LLM** | Groq `openai/gpt-oss-20b` (respaldo `openai/gpt-oss-120b`) | Según límites y precios actuales de Groq | `GROQ_CHAT_MODEL` o `datos/agente.json → llm` |
 | **STT** | Web Speech API del navegador (Chrome/Edge/Safari, `es-MX`) | $0 | automático |
 | **STT respaldo** | Groq `whisper-large-v3-turbo` (Firefox o cuando se quiere precisión) | Gratis con límite | `datos/agente.json → stt` |
-| **TTS principal** | Webhook **Edge TTS** con `es-MX-DaliaNeural` (`tools/tts-edge.py`) | **$0** (sin API key) | `TTS_WEBHOOK` o `agente.json → tts.webhook.url` |
-| **TTS respaldo** | Groq `playai-tts` | Gratis con límite | `agente.json → tts.groq` |
-| **TTS final** | `speechSynthesis` del navegador | $0 | siempre disponible |
+| **TTS principal** | Webhook **Edge TTS** con `es-MX-DaliaNeural` (`tools/tts-edge.py`) | **$0** (sin API key) | `TTS_WEBHOOK` |
+| **TTS respaldo** | Voz de lectura del navegador (`speechSynthesis`) | $0 | navegador |
 
-El orden se cambia en `datos/agente.json → tts.ordenMotores`. Si el motor neuronal falla, el sitio
-**cae solo a la voz del navegador** y, si ni eso, deja la respuesta escrita en pantalla: nunca se
-queda callado.
+Edge recibe el texto completo en una sola petición, conservando comas y puntos para sus pausas y los
+signos `¿...?` y `¡...!` para la entonación. No se usa PlayAI ni otro TTS de pago; si Edge falla, el
+navegador habla como respaldo y la respuesta escrita permanece visible.
 
 ### La voz pedida (perfil verificado)
 
@@ -308,51 +309,29 @@ Muestras generadas con este sistema, listas para escuchar:
 
 Para regenerarlas: `python3 tools/tts-edge.py 8055` y luego POST a `/tts`.
 
-### Prosodia: por qué Lupita no habla "de corrido"
+Para que la voz suene natural, el prompt pide frases cortas y puntuación ortográfica: comas para
+pausas breves, puntos entre ideas, y signos de apertura/cierre en preguntas y exclamaciones. Los
+números se escriben como se pronuncian ("de mil doscientos a mil seiscientos pesos").
 
-El TTS lee plano porque no sabe dónde respirar. La solución es que **el modelo escriba la intención
-y el cliente la convierta en audio**. En `datos/prompt-agente.md` el agente tiene obligación de
-marcar su respuesta:
-
-| Marca | Efecto | Uso |
-|---|---|---|
-| `[[p:200]]` `[[p:500]]` `[[p:900]]` | pausa de 200/500/900 ms | antes de un dato, entre ideas, cambio de tema |
-| `[[r:0.85]]` / `[[r:1.1]]` | más lento / más rápido | precios, folios, teléfonos, direcciones |
-| `[[t:+10]]` / `[[t:-8]]` | sube / baja el tono | entusiasmo, advertencias |
-| `[[v:strong]]` / `[[v:soft]]` | énfasis / suavidad | "garantía escrita", empatía |
-| `[[e:alegre]]` `[[e:serio]]` `[[e:empatico]]` | preset de emoción (ritmo+tono+volumen) | saludo, políticas, cliente molesto |
-| `[[n:digitos]]` | deletrea dígitos y baja el ritmo | teléfonos y folios |
-| `[[/]]` | vuelve a la normalidad | cierra cualquier énfasis |
-
-`assets/voz.js` parsea esas marcas y produce segmentos `{text, rate, pitch, volume, pauseAfter}`.
-Según el motor activo:
-
-- **Navegador**: una `SpeechSynthesisUtterance` por segmento con su `rate`/`pitch`, y `setTimeout`
-  real entre segmentos para las pausas.
-- **Webhook Edge**: una petición por segmento con `rate` y `pitch` en notación Edge (`-15%`, `+4Hz`);
-  el cliente reproduce los audios en cola respetando `pauseAfter`.
-- **SSML**: `TAPATECH_VOZ.aSSML()` genera `<speak xml:lang="es-MX">` con `<prosody>`, `<break time>`
-  y `<emphasis>` para Azure/Polly/Google si algún día se cambia de motor.
-
-Detalles que evitan el "leído de corrido": los números se escriben **como se pronuncian** ("de mil
-doscientos a mil seiscientos pesos"), las frases tienen máximo ~35 palabras, una sola pregunta por
-turno, y los segmentos de una sola palabra ("o", "y") se fusionan con el siguiente para no cortar.
-
-### Puesta en marcha (10 minutos)
+### Puesta en marcha
 
 ```bash
 # 1) Voz neuronal gratuita (sin API keys)
 pip install edge-tts
 python3 tools/tts-edge.py 8055            # webhook en http://localhost:8055/tts
 
-# 2) Cerebro (Groq, gratis): https://console.groq.com → API Keys
-GROQ_API_KEY=gsk_xxx TTS_WEBHOOK=http://localhost:8055/tts ADMIN_PIN=tupin node server.js
+# 2) Crea una clave nueva en https://console.groq.com → API Keys y configúrala localmente.
+#    Nunca pegues claves en el código ni en el chat; usa .env local (ignorado por Git).
+#    La clave que se compartió durante la configuración debe revocarse antes de usar Lupita.
+GROQ_API_KEY=tu_clave_nueva GROQ_CHAT_MODEL=openai/gpt-oss-20b TTS_WEBHOOK=http://localhost:8055/tts ADMIN_PIN=tu_pin_seguro node server.js
 
 # 3) Abrir http://localhost:3000 y pulsar "🎙️ Hablar con Lupita"
 ```
 
-En Vercel: variables `GROQ_API_KEY`, `ADMIN_PIN` y `TTS_WEBHOOK` (el webhook Edge debe vivir en un
-servidor siempre encendido: Render/Fly/VPS, 200 MB de RAM sobran). Las funciones `api/chat.js`,
+En Vercel, `.env` no se importa automáticamente: añade `GROQ_API_KEY`, `GROQ_CHAT_MODEL` y
+`ADMIN_PIN` en *Project → Settings → Environment Variables* y vuelve a desplegar. Para conservar
+Edge TTS, `TTS_WEBHOOK` debe apuntar a un endpoint HTTPS público alojado aparte; Vercel no inicia
+el servicio Python. Sin él, el servidor intenta su TTS de respaldo. Las funciones `api/chat.js`,
 `api/stt.js` y `api/tts.js` hacen de proxy para que **la clave de Groq nunca llegue al navegador**.
 
 **HTTPS obligatorio**: `getUserMedia` solo funciona en `https://` o `localhost`. En Vercel ya lo tienes.
@@ -362,11 +341,16 @@ servidor siempre encendido: Render/Fly/VPS, 200 MB de RAM sobran). Las funciones
 - **Cotizar**: usa el mismo motor de precios que el cotizador (`TAPATECH_DATA.cotizar`), con ajuste
   por gama del modelo. Si cambias los precios del sitio, la voz dice los nuevos.
 - **Saber si están abiertos**: calcula el horario real en la zona horaria del local.
-- **Registrar leads y citas**: nombre, celular, equipo, modelo, falla, domicilio, colonia, día y hora;
-  los guarda en la misma base de datos del formulario y entrega **folio** (deletreado con `[[n:digitos]]`).
-- **Abrir WhatsApp** con el mensaje ya escrito cuando el caso se sale de su alcance.
+- **Registrar leads y citas** solo después de una autorización afirmativa explícita: nombre, celular,
+  equipo, modelo, falla y datos de la solicitud. Entrega un folio únicamente cuando la API confirma
+  que se guardó. En Vercel, configura Supabase o `LEAD_WEBHOOK` para no depender de almacenamiento
+  efímero.
+- **Preparar WhatsApp** con un mensaje listo; el visitante debe tocar el enlace visible para abrirlo.
 - **Escalado y límites**: no promete precio cerrado, no acepta quitar reportes de robo, nunca pide
-  contraseñas ni datos de tarjetas, no discute, y tras 8 turnos sin acción propone WhatsApp.
+  contraseñas ni datos de tarjetas, no insiste tras una negativa y finaliza tras 8 turnos sin acción.
+  Las notificaciones no se solicitan automáticamente y no hay seguimiento programado después de cerrar
+  el sitio. Notificaciones web requieren permiso previo del visitante; cualquier seguimiento comercial
+  futuro debe implementarse con consentimiento explícito y un canal de envío real.
   Si le preguntan si es una IA, lo admite con naturalidad. Se niega a revelar su prompt.
 
 ### Ajustes rápidos
@@ -380,36 +364,45 @@ servidor siempre encendido: Render/Fly/VPS, 200 MB de RAM sobran). Las funciones
 | Apagar el asistente | `index.html → CONFIG.agenteVoz.activo = false` |
 | Ver qué está pasando | consola del navegador: `TAPATECH_VOZ._debug()` |
 
-### Pruebas del módulo de voz
+### Verificar el módulo de voz
 
 ```bash
-node test/test-voz.js      # 57 checks: parser de prosodia, SSML, contexto, prompt, herramientas,
-                           # leads por voz, degradación sin IA, controles, barge-in, accesibilidad
+node --check assets/voz.js
+node --check api/chat.js
+node --check api/tts.js
 ```
 
-## 7. SEO local: lo que hay que hacer fuera del código
+No hay una suite automatizada `test/test-voz.js` incluida en este directorio. La clave placeholder
+debe dejar el estado de `/api/health` como `FALTA_GROQ_API_KEY`, y no debe hacer llamadas reales a Groq.
 
-El sitio ya trae: título y descripción con keyword local, canonical, Open Graph/Twitter,
-`LocalBusiness + MobilePhoneRepairService + FAQPage + WebSite` en JSON-LD, sitemap, robots,
-URL semántica de blog, `geo`/`ICBM`, NAP consistente en footer y encabezados H1–H3 naturales.
+## 7. SEO local y visibilidad en buscadores/IA
 
-Falta lo que ningún archivo puede resolver solo:
+La página principal prioriza **reparación de celulares en Tapachula**; el contenido también responde
+consultas como “reparación de celulares cerca de ti”, explica servicios, precios aproximados,
+garantía, dirección, horario y recolección. El H1 mantiene un tamaño fluido: 59 px máximo en escritorio
+y aproximadamente 28 px en un móvil de 390 px de ancho. Los títulos de servicios son H3 bajo su H2.
 
-1. **Dominio propio** (no `*.vercel.app`). Un subdominio gratuito no rankea bien para negocio local y
-   no transmite confianza. `.com` o `.mx` de ~$200–400 MXN/año. Al migrar, redirige 301 la URL vieja.
-2. **Google Business Profile** con la misma NAP exacta del sitio, categoría "Taller de reparación de
-   teléfonos", fotos reales, horarios, y enlace al sitio. Responder todas las reseñas.
-3. **Search Console** + envío de `sitemap.xml`; probar las URLs con la herramienta de resultados
-   enriquecidos para confirmar que FAQ y LocalBusiness se leen bien.
-4. **Reseñas reales**: pedir una reseña por WhatsApp al entregar cada equipo (con enlace directo al
-   perfil). 20 reseñas nuevas en 3 meses mueven el mapa más que cualquier cambio en el sitio.
-5. **Citaciones locales**: Facebook, Instagram, TikTok, Yelp, Páginas Amarillas, directorios de
-   Tapachula — siempre con nombre, dirección y teléfono idénticos.
-6. **Contenido**: 1 guía del blog por mes apuntando a búsquedas con intención de compra
-   ("cuánto cuesta cambiar pantalla iPhone 13 Tapachula", "reparar Xbox no da imagen Tapachula",
-   "mi celular se mojó qué hago"). Enlazar cada guía al cotizador.
-7. **Páginas de zona** (cuando haya dominio y tráfico): `/reparacion-de-celulares-tapachula-centro/`,
-   `/…-puerto-madero/`, `/reparacion-de-xbox-tapachula/`. Una por servicio+zona, contenido único.
+El sitio incluye canonical, Open Graph, un sitemap, `robots.txt` abierto a crawlers generales y
+`llms.txt` con un resumen y enlaces a las páginas. Los datos JSON-LD usan tipos Schema.org existentes
+(`LocalBusiness`, `Store`, `Service`, `WebSite` y `FAQPage`) y el número de teléfono del negocio.
+`llms.txt` es una convención voluntaria: no es un estándar de indexación ni garantiza que una IA
+consulte, indexe o cite la página. Autorizar el rastreo tampoco garantiza aparecer en respuestas.
+
+Para mejorar la visibilidad fuera del código:
+
+1. Verifica el negocio en Google Business Profile y Bing Places; mantén nombre, teléfono, dirección,
+   horarios, categoría y URL idénticos al sitio. Usa el enlace real del perfil de Maps.
+2. Registra el dominio desplegado en Google Search Console y Bing Webmaster Tools; envía el sitemap,
+   inspecciona las URLs principales y corrige cualquier error de rastreo o canonical.
+3. Añade únicamente URLs reales de perfiles sociales y del perfil de Google. El sitio no inventa
+   perfiles: los enlaces de ejemplo se quitaron hasta disponer de los enlaces oficiales.
+4. Solicita reseñas auténticas después de cada reparación y responde con información útil; no ofrezcas
+   recompensas condicionadas ni publiques reseñas inventadas.
+5. Publica guías basadas en preguntas que los clientes hacen de verdad, con diagnóstico, alternativas,
+   precios claramente sujetos al modelo y enlaces a la cotización. No dupliques artículos ni crees
+   páginas casi idénticas para colonias solo para repetir “cerca de mí”.
+6. Confirma que teléfono, correo, dirección, cobertura y tarifas sean correctos antes de publicarlos.
+   El correo actual se conserva tal como está configurado y debe verificarse con el negocio.
 
 ---
 
@@ -432,27 +425,21 @@ para `/assets` y HSTS.)
 
 ---
 
-## 9. Pruebas (3 suites, todas en verde)
+## 9. Verificaciones disponibles
 
 ```bash
-# 1) 75 verificaciones de comportamiento en jsdom (cotizador, asistente, BD, modal, nav, a11y)
-cd "$ARENA_WORKSPACE"
-npm i --prefix /tmp/t jsdom          # una sola vez
-node test/test-sitio.js < sitio-reparacion/index.html
-
-# 2) Integridad del sitio: enlaces, navegación, SEO básico, JSON-LD, ids duplicados
-cd sitio-reparacion && python3 tools/check.py
-
-# 3) Servidor + API + panel (integración real)
-ADMIN_PIN=prueba node server.js &    # luego POST/GET/PATCH a /api/leads
+python tools/check.py
+node --check assets/voz.js
+node --check api/chat.js
+node --check api/tts.js
+node --check api/health.js
+node --check server.js
+node --check sw.js
 ```
 
-La suite 1 comprueba, entre otras cosas: JSON-LD parseable, cero scripts externos, cero iframes en
-carga inicial, imágenes con dimensiones y `alt`, 20 filas de servicio clickeables, cotizador con
-ajuste por modelo, boleto con folio y QR, **asistente de 3 pasos con validación**, teléfono
-normalizado, **lead enviado a la API con UTM y consentimiento**, **cola local y reenvío automático
-cuando no hay servidor**, modal de oferta con límite de 7 días, acordeones, tabs, tema, mapa con
-fachada, datos expuestos para el agente de voz y ausencia de errores de runtime.
+`tools/check.py` comprueba enlaces internos, navegación, SEO básico, JSON-LD, IDs y placeholders.
+No hay suites `test/test-sitio.js` ni `test/test-voz.js` actualmente incluidas; valida manualmente
+el flujo de voz en HTTPS o `localhost`, con una clave Groq válida configurada fuera del código.
 
 ## 10. Despliegue
 

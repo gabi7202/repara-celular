@@ -1,5 +1,6 @@
 # TapaTech Tapachula — robots.txt
 User-agent: *
+# El acceso global también permite los crawlers de búsqueda y asistentes de IA que respetan robots.txt.
 Allow: /
 Disallow: /admin.html
 Disallow: /admin

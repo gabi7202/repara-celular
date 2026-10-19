@@ -11,8 +11,8 @@
   },
   "llm": {
     "proveedor": "groq",
-    "modelo": "llama-3.3-70b-versatile",
-    "modeloRapido": "llama-3.1-8b-instant",
+    "modelo": "openai/gpt-oss-20b",
+    "modeloRapido": "openai/gpt-oss-20b",
     "temperature": 0.45,
     "maxTokens": 260,
     "topP": 0.9,
@@ -35,30 +35,15 @@
   },
   "tts": {
     "ordenMotores": [
-      "webhook",
-      "groq",
+      "proxy",
       "navegador"
     ],
-    "_ordenMotores": "Prueba el webhook gratuito (Edge neuronal es-MX), luego PlayAI vía Groq y al final la voz del navegador. Cambia el orden si quieres forzar uno.",
+    "_ordenMotores": "Usa Edge TTS gratuito mediante TTS_WEBHOOK; si no responde, usa la voz del navegador. No se envía texto a otro proveedor TTS.",
     "webhook": {
       "url": "",
-      "_url": "Pega aquí la URL de tu webhook TTS gratuito (tools/tts-edge.py lo levanta en tu servidor). Recibe POST {text, voice, rate, pitch, volume} y devuelve audio.",
+      "_url": "Opcional: URL directa para pruebas locales. En producción, configura TTS_WEBHOOK en el servidor para que Edge reciba el texto completo.",
       "formato": "mp3",
       "timeoutMs": 9000
-    },
-    "groq": {
-      "modelo": "playai-tts",
-      "voz": "Jennifer",
-      "_vocesAlternativas": [
-        "Deedee",
-        "Jennifer",
-        "Wendy",
-        "Judy",
-        "Eleanor"
-      ],
-      "estilo": "Cheerful",
-      "velocidad": 1.0,
-      "endpoint": "/api/tts"
     },
     "navegador": {
       "preferirVoces": [

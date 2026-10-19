@@ -19,19 +19,16 @@ Luego conecta el sitio (dos opciones):
 
 API
 ---
-  POST /tts    {"text":"...", "voice":"es-MX-DaliaNeural", "rate":"+2%", "pitch":"+4Hz",
-                "volume":"100", "format":"mp3", "ssml":"<speak>…</speak>"}
+  POST /tts    {"text":"...", "voice":"es-MX-DaliaNeural", "format":"mp3"}
                → audio/mpeg (o audio/wav con format=wav)
   GET  /voices → lista de voces en español de México
   GET  /health → {"ok":true}
 
 Notas de prosodia
 -----------------
-Edge TTS acepta rate/pitch/volume globales por petición. Para aprovechar las marcas de
-prosodia del prompt maestro ([[p:500]], [[r:0.85]], [[t:+10]], [[e:alegre]], [[v:strong]]),
-el sitio envía UN segmento por petición con su rate/pitch propios y reproduce las pausas
-entre segmentos. Si mandas el campo "ssml", este webhook lo ignora y usa text+rate+pitch
-(Edge no acepta SSML arbitrario); el cliente ya convierte las marcas a rate/pitch.
+El sitio envía el texto completo en una sola petición, sin marcas de prosodia ni SSML. Usa comas y
+puntos para las pausas y los signos españoles de apertura/cierre (¿? y ¡!) para la entonación.
+Edge TTS aplica el ritmo y tono globales configurados en el webhook.
 """
 import json
 import re
@@ -52,7 +49,7 @@ RE_MARCA = re.compile(r"\[\[\s*(p:\d+|r:[0-9.]+|t:[+-]?[0-9.]+|v:[a-zñ]+|e:[a-z
 
 
 def limpiar(texto: str):
-    """Quita marcas [[...]] y las traduce a rate/pitch promedio del primer segmento."""
+    """Quita marcas técnicas heredadas para que el sintetizador solo lea el texto."""
     rate, pitch = 1.0, 1.0
     for m in RE_MARCA.finditer(texto or ""):
         tok = m.group(1).lower()
@@ -62,7 +59,6 @@ def limpiar(texto: str):
             pitch = 1 + float(tok[2:]) / 100.0
     limpio = RE_MARCA.sub("", texto or "")
     limpio = re.sub(r"\s+", " ", limpio).strip()
-    # Las pausas largas se conservan como puntos suspensivos, que Edge sí respeta
     return limpio, rate, pitch
 
 
@@ -177,7 +173,7 @@ class Manejador(BaseHTTPRequestHandler):
         if not audio:
             return self._json(502, {"ok": False, "error": "audio vacio"})
         mime = "audio/wav" if formato == "wav" else "audio/mpeg"
-        print(f"  TTS {voz} · {len(texto)} chars → {len(audio)/1024:.1f} KB")
+        print(f"  TTS {voz} | {len(texto)} chars -> {len(audio)/1024:.1f} KB")
         return self._audio(audio, mime)
 
     def log_message(self, fmt, *args):

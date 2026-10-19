@@ -55,14 +55,15 @@ module.exports = async function handler(req, res) {
       stream: false,
       ...(tools.length ? { tools, tool_choice:'auto' } : {})
     };
+    const modelo = process.env.GROQ_CHAT_MODEL || b.modelo;
     let d = null, usatoJsonFormat = true;
     try {
-      d = await chatConFallback(Object.assign({ response_format:{ type:'json_object' } }, payloadBase), b.modelo, key);
+      d = await chatConFallback(Object.assign({ response_format:{ type:'json_object' } }, payloadBase), modelo, key);
     } catch(e){
       /* si el fallo fue por response_format (400) u otro del primer intento,
          reintentamos sin formato JSON — la normalización local cubre el resto */
       usatoJsonFormat = false;
-      d = await chatConFallback(payloadBase, b.modelo, key);
+      d = await chatConFallback(payloadBase, modelo, key);
     }
     const msg = (d.choices && d.choices[0] && d.choices[0].message) || {};
     const sal = parseSalida(msg.content || '');

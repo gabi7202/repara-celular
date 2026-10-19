@@ -148,7 +148,7 @@ puede reproducir con `curl`/DevTools.
 | **Confianza** | Reseñas reales de Google (Gemelos) + mitos y ética (TapaTech) | Sección de **6 promesas verificables** (nunca pedimos contraseña, pieza vieja devuelta, fotos antes/después, precio cerrado, garantía escrita, si no se repara no pagas) + espacio para reseñas **enlazables** y `aggregateRating` desactivado hasta tener datos reales |
 | **Diferenciador** | Recolección a domicilio (TapaTech) | Sección propia con **proceso de 4 pasos, zonas de cobertura, pago contra entrega y boleto del mensajero**, más CTA dedicados y evento de tracking |
 | **Alcance** | Multidispositivo (Gemelos: drones/consolas) | Tabs de **celulares, laptops y consolas (Xbox/PS/Switch)** con 21 servicios y precios; drones quedan fuera a propósito (mejor foco que diluir) |
-| **SEO** | Blog + robots/sitemap + GA4 (TapaTech) y dominio/canonical/OG/schema (Gemelos) | Todo junto: canonical, OG/Twitter con `og-cover.jpg` propio, `LocalBusiness+MobilePhoneRepairService+WebSite+FAQPage`, sitemap con imágenes, robots, blog con `Article`+`BreadcrumbList`+`FAQPage`, URL semántica, geo/ICBM, **sin stuffing** y sin meta keywords |
+| **SEO** | Blog + robots/sitemap + GA4 (TapaTech) y dominio/canonical/OG/schema (Gemelos) | Todo junto: canonical, OG/Twitter con `og-cover.jpg` propio, `LocalBusiness+Store+Service+WebSite+FAQPage`, sitemap con imágenes, robots, blog con `Article`+`BreadcrumbList`+`FAQPage`, URL semántica, geo/ICBM, **sin stuffing** y sin meta keywords |
 | **Velocidad** | CSS inline (Gemelos) + fuentes diferidas (TapaTech) | **0 terceros, 0 fuentes web, 2 peticiones críticas**, WebP con `width/height` + LQIP, mapa como fachada, favicon SVG de 226 B, HTML de 181 KB → **51 KB gzip** |
 | **Captura de leads** | Mensaje de WhatsApp estructurado (TapaTech) | Formulario con validación visible, **mensaje de éxito que no miente**, respaldo en `localStorage`, `leadEndpoint` opcional (Vercel Function / Apps Script / Formspree) y **folio compartido** entre boleto, WhatsApp y lead para medir cierre |
 | **Medición** | GA4 (TapaTech) | `dataLayer` con **18+ eventos de conversión** ya cableados; GA4 se activa pegando un snippet. Sin AdSense ni push-ads, así que no hace falta banner de cookies |
@@ -253,8 +253,8 @@ de los dos competidores:
   **las 20 filas de servicios son clickeables** y llevan al cotizador con ese servicio; 6 tiras de CTA
   al final de cada sección con mensaje contextual; boleto con folio + QR + "enviar por WhatsApp";
   mapa con "cómo llegar" y "copiar dirección"; CTA en pie; CTA en blog y en 404.
-- **Modal de oferta** por intención de salida (desktop) o 60 % de scroll (móvil): una vez por sesión,
-  7 días de silencio si lo cierran, validación propia y lead registrado.
+- **Aviso centrado de recolección a domicilio** tras avanzar en la página: una vez por sesión,
+  24 horas de silencio si lo cierran, con contacto por WhatsApp y acceso a los detalles del servicio.
 
 **Base de datos y panel del taller**
 - Asistente de 3 pasos (falla → modelo y domicilio → contacto) que captura nombre, celular, correo,

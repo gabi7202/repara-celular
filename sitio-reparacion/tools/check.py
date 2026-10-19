@@ -30,9 +30,11 @@ for p in PAGINAS:
 # 2) enlaces y recursos internos resuelven
 def existe(ruta_rel, pagina):
     if not ruta_rel: return True
-    base_dir = os.path.dirname(os.path.join(ROOT, pagina))
-    dest = os.path.normpath(os.path.join(base_dir, ruta_rel))
-    if dest.startswith('/'): dest = os.path.normpath(ROOT + dest)
+    if ruta_rel.startswith(('/', '\\')):
+        dest = os.path.normpath(os.path.join(ROOT, ruta_rel.lstrip('/\\')))
+    else:
+        base_dir = os.path.dirname(os.path.join(ROOT, pagina))
+        dest = os.path.normpath(os.path.join(base_dir, ruta_rel))
     return (os.path.exists(dest) or os.path.exists(os.path.join(dest, 'index.html'))
             or os.path.exists(dest + '.html') or dest.endswith('/'))
 total = rotos = 0
@@ -66,7 +68,7 @@ ids = re.findall(r'\sid="([^"]+)"', h)
 dup = {i for i in ids if ids.count(i) > 1}
 ok(not dup, 'index.html: ids duplicados → ' + ', '.join(sorted(dup)[:6]))
 # 4) placeholders pendientes (informativo)
-ph = len(re.findall(r'TU-DOMINIO|529622889585|962 288 9585|TU-PERFIL|TU-PAGINA|TU-ENLACE|Av\. Principal #000', h))
+ph = len(re.findall(r'TU-DOMINIO|TU-PERFIL|TU-PAGINA|TU-ENLACE|Av\. Principal #000', h))
 avisos.append(f'{ph} placeholders por reemplazar con los datos reales del cliente')
 
 print('\n'.join('❌ ' + e for e in errores) if errores else '✅ Sin errores')

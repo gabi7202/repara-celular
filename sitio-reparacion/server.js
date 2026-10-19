@@ -3,7 +3,7 @@
  * TapaTech — servidor sin dependencias (Node ≥ 18)
  * Sirve el sitio estático + API de leads (base de datos en JSONL).
  *
- *   node server.js                       → http://localhost:3000
+ *   node server.js                       → http://127.0.0.1:3000
  *   ADMIN_PIN=mipin node server.js       → panel /admin.html protegido
  *   LEAD_WEBHOOK=https://... node server.js  → reenvía cada lead (Slack/Sheets/WhatsApp Cloud)
  *
@@ -29,7 +29,7 @@ const { URL } = require('url');
 /* Lupita: mismo cliente Groq resiliente (fallback de modelos + retries) que las
    funciones de Vercel. Los archivos _ no se enrutan como endpoint en Vercel y
    aquí solo se requieren como librería — cero duplicación de lógica. */
-const { groqKey, chatConFallback, sttConFallback } = require('./api/_groq');
+const { groqKey, esPlaceholder, chatConFallback, sttConFallback } = require('./api/_groq');
 const { cotizarServer, parseSalida } = require('./api/_agente');
 
 /* Carga .env sin dependencias (dotenv-style): claves → process.env.
@@ -55,6 +55,7 @@ const { cotizarServer, parseSalida } = require('./api/_agente');
 const ROOT = __dirname;
 const DATA = path.join(ROOT, 'data');
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '127.0.0.1';
 const PIN = process.env.ADMIN_PIN || 'cambia-este-pin';
 const WEBHOOK = process.env.LEAD_WEBHOOK || '';
 const CORS = (process.env.CORS_ORIGINS || '').split(',').filter(Boolean);
@@ -174,10 +175,10 @@ const server = http.createServer(async (req, res) => {
 
   /* ── API ── */
   if (u.pathname === '/api/health'){
-    const kg = process.env.GROQ_API_KEY ? String(process.env.GROQ_API_KEY).trim() : '';
+    const kg = process.env.GROQ_API_KEY && !esPlaceholder(process.env.GROQ_API_KEY) ? String(process.env.GROQ_API_KEY).trim() : '';
     return json(res, 200, { ok:true, ts:new Date().toISOString(), leads: leer(LEADS).length, backend:'local',
-      groq: process.env.GROQ_API_KEY ? 'conectada' : 'FALTA_GROQ_API_KEY',
-      groq_detalle: { estado: process.env.GROQ_API_KEY ? 'conectada' : 'FALTA_GROQ_API_KEY',
+      groq: process.env.GROQ_API_KEY && !esPlaceholder(process.env.GROQ_API_KEY) ? 'conectada' : 'FALTA_GROQ_API_KEY',
+      groq_detalle: { estado: process.env.GROQ_API_KEY && !esPlaceholder(process.env.GROQ_API_KEY) ? 'conectada' : 'FALTA_GROQ_API_KEY',
         info:{ longitud: kg.length, empieza_gsk:/^gsk_/i.test(kg), espacios_dentro:/\s/.test(kg) } },
       node: process.version }, req);
   }
@@ -312,8 +313,9 @@ const server = http.createServer(async (req, res) => {
     };
     try {
       let d = null, jsonFormat = true;
-      try { d = await chatConFallback(Object.assign({ response_format:{ type:'json_object' } }, payloadBase), body.modelo, key); }
-      catch(e){ jsonFormat = false; d = await chatConFallback(payloadBase, body.modelo, key); }
+      const modelo = process.env.GROQ_CHAT_MODEL || body.modelo;
+      try { d = await chatConFallback(Object.assign({ response_format:{ type:'json_object' } }, payloadBase), modelo, key); }
+      catch(e){ jsonFormat = false; d = await chatConFallback(payloadBase, modelo, key); }
       const msg = (d.choices && d.choices[0] && d.choices[0].message) || {};
       const sal = parseSalida(msg.content || '');
       log('chat', msg.tool_calls ? 'tool_calls:' + msg.tool_calls.map(t=>t.function.name).join(',') : (sal.decir||'').slice(0,60).replace(/\n/g,' '), '· modelo', d._modelo_usado);
@@ -363,49 +365,34 @@ const server = http.createServer(async (req, res) => {
     let body; try { body = await leerBody(req, 32 * 1024); } catch(e){ return json(res, 400, { ok:false, error:e.message }, req); }
     const texto = String(body.text || '').slice(0, 1200);
     if (!texto) return json(res, 400, { ok:false, error:'texto_faltante' }, req);
-    /* 1) webhook TTS gratuito (Edge neuronal es-MX). Ver tools/tts-edge.py */
-    const hook = process.env.TTS_WEBHOOK || (body.webhook || '');
-    if (hook){
-      try {
-        const rh = await fetch(hook, { method:'POST', headers:{ 'Content-Type':'application/json' },
-          body: JSON.stringify({ text: texto, voice: body.voice || 'es-MX-DaliaNeural', rate: body.rate || '+2%', pitch: body.pitch || '+4Hz', volume: body.volume || '100', format: body.formato || 'mp3', ssml: body.ssml || null }) });
-        if (rh.ok){
-          const buf = Buffer.from(await rh.arrayBuffer());
-          if (buf.length > 400){
-            res.writeHead(200, { 'Content-Type': rh.headers.get('content-type') || 'audio/mpeg', 'Content-Length': buf.length, 'Cache-Control':'no-store' });
-            return res.end(buf);
-          }
-        } else log('tts webhook', rh.status);
-      } catch(e){ log('tts webhook falló:', e.message); }
-    }
-    /* 2) PlayAI vía Groq — con normalización de voz/estilo y retries (igual que api/tts.js) */
-    let key; try { key = groqKey(req); } catch(e){ return json(res, e.status || 503, { ok:false, error:e.code || 'sin_clave' }, req); }
-    const ESTILOS_VALIDOS = ['Cheerful','Sincere','Efficient','Lively'];
-    let voz = String(body.voice || 'Jennifer');
-    let estilo = body.style ? String(body.style).slice(0,30) : null;
-    if (/^es[-_]/i.test(voz) || !/^[A-Z][a-z]+$/.test(voz)) voz = 'Jennifer';
-    if (estilo && !ESTILOS_VALIDOS.includes(estilo)) estilo = null;
+    const hook = String(process.env.TTS_WEBHOOK || '').trim();
+    if (!hook) return json(res, 503, { ok:false, error:'tts_webhook_no_configurado' }, req);
+    const rate = /^[-+]?\d{1,2}%$/.test(String(body.rate || '')) ? String(body.rate) : '-10%';
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
     try {
-      let r = null, ultimoTxt = '';
-      for (let intento = 0; intento < 4 && !r; intento++){
-        const payload = { model: 'playai-tts', voice: voz,
-          response_format: String(body.formato || 'mp3'), input: texto };
-        if (estilo) payload.style = estilo;
-        if (body.speed) payload.speed = Math.min(1.6, Math.max(0.6, Number(body.speed) || 1));
-        const rr = await fetch('https://api.groq.com/openai/v1/audio/speech', { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + key }, body: JSON.stringify(payload) });
-        if (rr.ok){ r = rr; break; }
-        ultimoTxt = (await rr.text().catch(()=>'')).slice(0,180);
-        const s = rr.status;
-        if (s === 404 || s === 400 || s === 422) continue;
-        if ((s === 429 || s >= 500) && intento < 3){ await new Promise(z => setTimeout(z, 500)); continue; }
-        log('groq tts', s, ultimoTxt.slice(0,140));
-        return json(res, 502, { ok:false, error:'groq_fallo', detalle: ultimoTxt }, req);
+      const upstream = await fetch(hook, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({ text: texto, voice: body.voice || 'es-MX-DaliaNeural', rate, format:'mp3' }),
+        signal: controller.signal
+      });
+      if (!upstream.ok){
+        const detalle = (await upstream.text().catch(() => '')).slice(0,160);
+        log('tts webhook respondió HTTP', upstream.status, detalle);
+        return json(res, 502, { ok:false, error:'tts_webhook_fallo', estado:upstream.status }, req);
       }
-      if (!r) return json(res, 502, { ok:false, error:'groq_fallo', detalle: ultimoTxt }, req);
-      const buf = Buffer.from(await r.arrayBuffer());
-      res.writeHead(200, { 'Content-Type': r.headers.get('content-type') || 'audio/mpeg', 'Content-Length': buf.length, 'Cache-Control':'no-store' });
+      const buf = Buffer.from(await upstream.arrayBuffer());
+      if (buf.length <= 400) return json(res, 502, { ok:false, error:'tts_webhook_audio_vacio' }, req);
+      res.writeHead(200, { 'Content-Type': upstream.headers.get('content-type') || 'audio/mpeg', 'Content-Length': buf.length, 'Cache-Control':'no-store' });
       return res.end(buf);
-    } catch(e){ return json(res, 502, { ok:false, error:'tts_no_disponible', detalle:String(e.message).slice(0,160) }, req); }
+    } catch(e){
+      const timeout = e && e.name === 'AbortError';
+      log('tts webhook no disponible:', String(e && e.message || e).slice(0,160));
+      return json(res, timeout ? 504 : 502, { ok:false, error:timeout ? 'tts_webhook_timeout' : 'tts_webhook_no_disponible' }, req);
+    } finally {
+      clearTimeout(timeout);
+    }
   }
 
   /* ── estáticos ── */
@@ -447,9 +434,9 @@ const server = http.createServer(async (req, res) => {
   res.end(req.method === 'HEAD' ? undefined : buf);
 });
 
-server.listen(PORT, () => {
-  log(`TapaTech listo en http://localhost:${PORT}`);
-  const avisoPin = process.env.ADMIN_PIN ? 'definido por env' : 'por defecto "cambia-este-pin" — ¡CÁMBIALO!';
-  log('Panel: http://localhost:' + PORT + '/admin.html  (PIN ' + avisoPin + ')');
+server.listen(PORT, HOST, () => {
+  log(`TapaTech listo en http://${HOST}:${PORT}`);
+  const avisoPin = process.env.ADMIN_PIN ? 'definido por env' : 'por defecto "cambia-este-pin"';
+  log('Panel: http://' + HOST + ':' + PORT + '/admin.html  (PIN ' + avisoPin + ')');
   log(`BD: ${LEADS}`);
 });

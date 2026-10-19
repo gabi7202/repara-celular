@@ -15,6 +15,12 @@
   ],
   "icons": [
     {
+      "src": "assets/logo-t-flat.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
       "src": "assets/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",

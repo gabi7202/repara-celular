@@ -6,8 +6,8 @@
 <meta name="description" content="Aviso de privacidad de TapaTech Tapachula: qué datos recabamos, para qué los usamos, cómo ejercer tus derechos ARCO y cómo protegemos tu información al reparar tu equipo.">
 <link rel="canonical" href="https://reparaciondecelulares.vercel.app/privacidad.html">
 <meta name="robots" content="index,follow">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/doc.css">
+<link rel="icon" href="favicon.svg?v=20261018-flat-t3" type="image/svg+xml">
+<link rel="stylesheet" href="assets/doc.css?v=20261018-flat-t3">
 <style>
 /* Regla global: texto BLANCO sobre fondos oscuros — no aplica a botones/CTAs */
 .ftr :not(.btn):not(a),.ftr a,.cta :not(.btn),.cta :not(.btn) a,.cta-mini :not(.btn),.cta-mini :not(.btn) a{color:#fff!important}
@@ -31,7 +31,7 @@
 .ftr-grid a{display:block;font-size:.88rem;margin-bottom:7px}
 .ftr-grid div:first-child{font-size:.88rem;line-height:1.6}
 .cta-mini{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;
-  background:linear-gradient(120deg,rgba(76,91,212,.16),rgba(255,255,255,.03));
+  background:linear-gradient(120deg,rgba(8,102,255,.16),rgba(255,255,255,.03));
   border:1px solid rgba(0,0,0,.16);border-radius:20px;padding:18px 22px}
 .cta-btns{display:flex;gap:8px;flex-wrap:wrap}
 .ftr-legal{margin-top:26px;padding-top:18px;border-top:1px solid #22304E;font-size:.78rem;color:#8190A8}
@@ -88,6 +88,7 @@
     <li><b>Marca, modelo y falla del equipo:</b> para cotizar, pedir la pieza correcta y registrar el servicio.</li>
     <li><b>IMEI o número de serie</b> (solo en boletos de entrada y servicio a domicilio): para identificar tu equipo y evitar confusiones o recepción de equipo con reporte.</li>
     <li><b>Dirección de recolección</b> (solo si pides servicio a domicilio).</li>
+    <li><b>Voz:</b> si usas a Lupita y autorizas el micrófono, el audio se transcribe para responderte; el audio no se guarda en este sitio. La transcripción se envía al proveedor de IA configurado para generar la respuesta.</li>
   </ul>
   <p>No recabamos datos sensibles, ni datos de menores como categoría especial, ni información financiera: <b>no guardamos números de tarjeta</b>. Los pagos con tarjeta se procesan por terminal bancaria.</p>
 
@@ -103,8 +104,8 @@
   <p>Cuando un servicio sí requiere acceso al sistema (recuperación de información, formateo, desbloqueo de cuenta o migración de datos), te lo pedimos de forma expresa y por escrito antes de proceder, indicando qué se va a revisar y qué se va a borrar. Los respaldos temporales que generamos se eliminan al entregarte el equipo o a los 15 días naturales, lo que ocurra primero.</p>
 
   <h2>4. Formularios del sitio y WhatsApp</h2>
-  <p>Este sitio no envía tus datos a un servidor propio por defecto: el formulario de pre-diagnóstico <b>arma tu mensaje y abre WhatsApp</b>, de modo que la comunicación ocurre entre tú y nosotros dentro de la aplicación de mensajería. Si el responsable del sitio activa un endpoint de recepción (para no perder solicitudes), los datos se almacenan en una cuenta corporativa del taller con acceso limitado al personal de atención.</p>
-  <p>Los datos que el navegador guarda localmente (tema claro/oscuro y copias de seguridad de tus solicitudes) permanecen solo en tu dispositivo y puedes borrarlos limpiando los datos del sitio.</p>
+  <p>El formulario de pre-diagnóstico <b>arma tu mensaje y abre WhatsApp</b>. Lupita solo envía una solicitud al servidor si autorizas expresamente guardar tus datos para atenderla; si el servicio no confirma el guardado, no se genera ni comunica un folio. En el servidor propio, las solicitudes se guardan en archivos del taller. En Vercel, el almacenamiento local de funciones es temporal; para conservar solicitudes se debe configurar Supabase o un webhook de recepción. El responsable debe limitar el acceso y definir el plazo de conservación del almacenamiento que active.</p>
+  <p>El sitio no usa tus datos para seguimiento comercial automático. Las notificaciones del navegador no se solicitan automáticamente; el sitio no programa recordatorios ni te contacta después de cerrar la página. Las preferencias de tema y copias locales que guarden otros formularios permanecen en tu dispositivo y puedes borrarlas limpiando los datos del sitio.</p>
 
   <h2>5. Analítica web</h2>
   <p>Si activamos medición (por ejemplo Google Analytics 4), lo haremos con IP anonimizada, sin publicidad comportamental y sin compartir audiencias con terceros. Puedes bloquearla desde tu navegador o con extensiones de privacidad sin que el sitio deje de funcionar.</p>

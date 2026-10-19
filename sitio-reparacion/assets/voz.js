@@ -1,14 +1,13 @@
 /*!
  * TapaTech · Agente de voz "Lupita"
- * Flujo: micrófono (con permiso) → STT → Groq (LLM + herramientas) → TTS neuronal con prosodia.
+ * Flujo: micrófono (con permiso) → STT → Groq (LLM + herramientas) → Edge TTS con puntuación natural.
  * Sin dependencias. Se carga de forma perezosa solo cuando la persona abre el asistente.
  *
  * STT: Web Speech API del navegador (gratis, tiempo real). Si no existe, graba y transcribe
  *      con Groq Whisper (whisper-large-v3-turbo) vía /api/stt.
- * LLM: Groq (llama-3.3-70b-versatile) vía /api/chat. La clave vive en el servidor, nunca aquí.
+ * LLM: Groq (openai/gpt-oss-20b) vía /api/chat. La clave vive en el servidor, nunca aquí.
  * TTS: 1) webhook gratuito (Edge neuronal es-MX-DaliaNeural, ver tools/tts-edge.py)
- *      2) PlayAI vía Groq (/api/tts)
- *      3) voz del navegador (speechSynthesis) — siempre disponible, cero costo.
+ *      2) voz del navegador (speechSynthesis) como respaldo.
  *
  * La prosodia es lo importante: el modelo contesta con marcas ([[p:500]], [[r:0.85]], [[t:+10]],
  * [[v:strong]], [[e:alegre]], [[n:digitos]], [[/]]) y este módulo las traduce a pausas reales,
@@ -26,8 +25,8 @@ function dormir(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 function log() { try { if (W.console && console.info) console.info.apply(console, ['[voz]'].concat([].slice.call(arguments))); } catch (e) {} }
 
 var CFG = null, PROMPT = '', CTX = '';
-var historial = [], turnosSinAccion = 0, propuestasConvertidas = 0;
-var muted = false, manosLibres = true, velUsuario = 1, iniciado = false, cicloActivo = false;
+var historial = [], turnosSinAccion = 0, propuestasConvertidas = 0, autorizacionLeadEnTurno = false, leadGuardadoEnTurno = false;
+var manosLibres = true, velUsuario = 0.9, iniciado = false, cicloActivo = false;
 var recogn = null, detenerTodo = false;
 var colaAudio = [], reproduciendo = false, audioCtx = null;
 var ultimoFolio = null, pendienteEscucha = false;
@@ -101,6 +100,32 @@ API.aTextoPlano = function (texto) {
     .replace(/\[\[[^\]]*\]\]/gi, '')
     .replace(/\s+([,.;:!?])/g, '$1')
     .replace(/\s+/g, ' ').trim();
+};
+
+/** Conserva la puntuación que Edge usa para pausas y entonación. */
+API.textoParaVoz = function (texto) {
+  var s = API.aTextoPlano(texto)
+    .replace(/([.!?…])\s*,/g, '$1')
+    .replace(/,\s*,+/g, ',')
+    .replace(/([.!?…])(?=\S)/g, '$1 ');
+  function agregarSignoApertura(cierre, apertura) {
+    var fin = s.indexOf(cierre);
+    if (fin < 0) return;
+    var inicio = Math.max(
+      s.lastIndexOf('.', fin - 1),
+      s.lastIndexOf('?', fin - 1),
+      s.lastIndexOf('!', fin - 1),
+      s.lastIndexOf(',', fin - 1)
+    ) + 1;
+    if (s.slice(inicio, fin).indexOf(apertura) >= 0) return;
+    while (inicio < fin && /\s/.test(s.charAt(inicio))) inicio++;
+    s = s.slice(0, inicio) + apertura + s.slice(inicio);
+  }
+  agregarSignoApertura('?', '¿');
+  agregarSignoApertura('!', '¡');
+  s = s.replace(/[,;:]\s*$/, '');
+  if (s && !/[.!?…]$/.test(s)) s += '.';
+  return s;
 };
 
 /** SSML para motores que lo aceptan (Edge/Azure, Amazon Polly, Google). */
@@ -195,12 +220,13 @@ var HERRAMIENTAS = [
       calidad: { type: 'string', enum: ['incell', 'premium', 'ambas'] }
     }, required: ['equipo', 'servicio'] } } },
   { type: 'function', function: { name: 'estado_abierto', description: 'Dice si el local está abierto ahora y a qué hora cierra o abre.', parameters: { type: 'object', properties: {} } } },
-  { type: 'function', function: { name: 'registrar_lead', description: 'Guarda la solicitud del cliente en el sistema del taller y devuelve un folio. Requiere nombre y teléfono de 10 dígitos.',
+  { type: 'function', function: { name: 'registrar_lead', description: 'Guarda la solicitud solo después de que el cliente autorizó guardar sus datos en el turno anterior. Requiere nombre, teléfono de 10 dígitos y consentimiento true.',
     parameters: { type: 'object', properties: {
       nombre: { type: 'string' }, telefono: { type: 'string' }, equipo: { type: 'string' }, marca: { type: 'string' },
       modelo: { type: 'string' }, falla: { type: 'string' }, domicilio: { type: 'boolean' }, colonia: { type: 'string' },
-      tipo: { type: 'string', enum: ['diagnostico', 'cita', 'callback', 'oferta'] }, cita_fecha: { type: 'string' }, cita_hora: { type: 'string' }
-    }, required: ['nombre', 'telefono'] } } },
+      tipo: { type: 'string', enum: ['diagnostico', 'cita', 'callback', 'oferta'] }, cita_fecha: { type: 'string' }, cita_hora: { type: 'string' },
+      consentimiento: { type: 'boolean', enum: [true] }
+    }, required: ['nombre', 'telefono', 'consentimiento'] } } },
   { type: 'function', function: { name: 'agendar_cita', description: 'Valida si un día y hora están disponibles según el horario del local.',
     parameters: { type: 'object', properties: { fecha: { type: 'string', description: 'AAAA-MM-DD' }, hora: { type: 'string', description: 'HH:MM' } }, required: ['fecha', 'hora'] } } },
   { type: 'function', function: { name: 'verificar_folio', description: 'Consulta el estado de un folio existente.', parameters: { type: 'object', properties: { folio: { type: 'string' } }, required: ['folio'] } } },
@@ -229,32 +255,42 @@ function agendarLocal(a) {
   return { disponible: true, fecha: a.fecha, hora: a.hora, nota: 'sujeto a confirmacion del taller' };
 }
 async function registrarLead(a) {
+  if (a.consentimiento !== true || !autorizacionLeadEnTurno) return { error: 'consentimiento_requerido', guardado: false };
+  autorizacionLeadEnTurno = false;
+  var telefono = normalizarTel(a.telefono);
+  if (!/^\d{10}$/.test(telefono)) return { error: 'telefono_invalido', guardado: false };
   var folio = (negocio().folioPrefix || 'TT') + '-' + new Date().toISOString().slice(0, 10).replace(/-/g, '') + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
   var lead = {
-    folio: folio, tipo: a.tipo || 'diagnostico', nombre: a.nombre, telefono: normalizarTel(a.telefono),
+    folio: folio, tipo: a.tipo || 'diagnostico', nombre: a.nombre, telefono: telefono,
     telefono_texto: a.telefono, equipo: a.equipo || '', marca: a.marca || '', modelo: a.modelo || '',
     falla: a.falla || '', domicilio: !!a.domicilio, colonia: a.colonia || '',
     cita_fecha: a.cita_fecha || '', cita_hora: a.cita_hora || '', contacto: 'voz',
-    consentimiento: true, origen: location.href, pagina: 'agente-de-voz', notes: 'lead capturado por Lupita (voz)'
+    consentimiento: true, origen: location.href, pagina: 'agente-de-voz', notas: 'lead capturado por Lupita (voz)'
   };
-  var via = 'no_guardado';
   try {
     var r = await fetch(endpoint('leads'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(lead) });
-    via = r.ok ? 'api' : 'http_' + r.status;
-  } catch (e) { via = 'sin_servidor'; }
-  try { var arr = JSON.parse(localStorage.getItem('tt-leads-voz') || '[]'); arr.unshift(lead); localStorage.setItem('tt-leads-voz', JSON.stringify(arr.slice(0, 60))); } catch (e) {}
+    if (!r.ok) return { error: 'lead_no_guardado', guardado: false, estado: r.status };
+  } catch (e) { return { error: 'lead_no_guardado', guardado: false }; }
   ultimoFolio = folio;
-  track('voz_lead', { folio: folio, tipo: lead.tipo, via: via });
-  return { folio: folio, guardado: via === 'api', via: via, telefono_confirmado: lead.telefono };
+  turnosSinAccion = 0;
+  propuestasConvertidas = 0;
+  leadGuardadoEnTurno = true;
+  track('voz_lead', { folio: folio, tipo: lead.tipo, via: 'api' });
+  return { folio: folio, guardado: true, telefono_confirmado: lead.telefono };
 }
 function abrirWhatsApp(motivo) {
   var num = (negocio().whatsapp || '529622889585');
   var txt = '¡Hola ' + (negocio().nombre || 'TapaTech') + '! Vengo del asistente de voz Lupita. Motivo: ' + (motivo || 'quiero cotizar una reparación') +
     (ultimoFolio ? '. Mi folio es ' + ultimoFolio : '') + '.';
-  try { W.open('https://wa.me/' + num + '?text=' + encodeURIComponent(txt), '_blank', 'noopener'); } catch (e) {}
-  var a = $('#vozWa'); if (a) a.href = 'https://wa.me/' + num + '?text=' + encodeURIComponent(txt);
+  var a = $('#vozWa');
+  if (a) {
+    a.href = 'https://wa.me/' + num + '?text=' + encodeURIComponent(txt);
+    a.hidden = false;
+    a.textContent = 'Continuar por WhatsApp';
+  }
+  if (!a) return { error: 'enlace_whatsapp_no_disponible', preparado: false };
   track('voz_whatsapp', { motivo: motivo || '' });
-  return { abierto: true };
+  return { preparado: true, requiereToque: true };
 }
 async function ejecutarHerramienta(nombre, args) {
   switch (nombre) {
@@ -313,47 +349,43 @@ async function llamarLLM(mensajes) {
   return await r.json();
 }
 
-/* ── Regla de marketing + conversión (versión robusta) ────────────────────
-   Los contadores viven en localStorage: así NO se reinician al recargar, al
-   cambiar de red o si el usuario abre/cierra la consola a media plática.
-   Antes se perdían y Lupita "olvidaba" las evasiones → nunca cerraba y el
-   visitante quedaba dando vueltas sin convertir. */
-var CONV_KEY = 'lupita_conv_v1';
-function leerEstadoConv() {
-  try { return JSON.parse(localStorage.getItem(CONV_KEY) || '{}') || {}; } catch (e) { return {}; }
-}
-function guardarEstadoConv(o) {
-  try { localStorage.setItem(CONV_KEY, JSON.stringify(Object.assign({ t: Date.now() }, o))); } catch (e) {}
-}
-(function () { var e0 = leerEstadoConv(); propuestasConvertidas = e0.p || 0; turnosSinAccion = e0.u || 0; reintentosRuido = e0.r || 0; })();
+/* La cuenta dura solo lo que dure esta conversación: no se persigue al visitante
+   entre sesiones y Lupita deja de insistir después de dos propuestas. */
+function accionEsConversion(a) { return !!a && ['whatsapp', 'cotizador', 'cita'].includes(a.tipo); }
 
-function accionEsConversion(a) { return !!a && (a.tipo === 'whatsapp' || a.tipo === 'cotizador'); }
-
-/** Se llama con la respuesta YA resuelta del turno. Devuelve true si hay que CERRAR. */
-function registrarConversion(decir, acc) {
+function registrarConversion(decir, acc, textoUsuario) {
   var maxProp = (CFG.conversacion && CFG.conversacion.maxPropuestasConversion) || 2;
-  var e = leerEstadoConv();
-  var propuso = !!(accionEsConversion(acc)) || /\b(whatsapp|pas[áa]rtelo? por whats|te abro whats)/i.test(String(decir || ''));
-  /* ¿el cliente ACEPTÓ? (sí claro / ok / está bien / anótame / ahí voy…) */
-  var ultimoUser = '';
-  for (var i = historial.length - 1; i >= 0; i--) if (historial[i].role === 'user') { ultimoUser = String(historial[i].content || ''); break; }
-  var acepto = /\b(s[ií]\s?(claro|por favor|va|dale|ok|está? bien|me parece|se puede|afectado)?|ok(?:ay)?|va?le|dale|perfecto|genial|est[aá]?\s?(bien|perfecto|genial)|an[oó]tame|aparta|agenda|pase|ah[ií]\s?voy|manda|env[ií]a|quiero|s[ií]?,? me sirve)\b/i.test(ultimoUser);
-  if (acepto) { e.p = 0; }                                  /* conversion encaminada: se reinicia la cuenta */
-  else if (propuso) { e.p = (e.p || 0) + 1; }               /* propuesta ignorada: +1 */
-  e.u = turnosSinAccion; e.r = reintentosRuido;
-  guardarEstadoConv(e);
-  propuestasConvertidas = e.p || 0;
-  return propuestasConvertidas >= maxProp + 1;              /* con 2 ignoradas ya se cierra */
+  if (leadGuardadoEnTurno) { propuestasConvertidas = 0; return false; }
+  var propuso = !!accionEsConversion(acc) ||
+    /\b(?:whatsapp|cotizador|cotizaci[oó]n|folio|cita|agend(?:a|ar|amos)|apart(?:a|ar)|recolecci[oó]n)\b/i.test(String(decir || ''));
+  var acepto = propuestasConvertidas > 0 &&
+    /^\s*(?:sí|si|claro|va|dale|ok|okay|me parece|está bien|anótame|aparta|agenda|quiero|mándalo|envíalo)\b/i.test(String(textoUsuario || ''));
+  if (acepto || (acc && accionEsConversion(acc))) propuestasConvertidas = 0;
+  else if (propuso) propuestasConvertidas++;
+  return propuestasConvertidas >= maxProp;
 }
 
 async function pensar(textoUsuario) {
+  leadGuardadoEnTurno = false;
+  var ultimoAsistente = '';
+  for (var ai = historial.length - 1; ai >= 0; ai--) {
+    if (historial[ai].role === 'assistant' && !historial[ai].tool_calls && historial[ai].content) {
+      ultimoAsistente = String(historial[ai].content);
+      break;
+    }
+  }
+  autorizacionLeadEnTurno =
+    /\b(?:autoriz|permiso|guardar|registrar)\b/i.test(ultimoAsistente) &&
+    /^\s*(?:sí|si)(?:\s*,?\s*(?:autorizo|está bien|claro|puedes|de acuerdo|por favor))?\s*[.!]?\s*$/i.test(String(textoUsuario || ''));
   historial.push({ role: 'user', content: textoUsuario });
   /* CIERRE DIRECTO tras 2 propuestas de conversión sin aceptación:
      se inyecta una orden de sistema al final del historial (no se guarda
      permanente; solo vive en esta llamada). Así Lupita deja de insistir,
      ahorra llamadas a la API y suelta al "comparador de precios" con elegancia. */
   var maxProp = (CFG.conversacion && CFG.conversacion.maxPropuestasConversion) || 2;
-  if (propuestasConvertidas >= maxProp) {
+  var rechazo = propuestasConvertidas > 0 && /^\s*(?:no gracias|ahora no|no por ahora|luego|después|solo estoy viendo|solo comparo)\b/i.test(String(textoUsuario || ''));
+  var cierreObligatorio = propuestasConvertidas >= maxProp || rechazo;
+  if (cierreObligatorio) {
     historial.push({ role: 'system', content: 'CIERRE OBLIGATORIO: ya ofreciste ayuda ' + propuestasConvertidas + ' veces y el cliente no toma ninguna acción (solo compara precios o evade). NO vuelvas a proponer WhatsApp, cotización ni cita. Responde ÚNICAMENTE un cierre corto, amable y directo, más o menos así: "Si en algún momento decides repararlo, escríbenos por WhatsApp y te atendemos de inmediato. Que estés bien." Y termina la conversación con calma.' });
   }
   recortar();
@@ -381,14 +413,8 @@ async function pensar(textoUsuario) {
   historial.push({ role: 'assistant', content: decir });
   recortar();
   if (/whatsapp|folio|cita/i.test(decir)) turnosSinAccion = 0; else turnosSinAccion++;
-  /* Contador de PROPUESTAS DE CONVERSIÓN: cada vez que Lupita ofrece WhatsApp,
-     cita o folio se cuenta como intento (máx. 2). Al llegar a 2 sin que el
-     cliente acepte ninguna acción, pensar() inyecta la orden de cierre directo. */
-  if (/whatsapp|cotiza|agend|cita|folio|puedo ayudar|¿te lo abro|seguimos\?/i.test(decir)) propuestasConvertidas++;
-  /* El cliente ACEPTÓ una propuesta (acción real de conversión): Lupita puede
-     seguir ofreciendo con normalidad — se reinicia el contador de propuestas. */
-  if (accion) propuestasConvertidas = 0;
-  return { decir: decir, accion: accion };
+  registrarConversion(decir, accion, textoUsuario);
+  return { decir: decir, accion: accion, cierre: cierreObligatorio };
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -697,9 +723,9 @@ async function sintetizarRemoto(seg, motor) {
     if (!url) throw new Error('sin_webhook');
     var cuerpo = {
       text: seg.text, voice: (CFG.tts && CFG.tts.vozEdge) || 'es-MX-DaliaNeural',
-      rate: API.rateEdge(seg.rate), pitch: API.pitchEdge(seg.pitch),
+        rate: API.rateEdge(velUsuario),
+      pitch: (CFG.tts && CFG.tts.pitchPorDefecto) || '+4Hz',
       volume: (CFG.tts && CFG.tts.volumePorDefecto) || '100', format: (CFG.tts && CFG.tts.webhook.formato) || 'mp3',
-      ssml: API.aSSML(seg.text, CFG)
     };
     var ctrl = new AbortController();
     var to = setTimeout(function () { ctrl.abort(); }, (CFG.tts.webhook.timeoutMs) || 9000);
@@ -716,11 +742,9 @@ async function sintetizarRemoto(seg, motor) {
     }
     return await r.blob();
   }
-  /* Groq / PlayAI */
-  var g = (CFG.tts && CFG.tts.groq) || {};
+  /* Proxy al webhook gratuito Edge TTS configurado solo en el servidor. */
   var rr = await fetch(endpoint('tts'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
-    text: seg.text, voice: g.voz || 'Jennifer', style: g.estilo || 'Cheerful', speed: Math.min(1.6, Math.max(0.6, seg.rate)),
-    modelo: g.modelo || 'playai-tts', formato: 'mp3'
+    text: seg.text, voice: (CFG.tts && CFG.tts.vozEdge) || 'es-MX-DaliaNeural', rate: API.rateEdge(velUsuario), formato: 'mp3'
   })});
   if (!rr.ok) throw new Error('tts_' + rr.status);
   var ct2 = rr.headers.get('content-type') || '';
@@ -774,11 +798,11 @@ async function hablarRemoto(segs, motor) {
 }
 
 function elegirMotor() {
-  var orden = (CFG.tts && CFG.tts.ordenMotores) || ['webhook', 'groq', 'navegador'];
+  var orden = (CFG.tts && CFG.tts.ordenMotores) || ['proxy', 'navegador'];
   for (var i = 0; i < orden.length; i++) {
     var m = orden[i];
     if (m === 'webhook' && CFG.tts && CFG.tts.webhook && CFG.tts.webhook.url) return 'webhook';
-    if (m === 'groq') return 'groq';           /* el proxy decide si hay clave; si falla, caemos al navegador */
+    if (m === 'proxy') return 'proxy';
     if (m === 'navegador' && W.speechSynthesis) return 'navegador';
   }
   return W.speechSynthesis ? 'navegador' : null;
@@ -808,15 +832,16 @@ API.fusionarSegmentos = function (segs) {
 };
 
 async function hablar(texto) {
-  var plano = API.aTextoPlano(texto);
+  var plano = API.textoParaVoz(texto);
   if (!plano) return;
   var burbBot = pintarBurbuja('bot', plano);
   /* Lupita "escribe" su respuesta: punteado vivo hasta que empieza a sonar */
   if (burbBot) { burbBot.classList.add('typing'); setTimeout(function(){ burbBot.classList.remove('typing'); }, Math.min(2600, plano.length * 24)); }
-  if (muted) { notificar('Lupita respondió', plano); return; }
-  var segs = API.fusionarSegmentos(API.parsearProsodia(texto, CFG));
-  detenerTodo = false;
   var motor = elegirMotor();
+  var segs = motor && motor !== 'navegador'
+    ? [{ text: plano, rate: 1, pitch: 1, volume: 1, pauseAfter: 0 }]
+    : API.fusionarSegmentos(API.parsearProsodia(texto, CFG));
+  detenerTodo = false;
   setEstado(motor === 'navegador' ? 'Hablando…' : 'Hablando con voz neuronal…');
   try {
     if (motor === 'navegador') await hablarNavegador(segs);
@@ -846,8 +871,8 @@ function avatar(clase) { var a = $('#vozAv'); if (a) a.className = 'voz-av' + (c
 function idleTxt() { return manosLibres ? 'Toca el micrófono o habla cuando quieras' : 'Toca el micrófono para hablar'; }
 function setEstado(t) {
   API.estado = t;
-  var e = $('#vozEstado'), h = $('#vozEstadoHd');
-  if (e) e.textContent = t; if (h) h.textContent = t;
+  var e = $('#vozEstado');
+  if (e) e.textContent = t;
   /* Lupita (mascota salmón): el botón "Hablar con Lupita" refleja si escucha o habla */
   var vb = $('#voiceBtn'), vl = $('#voiceBtnLbl');
   if (vb) vb.classList.toggle('voice-live', !!(t && /escuchando|hablando/i.test(t)));
@@ -915,20 +940,19 @@ async function ciclo() {
     var r = await pensar(texto);
     await hablar(r.decir);
     if (r.accion) await manejarAccion(r.accion);
-    if (turnosSinAccion >= ((CFG.conversacion && CFG.conversacion.maxTurnosSinAccion) || 8)) {
-      await hablar('[[e:empatico]]Para atenderte mejor,[[p:300]] te propongo seguir por WhatsApp con el técnico.[[/]][[p:400]] ¿Te lo abro?');
-      abrirWhatsApp('continuar conversación desde el asistente de voz');
+    if (r.cierre) {
       turnosSinAccion = 0;
-      propuestasConvertidas = 1;
-    }
-    /* CIERRE DEFINITIVO local (sin gastar más llamadas a la IA): tras 2 propuestas
-       ignoradas, Lupita suelta al visitante con una frase directa y cierra la sesión. */
-    var maxProp = (CFG.conversacion && CFG.conversacion.maxPropuestasConversion) || 2;
-    if (propuestasConvertidas >= maxProp + 1) {
-      track('voz_cierre_evasion', { propuestas: propuestasConvertidas });
-      await hablar('[[e:empatico]]Si en algún momento decides repararlo,[[p:250]] escríbenos por WhatsApp y te atendemos de inmediato.[[/]][[p:350]] ¡Que estés bien!');
       propuestasConvertidas = 0;
+      API.estado = 'fin';
+      setEstado('Conversación terminada');
+      cicloActivo = false;
+      return;
+    }
+    if (turnosSinAccion >= ((CFG.conversacion && CFG.conversacion.maxTurnosSinAccion) || 8)) {
+      await hablar('[[e:empatico]]Para atenderte mejor,[[p:300]] si quieres continuar, toca el botón de WhatsApp que aparece aquí abajo.[[/]]');
+      abrirWhatsApp('continuar conversación desde el asistente de voz');
       API.estado = 'fin'; setEstado('Conversación terminada');
+      cicloActivo = false;
       return;
     }
     if ((manosLibres || pendienteEscucha) && API.estado !== 'fin') {
@@ -1039,13 +1063,13 @@ async function cargarConfig() {
 async function saludar() {
   var saludo = (CFG.asistente && CFG.asistente.saludo) || '¡Hola! Soy Lupita, del taller TapaTech. ¿Qué le pasó a tu equipo?';
   historial = [{ role: 'assistant', content: saludo }];
-  turnosSinAccion = 0; propuestasConvertidas = 0;
+  turnosSinAccion = 0; propuestasConvertidas = 0; autorizacionLeadEnTurno = false; leadGuardadoEnTurno = false;
   await hablar(saludo);
 }
 
 /* ── Saludo PREVIO desde la tarjeta de sorpresa (voz-sorp en index.html).
-   Pide SOLO permiso de micrófono (el gesto ya lo hizo el botón "Sí, quiero
-   conversar"). Las notificaciones se piden después, dentro de la consola. ── */
+   Pide SOLO permiso de micrófono después del gesto explícito del visitante.
+   No solicita notificaciones ni inicia seguimiento comercial. ── */
 API.saludoPrevio = async function (texto) {
   abrir();
   setEstado('Lupita te está hablando…');
@@ -1069,10 +1093,6 @@ API.saludoPrevio = async function (texto) {
   }
 };
 
-async function pedirPermisoNotificaciones() {
-  try { if (W.Notification && Notification.permission === 'default') await Notification.requestPermission(); } catch (e) {}
-}
-
 API.iniciar = async function () {
   if (iniciado) { abrir(); return; }
   abrir();
@@ -1086,7 +1106,6 @@ API.iniciar = async function () {
     var nombre = (CFG.asistente && CFG.asistente.nombre) || 'Lupita';
     var nn = $('#vozNombre'); if (nn) nn.textContent = nombre + ' · ' + (negocio().nombre || 'TapaTech');
     pintarBurbuja('sys', 'Asistente de voz con IA. ' + ((CFG.permisos && CFG.permisos.explicacionAntesDePedir) || ''));
-    await pedirPermisoNotificaciones();
     /* Refresca el contexto cada 60 s para que el horario no se quede viejo */
     setInterval(function () { CTX = construirContexto(); }, 60000);
     await saludar();
@@ -1123,7 +1142,7 @@ if (iniciado) API.iniciar = function () { abrir(); };
 API.cancelarVoz = cancelarVoz;
 /* introspección para pruebas y depuración en consola */
 API._debug = function () { return { cicloActivo: cicloActivo, reproduciendo: reproduciendo, pendienteEscucha: pendienteEscucha, detenerTodo: detenerTodo,
-  muted: muted, manosLibres: manosLibres, estado: API.estado, historial: historial.length, turnosSinAccion: turnosSinAccion }; };
+  manosLibres: manosLibres, velocidad: velUsuario, estado: API.estado, historial: historial.length, turnosSinAccion: turnosSinAccion }; };
 API.hablarTexto = hablar;               /* útil para probar la prosodia desde consola */
 API.parsear = API.parsearProsodia;
 
@@ -1141,15 +1160,6 @@ function enlazarControles() {
     }
   });
   var x = $('#vozX'); if (x) x.addEventListener('click', cerrar);
-  var mu = $('#vozMute');
-  if (mu) mu.addEventListener('click', function () {
-    muted = !muted; mu.setAttribute('aria-pressed', String(muted));
-    mu.textContent = muted ? '🔊 Activar voz' : '🔇 Silenciar voz';
-    if (muted) cancelarVoz();
-    track('voz_mute', { silenciado: muted });
-  });
-  var vel = $('#vozVel');
-  if (vel) vel.addEventListener('change', function () { velUsuario = parseFloat(vel.value) || 1; track('voz_velocidad', { velocidad: velUsuario }); });
   var ml = $('#vozManos');
   if (ml) ml.addEventListener('click', function () {
     manosLibres = !manosLibres; ml.setAttribute('aria-pressed', String(manosLibres));
@@ -1158,17 +1168,6 @@ function enlazarControles() {
   });
   var wa = $('#vozWa'); if (wa && !wa.getAttribute('href').match(/wa\.me/)) wa.href = 'https://wa.me/' + (negocio().whatsapp || '');
   var cot = $('#vozCot'); if (cot) cot.addEventListener('click', function () { cerrar(); var c = $('#cotizador'); if (c) c.scrollIntoView({ behavior: 'smooth' }); });
-  /* Muestra de voz real (generada con es-MX-DaliaNeural) para que el cliente la escuche antes de hablar */
-  var demo = $('#vozDemo');
-  if (demo) demo.addEventListener('click', function () {
-    try {
-      var a = demo._audio || (demo._audio = new Audio('assets/demo-lupita.mp3'));
-      if (a.paused) { cancelarVoz(); a.play(); demo.textContent = '⏸ Detener muestra'; }
-      else { a.pause(); demo.textContent = '▶️ Escuchar a Lupita'; }
-      a.onended = function () { demo.textContent = '▶️ Escuchar a Lupita'; };
-      track('voz_demo', { reproduciendo: a.paused ? false : true });
-    } catch (e) { log('demo no disponible', e.message); }
-  });
   D.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && $('#vozApp') && $('#vozApp').classList.contains('is-on')) cerrar();
     /* barra espaciadora = push-to-talk cuando el panel está abierto y no hay un campo enfocado */

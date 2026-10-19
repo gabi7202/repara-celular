@@ -17,7 +17,6 @@ PAGINAS = {
     'privacidad.html': './',
     'terminos.html': './',
     'blog/index.html': '../',
-    'blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/index.html': '../../',
 }
 MARCA   = 'TapaTech'
 CIUDAD  = 'Tapachula · Chiapas'

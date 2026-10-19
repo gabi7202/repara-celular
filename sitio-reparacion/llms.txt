@@ -1,0 +1,41 @@
+# TapaTech Tapachula
+
+> Taller de reparación de celulares, laptops y consolas en Tapachula, Chiapas, México.
+
+Este archivo resume el sitio para sistemas que voluntariamente consultan `llms.txt`.
+No reemplaza `robots.txt`, el sitemap ni garantiza que un buscador o una IA indexe o cite el sitio.
+
+## Información del negocio
+
+- Sitio: https://reparaciondecelulares.vercel.app/
+- Nombre: TapaTech Tapachula
+- Ubicación: Quinceava Avenida Sur y 18.ª Calle Oriente, Los Naranjos, C.P. 30705, Tapachula, Chiapas.
+- Teléfono y WhatsApp: +52 962 288 9585
+- Horario del local: lunes a sábado, 9:00 a 19:00; domingo cerrado.
+- Atención: diagnóstico gratuito, precio final confirmado antes de reparar y garantía escrita de 30 días.
+- Recolección y entrega: zona urbana de Tapachula; confirmar cobertura y costo al agendar.
+
+## Servicios
+
+- Reparación de celulares: pantallas, baterías, puertos de carga, cámaras, equipos mojados, software y microsoldadura.
+- Reparación de laptops y computadoras.
+- Reparación de Xbox, PlayStation y Nintendo Switch.
+- Los precios del cotizador son aproximados; el precio cerrado depende del modelo, las piezas disponibles y el diagnóstico.
+
+## Páginas principales
+
+- Inicio, servicios, cotizador, preguntas frecuentes y ubicación: https://reparaciondecelulares.vercel.app/
+- Quiénes somos: https://reparaciondecelulares.vercel.app/nosotros.html
+- Blog y guías: https://reparaciondecelulares.vercel.app/blog/
+- Sitemap: https://reparaciondecelulares.vercel.app/sitemap.xml
+- Aviso de privacidad: https://reparaciondecelulares.vercel.app/privacidad.html
+- Términos y garantía: https://reparaciondecelulares.vercel.app/terminos.html
+
+## Guías útiles
+
+- Precio del cambio de pantalla en Tapachula: https://reparaciondecelulares.vercel.app/blog/cuanto-cuesta-cambiar-la-pantalla-de-un-celular-en-tapachula/
+- Qué hacer si se mojó un celular: https://reparaciondecelulares.vercel.app/blog/mi-celular-se-mojo-que-hacer/
+- Causas de un celular que no enciende: https://reparaciondecelulares.vercel.app/blog/celular-no-enciende-causas-y-soluciones/
+- Diagnóstico de un celular que no carga: https://reparaciondecelulares.vercel.app/blog/no-carga-puerto-o-bateria/
+- Pantalla rota del Samsung Galaxy A17: https://reparaciondecelulares.vercel.app/blog/samsung-galaxy-a17-pantalla-rota-precio/
+- Samsung A17 bloqueado por empresa o falta de pago: https://reparaciondecelulares.vercel.app/blog/samsung-a17-bloqueado-por-empresa-frp-knox-pago/
