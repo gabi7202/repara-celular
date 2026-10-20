@@ -1,4 +1,5 @@
 const { json, tieneSupabase } = require('./_lib');
+const { vapidListo } = require('./_push');
 /* Diagnóstico de Lupita SIN exponer la clave: forma, longitud y prefijo/sufijo
    permiten detectar errores típicos de Vercel (copiar con espacios, pegar la
    clave equivocada, o definir la variable solo en Preview y no en Production). */
@@ -17,5 +18,10 @@ module.exports = (req, res) => json(res, 200, {
   backend: tieneSupabase() ? 'supabase' : 'local',
   groq: process.env.GROQ_API_KEY ? 'conectada' : 'FALTA_GROQ_API_KEY',
   groq_detalle: estadoGroq(),
+  /* push: el SW lee push_public_x/y para suscribirse (solo coordenadas
+     PÚBLICAS — la privada jamás sale del servidor) */
+  push: vapidListo() ? 'listo' : 'FALTA_VAPID (node tools/gen-vapid.js --env)',
+  push_public_x: vapidListo() ? (process.env.VAPID_PUBLIC_KEY || '') : '',
+  push_public_y: vapidListo() ? (process.env.VAPID_PUBLIC_Y || '') : '',
   node: process.version
 });
