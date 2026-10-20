@@ -3390,7 +3390,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         });
         return reg.ready;
       }).then(function(reg){
-        try{ reg.active && reg.active.postMessage({ type:'lupita:registrar' }); }catch(e){}
+        /* llevar la huella al SW para que la suscripción push quede asociada
+           al visitante (mismo hash que usa el remarketing in-page) */
+        huella().then(function(h){
+          try{ reg.active && reg.active.postMessage({ type:'lupita:registrar', hash:h }); }catch(e){}
+        }).catch(function(){});
         try{ reg.active && reg.active.postMessage({ type:'lupita:check-update' }); }catch(e){}
       }).catch(function(){});
     });

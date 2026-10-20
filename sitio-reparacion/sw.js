@@ -9,7 +9,7 @@
 /* ═══ AUTO-UPDATE: este service worker se revalida solo en cada navegación.
    Cuando Vercel publica una nueva versión del sitio, la próxima visita ya
    muestra los cambios (sin "sitio viejo" ni caché atrapada). ═══ */
-const SW_VER = '2026-10-17-burger-web-off-12';
+const SW_VER = '2026-10-21-push-vapid-1';
 
 self.addEventListener('install', e => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil((async () => {
@@ -31,18 +31,35 @@ self.addEventListener('message', (e) => {
   if (e.data && e.data.type === 'lupita:check-update') checkForUpdate();
 });
 
-/* Mensaje desde la página: {type:'lupita:registrar'} → suscribe este SW */
+/* Mensaje desde la página: {type:'lupita:registrar', vapid} → suscribe este SW.
+   La clave VAPID pública llega como coordenadas JWK (x,y) en base64url; se
+   reconstruye el punto EC raw 0x04||x||y que exige PushManager.subscribe(). */
+async function vapidAplicacionServerKey(){
+  try{
+    const r = await fetch('/api/health'); const j = await r.json();
+    const x = j && j.push_public_x, y = j && j.push_public_y;
+    if(!x || !y) return null;
+    const dec = (s) => { s = String(s).replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; const bin = atob(s); const u = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i); return u; };
+    const raw = new Uint8Array(65); raw[0] = 4; raw.set(dec(x), 1); raw.set(dec(y), 33);
+    return raw;
+  }catch(e){ return null; }
+}
 self.addEventListener('message', async (e) => {
   const d = e.data || {};
   if (d.type === 'lupita:registrar') {
     try {
-      const sub = await self.registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: d.vapid || undefined });
+      if (Notification.permission !== 'granted') throw new Error('sin_permiso');
+      let key = d.vapid || undefined;
+      if (!key) key = (await vapidAplicacionServerKey()) || undefined;
+      /* reutilizar suscripción existente si ya la tenemos (evita churn) */
+      let sub = await self.registration.pushManager.getSubscription();
+      if (!sub || !sub.endpoint) sub = await self.registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
       await fetch('/api/visitas', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accion: 'suscribir', endpoint: sub.endpoint, keys: sub.keys })
+        body: JSON.stringify({ accion: 'suscribir', endpoint: sub.endpoint, keys: sub.keys, hash: d.hash || '' })
       });
-    } catch (err) { /* sin VAPID el push no funciona; igual registramos visita simple */ 
-      try { await fetch('/api/visitas', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accion: 'visita' }) }); } catch(e2){}
+    } catch (err) { /* sin VAPID/permiso el push no funciona; registramos visita simple */
+      try { await fetch('/api/visitas', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accion: 'visita', hash: d.hash || '' }) }); } catch(e2){}
     }
   }
   if (d.type === 'lupita:test') {
@@ -52,6 +69,27 @@ self.addEventListener('message', async (e) => {
       silent: true, data: { url: '/' }
     });
   }
+});
+
+/* ═══ PUSH RECIBIDO (VAPID) — descifrado lo hace el navegador; aquí solo
+   leemos el JSON {titulo, cuerpo, url} y mostramos la notificación.
+   Nunca enviamos nada si no hay permiso explícito otorgado. ═══ */
+self.addEventListener('push', (e) => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (err) { try { d = { cuerpo: e.data && e.data.text() }; } catch (e2) {} }
+  e.waitUntil(self.registration.showNotification(d.titulo || 'Lupita 💛 TapaTech', {
+    body: d.cuerpo || 'Tu cotización sigue guardada en TapaTech.',
+    tag: 'lupita-push', icon: '/assets/lupita-mascota.svg', badge: '/assets/icon-192.png',
+    silent: true, data: { url: d.url || '/', id: d.id || '' }
+  }));
+});
+
+/* Si el usuario cancela la suscripción desde la UI del navegador, avisamos
+   al servidor para limpiar el endpoint y no intentar enviarle nunca más. */
+self.addEventListener('pushsubscriptionchange', (e) => {
+  e.waitUntil((async () => {
+    try { await fetch('/api/visitas', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accion: 'unsubscribe', endpoint: (e.oldSubscription && e.oldSubscription.endpoint) || '' }) }); } catch (err) {}
+  })());
 });
 
 /* Clic en la notificación → abrir/reenfocar el sitio (y registrar conversión) */

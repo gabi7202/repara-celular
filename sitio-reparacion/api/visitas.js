@@ -40,11 +40,31 @@ module.exports = async function handler(req, res){
     const now = Date.now();
     const h = String(b.hash || '') === '' ? huella(ip(req), req.headers['user-agent']) : String(b.hash).slice(0,64);
 
-    /* suscripciones push (preparado para VAPID cuando lo actives) */
+    /* suscripciones push (VAPID) — el SW las envía tras Notification grant */
     if (accion === 'suscribir' || accion === 'unsubscribe'){
       let v = rows.find(r => r.h === h) || (rows.push({ h, created_at:new Date().toISOString() }) && rows[rows.length-1]);
       v.push = accion === 'suscribir' ? { endpoint: String(b.endpoint||'').slice(0,400), keys: b.keys || null } : null;
+      /* el push VAPID no puede asociarse a la huella del navegador (el SW no
+         la comparte); marcamos la fila para que /api/push la excluya de campañas */
+      if (accion === 'suscribir' && !b.hash) v.push_sin_huella = true;
       v.actualizado = new Date().toISOString();
+      escribirJsonl(VISITAS_F(), rows);
+      return json(res, 201, { ok:true });
+    }
+    /* limpieza por endpoint (pushsubscriptionchange no conoce la huella) */
+    if (accion === 'unsubscribe_endpoint'){
+      const ep = String(b.endpoint || '');
+      let limpiados = 0;
+      for (const r of rows){ if (r.push && r.push.endpoint === ep){ r.push = null; limpiados++; } }
+      if (limpiados) escribirJsonl(VISITAS_F(), rows);
+      return json(res, 201, { ok:true, limpiados });
+    }
+
+    /* confirmación del SW: ya mostró el aviso in-page → quemamos el periodo
+       de frecuencia para ese visitante (evita doble aviso push+in-page). */
+    if (accion === 'notif_mostrada'){
+      const v = rows.find(r => r.h === h);
+      if (v){ v.ultimo_aviso = now; v.avisos = (v.avisos||0)+1; v.contexto_aviso = 'in_page_sw'; }
       escribirJsonl(VISITAS_F(), rows);
       return json(res, 201, { ok:true });
     }

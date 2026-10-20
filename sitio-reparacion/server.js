@@ -31,6 +31,8 @@ const { URL } = require('url');
    aquí solo se requieren como librería — cero duplicación de lógica. */
 const { groqKey, clavesGroq, chatConFallback, sttConFallback, sanearModelo } = require('./api/_groq');
 const { cotizarServer, parseSalida } = require('./api/_agente');
+/* Web Push nativo (VAPID) — misma librería que las funciones de Vercel */
+const { vapidListo, pushAvisarLupita, pushEnviar } = require('./api/_push');
 
 /* Carga .env sin dependencias (dotenv-style): claves → process.env.
    Las variables que ya existan en el entorno tienen prioridad sobre .env,
@@ -179,7 +181,64 @@ const server = http.createServer(async (req, res) => {
       groq: process.env.GROQ_API_KEY ? 'conectada' : 'FALTA_GROQ_API_KEY',
       groq_detalle: { estado: process.env.GROQ_API_KEY ? 'conectada' : 'FALTA_GROQ_API_KEY',
         info:{ longitud: kg.length, empieza_gsk:/^gsk_/i.test(kg), espacios_dentro:/\s/.test(kg) } },
+      /* push: el SW lee push_public_x/y para suscribirse (solo coordenadas
+         públicas; la privada nunca sale del servidor) */
+      push: vapidListo() ? 'listo' : 'FALTA_VAPID (node tools/gen-vapid.js --env)',
+      push_public_x: vapidListo() ? (process.env.VAPID_PUBLIC_KEY || '') : '',
+      push_public_y: vapidListo() ? (process.env.VAPID_PUBLIC_Y || '') : '',
       node: process.version }, req);
+  }
+
+  /* ── Web Push · consola de envío (solo ADMIN_PIN) — mismo contrato que api/push.js ── */
+  if (u.pathname === '/api/push'){
+    if (!auth(q)) return json(res, 401, { ok:false, error:'pin_invalido' }, req);
+    let body = {};
+    if (req.method === 'POST'){
+      if (!permitir(ip, 30)) return json(res, 429, { ok:false }, req);
+      try { body = await leerBody(req, 16 * 1024); } catch(e){ return json(res, 400, { ok:false, error:e.message }, req); }
+    }
+    const b = Object.assign({}, Object.fromEntries(q), body);
+    /* el PIN puede venir por query (?pin=) o por body JSON — ambos válidos */
+    if (b.pin !== undefined && b.pin !== '') q.set('pin', String(b.pin));
+    if (!auth(q)) return json(res, 401, { ok:false, error:'pin_invalido' }, req);
+    const accion = String(b.accion || 'estado');
+    const rows = leer(VISITAS);
+    const now = Date.now();
+    const suscritos = rows.filter(r => r.push && r.push.endpoint);
+    const elegibles = suscritos.filter(r => !r.convirtio && !r.push_sin_huella && (now - Number(r.ultimo_aviso || 0)) >= MS_PERIOD && (r.avisos_push || 0) < 5);
+
+    if (accion === 'estado'){
+      return json(res, 200, { ok:true, vapid: vapidListo(), suscritos: suscritos.length, elegibles_hoy: elegibles.length,
+        freq: LUPITA_FREQ, total_visitas: rows.length }, req);
+    }
+    if (accion === 'avisar'){
+      const h = String(b.hash || '').slice(0, 64);
+      const v = rows.find(r => r.h === h);
+      if (!v) return json(res, 404, { ok:false, error:'no_encontrado' }, req);
+      const r = await pushAvisarLupita(v, 'manual');
+      escribir(VISITAS, rows.length > 2000 ? rows.slice(-2000) : rows);
+      return json(res, r.enviado ? 200 : 422, { ok: r.enviado, motivo: r.motivo || null, msg: r.msg || null }, req);
+    }
+    if (accion === 'difundir'){
+      const lista = b.solo_elegibles === false || b.solo_elegibles === 'false' ? suscritos : elegibles;
+      const objetivos = lista.slice(0, 50);
+      let enviados = 0; const fallidos = [];
+      for (const v of objetivos){
+        try {
+          if (b.titulo || b.cuerpo){
+            await pushEnviar(v.push, b.titulo || 'TapaTech · Lupita', b.cuerpo || 'Pasa por el taller: diagnóstico gratis hoy.', b.url || '/');
+            v.ultimo_aviso = now; v.avisos = (v.avisos||0)+1; v.avisos_push = (v.avisos_push||0)+1;
+          } else {
+            const r = await pushAvisarLupita(v, 'difusion');
+            if (!r.enviado){ fallidos.push({ h:(v.h||'').slice(0,8), motivo:r.motivo }); continue; }
+          }
+          enviados++;
+        } catch(e){ fallidos.push({ h:(v.h||'').slice(0,8), motivo:String(e.message).slice(0,80) }); if (e.expired) v.push = null; }
+      }
+      escribir(VISITAS, rows.length > 2000 ? rows.slice(-2000) : rows);
+      return json(res, 200, { ok:true, enviados, fallidos: fallidos.slice(0,20) }, req);
+    }
+    return json(res, 400, { ok:false, error:'accion_desconocida' }, req);
   }
 
   if (u.pathname === '/api/leads' && req.method === 'POST'){
@@ -259,6 +318,28 @@ const server = http.createServer(async (req, res) => {
     if (accion === 'clic_notif'){
       const v = rows.find(r => r.h === h);
       if (v){ v.retornos = (v.retornos||0)+1; v.ultimo_retorno = new Date().toISOString(); escribir(VISITAS, rows); }
+      return json(res, 201, { ok:true }, req);
+    }
+    /* ── Web Push: suscripciones del SW y confirmaciones (mismo contrato que api/visitas.js) ── */
+    if (accion === 'suscribir' || accion === 'unsubscribe'){
+      let v = rows.find(r => r.h === h);
+      if (!v){ v = { h, created_at:new Date().toISOString() }; rows.push(v); }
+      v.push = accion === 'suscribir' ? { endpoint:String(body.endpoint||'').slice(0,400), keys:body.keys||null } : null;
+      if (accion === 'suscribir' && !body.hash) v.push_sin_huella = true;
+      v.actualizado = new Date().toISOString();
+      escribir(VISITAS, rows);
+      return json(res, 201, { ok:true }, req);
+    }
+    if (accion === 'unsubscribe_endpoint'){
+      const ep = String(body.endpoint || '');
+      let limpiados = 0;
+      for (const r of rows){ if (r.push && r.push.endpoint === ep){ r.push = null; limpiados++; } }
+      if (limpiados) escribir(VISITAS, rows);
+      return json(res, 201, { ok:true, limpiados }, req);
+    }
+    if (accion === 'notif_mostrada'){
+      const v = rows.find(r => r.h === h);
+      if (v){ v.ultimo_aviso = now; v.avisos = (v.avisos||0)+1; v.contexto_aviso = 'in_page_sw'; escribir(VISITAS, rows); }
       return json(res, 201, { ok:true }, req);
     }
     let v = rows.find(r => r.h === h);
