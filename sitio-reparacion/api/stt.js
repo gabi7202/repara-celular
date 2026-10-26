@@ -26,10 +26,11 @@ module.exports = async function handler(req, res) {
       fd.append('language', String(b.idioma || 'es').slice(0, 8));
       fd.append('response_format', 'json');
       fd.append('temperature', '0');
-      /* anti-alucinación de Whisper con silencios/ruido */
-      fd.append('no_speech_threshold', '0.6');
-      fd.append('compression_ratio_threshold', '2.4');
-      fd.append('logprob_threshold', '-1.0');
+      /* Groq SOLO acepta file, url, language, model, prompt, response_format,
+         temperature y timestamp_granularities[]. Enviar los umbrales clásicos de
+         OpenAI (no_speech_threshold, compression_ratio_threshold,
+         logprob_threshold) devuelve 400 "unknown param" y rompía el STT.
+         El filtro de ruido se hace en el cliente antes de llegar aquí. */
       /* refuerzo de vocabulario: Whisper sesga la transcripción hacia estas palabras */
       fd.append('prompt', String(b.vocabulario || PROMPT_VOCABULARIO).slice(0, 400));
       return fd;

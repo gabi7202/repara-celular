@@ -381,6 +381,16 @@ curl https://TU-DOMINIO.vercel.app/api/health
 # version: 2026-10-26-chat-tpm, prompt.ok: true, modelos_respaldo: [...]
 ```
 
+### STT de respaldo (Whisper) — corregido
+
+Groq dejó de aceptar los umbrales clásicos de OpenAI
+(`logprob_threshold`, `no_speech_threshold`, `compression_ratio_threshold`). El
+proxy los enviaba y Whisper devolvía **400 "unknown param"**, así que en
+Firefox o cuando el navegador no tiene Web Speech la voz no transcribía. Ahora
+`api/stt.js` manda solo los parámetros documentados (`file`, `model`,
+`language`, `prompt`, `response_format`, `temperature`). El filtro de ruido
+sigue haciéndose en el cliente antes de enviar el audio.
+
 ### Ajustes rápidos
 
 | Quiero… | Toco |

@@ -347,9 +347,7 @@ const server = http.createServer(async (req, res) => {
       fd.append('language', String(body.idioma || 'es').slice(0, 8));
       fd.append('response_format', 'json');
       fd.append('temperature', '0');
-      fd.append('no_speech_threshold', '0.6');
-      fd.append('compression_ratio_threshold', '2.4');
-      fd.append('logprob_threshold', '-1.0');
+      /* Igual que api/stt.js: Groq no acepta los umbrales clásicos de OpenAI. */
       return fd;
     };
     try {

@@ -804,7 +804,9 @@ function elegirMotor() {
   for (var i = 0; i < orden.length; i++) {
     var m = orden[i];
     if (m === 'webhook' && CFG.tts && CFG.tts.webhook && CFG.tts.webhook.url) return 'webhook';
-    if (m === 'proxy') return 'proxy';
+    /* Si /api/health dice que no hay TTS_WEBHOOK, no perdemos una petición
+       fallida por respuesta: pasamos directo a la voz del navegador. */
+    if (m === 'proxy' && !(CFG.tts && CFG.tts.proxyOk === false)) return 'proxy';
     if (m === 'navegador' && W.speechSynthesis) return 'navegador';
   }
   return W.speechSynthesis ? 'navegador' : null;
@@ -1053,6 +1055,17 @@ async function cargarConfig() {
   /* El prompt maestro ya no se descarga en el navegador: /api/chat lo lee de
      datos/prompt-agente.md en el servidor. Así una sola copia define a Lupita
      y no se duplican tokens en cada turno. */
+  /* Saber si el servidor tiene TTS remoto evita un 503 por cada frase. */
+  try {
+    var hr = await fetch('/api/health', { cache: 'no-cache' });
+    if (hr.ok) {
+      var hj = await hr.json();
+      if (hj && hj.tts && hj.tts.estado === 'respaldo_navegador') {
+        CFG.tts = CFG.tts || {};
+        CFG.tts.proxyOk = false;
+      }
+    }
+  } catch (e) { log('health no disponible', e && e.message); }
   manosLibres = !(CFG.conversacion && CFG.conversacion.manosLibres === false);
   var mb = $('#vozManos'); if (mb) mb.setAttribute('aria-pressed', String(manosLibres));
 }
