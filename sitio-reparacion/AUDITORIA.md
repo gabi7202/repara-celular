@@ -287,12 +287,13 @@ Chiapas**, coordenadas 14.889124/-92.258130, horario **lunes a sábado 9:00–19
 solo urgencias por WhatsApp), folios con prefijo `TT-`, imagen OG regenerada con la marca.
 
 **Agente de voz "Lupita" (implementado, no maquetado)**
-- Perfil solicitado: mujer mexicana de 45–55 años, tono medio-agudo (nunca grave), simpática y alegre.
-  Verificado con el motor: Edge TTS solo ofrece dos voces es-MX y `es-MX-DaliaNeural` es la que cumple.
+- Perfil solicitado: mujer mexicana de 35–40 años, tono medio-agudo (nunca grave), simpática y alegre.
+  Verificado con el motor: Edge TTS solo ofrece dos voces es-MX y `es-MX-DaliaNeural` es la más
+  cercana; se ajusta con `pitch +6Hz` y `rate +2%` para el perfil pedido.
   Muestras reales generadas: `assets/demo-lupita.mp3`, `assets/demo-lupita-prosodia.mp3`,
   `assets/voz-dalia.mp3` y `assets/voz-jorge.mp3` (comparativa).
 - Flujo: micrófono con permiso explícito y aviso visible → STT (Web Speech API `es-MX`, o Groq
-  Whisper cuando el navegador no la trae) → Groq `llama-3.3-70b-versatile` con el prompt maestro →
+  Whisper cuando el navegador no la trae) → Groq `openai/gpt-oss-20b` (respaldo `gpt-oss-120b`) con el prompt maestro →
   parser de prosodia → TTS neuronal por segmentos → reproducción en cola con pausas reales.
 - **Prosodia**: el prompt obliga a marcar la respuesta (`[[p:500]]`, `[[r:0.85]]`, `[[t:+10]]`,
   `[[v:strong]]`, `[[e:alegre]]`, `[[n:digitos]]`, `[[/]]`) y `assets/voz.js` las convierte en pausas,

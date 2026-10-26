@@ -726,7 +726,7 @@ async function sintetizarRemoto(seg, motor) {
     var cuerpo = {
       text: seg.text, voice: (CFG.tts && CFG.tts.vozEdge) || 'es-MX-DaliaNeural',
         rate: API.rateEdge(velUsuario),
-      pitch: (CFG.tts && CFG.tts.pitchPorDefecto) || '+4Hz',
+      pitch: (CFG.tts && CFG.tts.pitchPorDefecto) || '+6Hz',
       volume: (CFG.tts && CFG.tts.volumePorDefecto) || '100', format: (CFG.tts && CFG.tts.webhook.formato) || 'mp3',
     };
     var ctrl = new AbortController();
@@ -746,7 +746,11 @@ async function sintetizarRemoto(seg, motor) {
   }
   /* Proxy al webhook gratuito Edge TTS configurado solo en el servidor. */
   var rr = await fetch(endpoint('tts'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
-    text: seg.text, voice: (CFG.tts && CFG.tts.vozEdge) || 'es-MX-DaliaNeural', rate: API.rateEdge(velUsuario), formato: 'mp3'
+    text: seg.text, voice: (CFG.tts && CFG.tts.vozEdge) || 'es-MX-DaliaNeural',
+    rate: API.rateEdge(velUsuario),
+    pitch: (CFG.tts && CFG.tts.pitchPorDefecto) || '+6Hz',
+    volume: (CFG.tts && CFG.tts.volumePorDefecto) || '100',
+    formato: 'mp3'
   })});
   if (!rr.ok) throw new Error('tts_' + rr.status);
   var ct2 = rr.headers.get('content-type') || '';

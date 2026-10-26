@@ -2,7 +2,7 @@
   "_comentario": "Configuración del agente de voz. Todo lo editable sin tocar código: nombre, voz, modelos, motores y límites. Las claves de API NUNCA van aquí: van en el servidor (ADMIN/GROQ_API_KEY en env).",
   "asistente": {
     "nombre": "Lupita",
-    "perfilVoz": "Mujer mexicana de 45 a 55 años, tono medio-agudo (nunca grave), carácter simpático y alegre, ritmo natural con pausas claras",
+    "perfilVoz": "Mujer mexicana de 35 a 40 años, tono medio-agudo (nunca grave), carácter simpático y alegre, ritmo natural con pausas claras. Puntuación para voz: coma para pausas breves, punto para separar ideas, signos de interrogación para preguntas y de exclamación para exclamaciones genuinas.",
     "idioma": "es-MX",
     "saludo": "¡Hola! Soy Lupita, del taller TapaTech en Tapachula. ¿Qué le pasó a tu equipo?",
     "despedida": "¡Gracias por llamar a TapaTech! Que tengas bonito día.",
@@ -38,6 +38,8 @@
       "proxy",
       "navegador"
     ],
+    "puntuacion": [",", ".", "?", "¡"],
+    "_puntuacion": "La voz usa estos signos para pausas y entonación: coma (pausa breve), punto (idea nueva), ¿? (pregunta) y ¡! (exclamación).",
     "_ordenMotores": "Usa Edge TTS gratuito mediante TTS_WEBHOOK; si no responde, usa la voz del navegador. No se envía texto a otro proveedor TTS.",
     "webhook": {
       "url": "",
@@ -48,6 +50,7 @@
     "navegador": {
       "preferirVoces": [
         "Dalia",
+        "Microsoft Dalia",
         "es-MX",
         "es_MX",
         "Paulina",
@@ -68,13 +71,13 @@
         "Carlos"
       ],
       "_evitarVoces": "Se evitan voces masculinas graves para respetar el perfil pedido",
-      "velocidad": 1.0,
-      "tono": 1.06
+      "velocidad": 1.02,
+      "tono": 1.04
     },
     "vozEdge": "es-MX-DaliaNeural",
-    "_vozEdge": "Verificado con edge-tts: las ÚNICAS voces es-MX son es-MX-DaliaNeural (mujer adulta, cálida y alegre — coincide exacto con el perfil pedido) y es-MX-JorgeNeural (hombre). Si quieres otro acento en español: es-AR-ElenaNeural, es-CO-SalomeNeural, es-ES-PilarNeural, es-US-PalomaNeural. Cambia también tts.navegador.preferirVoces.",
+    "_vozEdge": "Edge TTS solo tiene dos voces es-MX: Dalia (mujer adulta, cálida) y Jorge (hombre). Dalia es la más cercana al perfil de mujer de 35 a 40 años; se ajusta con pitch +6Hz y rate +2% para que suene más joven y vivaz. Otros acentos femeninos: es-AR-ElenaNeural, es-CO-SalomeNeural, es-ES-PilarNeural, es-US-PalomaNeural (cambia también tts.navegador.preferirVoces).",
     "ratePorDefecto": "+2%",
-    "pitchPorDefecto": "+4Hz",
+    "pitchPorDefecto": "+6Hz",
     "volumePorDefecto": "100"
   },
   "prosodia": {

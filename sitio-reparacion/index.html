@@ -3026,7 +3026,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function vozLibreria(cb){
     if(window.TAPATECH_VOZ && window.TAPATECH_VOZ.listo!==undefined && typeof window.TAPATECH_VOZ.saludoPrevio==='function'){ cb(window.TAPATECH_VOZ); return; }
     var s=document.querySelector('script[src*="assets/voz.js"]');
-    if(!s){ s=document.createElement('script'); s.src='assets/voz.js?v=20261026-chat2'; s.defer=true; document.body.appendChild(s); }
+    if(!s){ s=document.createElement('script'); s.src='assets/voz.js?v=20261026-voz3'; s.defer=true; document.body.appendChild(s); }
     s.addEventListener('load',function(){ cb(window.TAPATECH_VOZ); });
     s.addEventListener('error',function(){ trk('voz_sorp_error',{motivo:'carga'}); });
   }
@@ -3065,7 +3065,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!cargado){
       cargado = true;
       var s = document.createElement('script');
-      s.src = 'assets/voz.js?v=20261026-chat2'; s.defer = true;
+      s.src = 'assets/voz.js?v=20261026-voz3'; s.defer = true;
       s.onload = function(){ if (window.TAPATECH_VOZ) window.TAPATECH_VOZ.iniciar(); };
       s.onerror = function(){
         var d = document.getElementById('voiceDesc');

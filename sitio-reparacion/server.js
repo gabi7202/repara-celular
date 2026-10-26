@@ -368,14 +368,16 @@ const server = http.createServer(async (req, res) => {
     if (!texto) return json(res, 400, { ok:false, error:'texto_faltante' }, req);
     const hook = String(process.env.TTS_WEBHOOK || '').trim();
     if (!hook) return json(res, 503, { ok:false, error:'tts_webhook_no_configurado' }, req);
-    const rate = /^[-+]?\d{1,2}%$/.test(String(body.rate || '')) ? String(body.rate) : '-10%';
+    const rate = /^[-+]?\d{1,2}%$/.test(String(body.rate || '')) ? String(body.rate) : '+2%';
+    const pitch = /^[-+]?\d{1,3}Hz$/i.test(String(body.pitch || '')) ? String(body.pitch) : '+6Hz';
+    const volume = /^\d{1,3}%?$/.test(String(body.volume || '')) ? String(body.volume) : '100';
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
     try {
       const upstream = await fetch(hook, {
         method:'POST',
         headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({ text: texto, voice: body.voice || 'es-MX-DaliaNeural', rate, format:'mp3' }),
+        body: JSON.stringify({ text: texto, voice: body.voice || 'es-MX-DaliaNeural', rate, pitch, volume, format:'mp3' }),
         signal: controller.signal
       });
       if (!upstream.ok){

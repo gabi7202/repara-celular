@@ -13,7 +13,9 @@ module.exports = async function handler(req, res) {
 
   const webhook = String(process.env.TTS_WEBHOOK || '').trim();
   if (!webhook) return json(res, 503, { ok: false, error: 'tts_webhook_no_configurado' });
-  const rate = /^[-+]?\d{1,2}%$/.test(String(body.rate || '')) ? String(body.rate) : '-10%';
+  const rate = /^[-+]?\d{1,2}%$/.test(String(body.rate || '')) ? String(body.rate) : '+2%';
+  const pitch = /^[-+]?\d{1,3}Hz$/i.test(String(body.pitch || '')) ? String(body.pitch) : '+6Hz';
+  const volume = /^\d{1,3}%?$/.test(String(body.volume || '')) ? String(body.volume) : '100';
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);
@@ -26,6 +28,8 @@ module.exports = async function handler(req, res) {
         text,
         voice: String(body.voice || 'es-MX-DaliaNeural'),
         rate,
+        pitch,
+        volume,
         format: 'mp3'
       }),
       signal: controller.signal

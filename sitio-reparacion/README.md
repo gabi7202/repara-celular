@@ -296,10 +296,12 @@ navegador habla como respaldo y la respuesta escrita permanece visible.
 
 ### La voz pedida (perfil verificado)
 
-> Mujer mexicana de 45 a 55 años, tono medio-agudo (nunca grave), simpática y alegre.
+> Mujer mexicana de 35 a 40 años, tono medio-agudo (nunca grave), simpática y alegre.
 
 `edge-tts` solo tiene **dos** voces es-MX: `es-MX-DaliaNeural` (mujer adulta, cálida) y
-`es-MX-JorgeNeural` (hombre). **Dalia es la que cumple el perfil** y queda por defecto.
+`es-MX-JorgeNeural` (hombre). **Dalia es la más cercana al perfil** y queda por defecto, ajustada
+con `pitch +6Hz` y `rate +2%` para sonar más joven y vivaz. No existe una voz etiquetada por edad:
+la edad se aproxima con tono, ritmo y puntuación.
 Muestras generadas con este sistema, listas para escuchar:
 
 - `assets/demo-lupita.mp3` — saludo y cotización (112 KB).
@@ -309,8 +311,10 @@ Muestras generadas con este sistema, listas para escuchar:
 
 Para regenerarlas: `python3 tools/tts-edge.py 8055` y luego POST a `/tts`.
 
-Para que la voz suene natural, el prompt pide frases cortas y puntuación ortográfica: comas para
-pausas breves, puntos entre ideas, y signos de apertura/cierre en preguntas y exclamaciones. Los
+Para que la voz suene natural, el prompt pide frases cortas y puntuación ortográfica: **coma** para
+pausas breves, **punto** entre ideas, **¿...?** en preguntas y **¡...!** en exclamaciones genuinas.
+El motor TTS usa esos cuatro signos para pausar y entonar; no se usan puntos suspensivos ni guiones
+como pausas. Los
 números se escriben como se pronuncian ("de mil doscientos a mil seiscientos pesos").
 
 ### Puesta en marcha
