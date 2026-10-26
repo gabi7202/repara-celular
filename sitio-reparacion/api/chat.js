@@ -9,7 +9,7 @@
      manda `sistema`, se usa el del servidor como base y el extra del cliente después. */
 const { json } = require('./_lib');
 const { groqKey, chatConFallback, corregirSTT } = require('./_groq');
-const { parseSalida } = require('./_agente');
+const { parseSalida, componerSistema } = require('./_agente');
 const fs = require('fs');
 const path = require('path');
 
@@ -41,12 +41,14 @@ module.exports = async function handler(req, res) {
       m.name ? { name: m.name } : {}
     ));
     if (!mensajes.length) return json(res, 400, { ok:false, error:'mensajes_vacios' });
-    /* Sistema: prompt maestro del servidor + extras del cliente + contexto vivo */
+    /* Sistema: prompt maestro del servidor + extras del cliente + contexto vivo.
+       componerSistema() descarta la copia del maestro que aún manda el cliente
+       antiguo: duplicarlo disparaba el 429 de Groq en CADA turno. */
     const maestro = promptMaestro();
-    const sistema = [maestro, String(b.sistema || '').slice(0, 12000)].filter(Boolean).join('\n\n')
-                  + (b.contexto ? '\n\n' + String(b.contexto).slice(0, 12000) : '');
+    const sistema = componerSistema(maestro, b.sistema, b.contexto);
     mensajes.unshift({ role:'system', content: sistema });
     const tools = (Array.isArray(b.herramientas) ? b.herramientas : []).filter(t => t && t.type === 'function' && t.function && t.function.name).slice(0, 12);
+    const modelo = process.env.GROQ_CHAT_MODEL || b.modelo;
     const payloadBase = {
       messages: mensajes,
       temperature: Number.isFinite(b.temperature) ? Math.min(1.2, Math.max(0, b.temperature)) : 0.45,
@@ -55,13 +57,19 @@ module.exports = async function handler(req, res) {
       stream: false,
       ...(tools.length ? { tools, tool_choice:'auto' } : {})
     };
-    const modelo = process.env.GROQ_CHAT_MODEL || b.modelo;
+    /* gpt-oss razona antes de responder; en voz sobra con "low" y ahorra
+       tokens de salida (el TPM gratuito es de 8 000). Otros modelos no
+       aceptan el parámetro, así que solo se manda a gpt-oss. */
+    if (!modelo || /gpt-oss/i.test(String(modelo))) payloadBase.reasoning_effort = 'low';
     let d = null, usatoJsonFormat = true;
     try {
       d = await chatConFallback(Object.assign({ response_format:{ type:'json_object' } }, payloadBase), modelo, key);
     } catch(e){
-      /* si el fallo fue por response_format (400) u otro del primer intento,
-         reintentamos sin formato JSON — la normalización local cubre el resto */
+      /* Solo reintentamos sin response_format si el modelo/endpoint no lo
+         soporta. Un 429 NO se reintenta aquí: duplicaría el consumo y el
+         respaldo entre modelos ya ocurrió dentro de chatConFallback(). */
+      const s = e.groqStatus || e.status;
+      if (s !== 400 && s !== 422) throw e;
       usatoJsonFormat = false;
       d = await chatConFallback(payloadBase, modelo, key);
     }

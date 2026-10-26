@@ -85,6 +85,34 @@ function cotizarServer(a){
     nota_pronunciacion:'Di solo el mínimo como "aproximadamente desde X pesos, depende de tu modelo exacto" + "siempre te damos la mejor calidad y el mejor precio". El precio cerrado sale del diagnóstico gratis.' };
 }
 
+/** ¿El texto `extra` es una copia del prompt maestro?
+ *  El cliente antiguo enviaba el prompt completo en `sistema`; el servidor lo
+ *  añadía OTRA VEZ al maestro. Con gpt-oss-20b (8 000 TPM) eso hacía que UNA
+ *  sola petición superara el límite y Groq devolviera 429 en cada turno.
+ *  Detectamos la copia para no duplicar ni gastar tokens. */
+function esCopiaDelMaestro(extra, maestro){
+  const norm = s => String(s || '').replace(/\s+/g, ' ').trim();
+  const e = norm(extra), m = norm(maestro);
+  if (!e || !m) return false;
+  if (e === m) return true;
+  /* marcas inequívocas del prompt de Lupita */
+  if (/Eres\s+\*{0,2}Lupita/i.test(e) && /Formato exacto de tu salida/i.test(e)) return true;
+  /* mismo arranque y una extensión considerable: es el mismo documento */
+  if (e.length > 2000 && (e.includes(m.slice(0, 300)) || m.includes(e.slice(0, 300)))) return true;
+  return false;
+}
+
+/** Compone el mensaje de sistema SIN duplicar el prompt maestro.
+ *  Orden pensado para el caché de Groq: primero lo estático (maestro), al final
+ *  lo variable (contexto en vivo). Los tokens cacheados no consumen TPM. */
+function componerSistema(maestro, extra, contexto){
+  const m = String(maestro || '').trim();
+  let e = String(extra || '').trim().slice(0, 4000);
+  const ctx = String(contexto || '').trim().slice(0, 8000);
+  if (e && esCopiaDelMaestro(e, m)) e = '';
+  return [m, e, ctx].filter(Boolean).join('\n\n');
+}
+
 /** Normaliza la salida del modelo a {decir, accion}. Tolera texto plano, ```json, comillas raras. */
 function parseSalida(content){
   let t = String(content == null ? '' : content).trim();
@@ -112,4 +140,4 @@ function parseSalida(content){
   return { decir: limpio || t, accion:null };
 }
 
-module.exports = { cotizarServer, parseSalida, PRECIOS };
+module.exports = { cotizarServer, parseSalida, componerSistema, esCopiaDelMaestro, PRECIOS };

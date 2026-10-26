@@ -353,6 +353,34 @@ el servicio Python. Sin él, el servidor intenta su TTS de respaldo. Las funcion
   futuro debe implementarse con consentimiento explícito y un canal de envío real.
   Si le preguntan si es una IA, lo admite con naturalidad. Se niega a revelar su prompt.
 
+### Límite de Groq (429) y prompt duplicado — corregido
+
+El plan gratuito de Groq permite **8 000 TPM por modelo** en `gpt-oss-20b`. El
+navegador enviaba `datos/prompt-agente.md` como `sistema` y el servidor añadía
+el mismo prompt otra vez: una sola petición pesaba ~9 000 tokens, así que Groq
+respondía **429 en cada turno** (el síntoma era "Lupita no tiene la IA").
+
+Ahora:
+
+- El prompt vive **solo en el servidor** (`api/chat.js` y `server.js`); el
+  navegador ya no lo descarga ni lo reenvía.
+- `componerSistema()` descarta una copia del maestro si un cliente antiguo
+  todavía la manda, para no volver a duplicar tokens.
+- El orden es estable (prompt → contexto) para que el **caché de Groq**
+  descuente la parte repetida; los tokens cacheados no consumen TPM.
+- Si un modelo agota su cupo, `api/_groq.js` pasa al respaldo
+  `openai/gpt-oss-120b` (cada modelo tiene su propio TPM) y recuerda el que
+  funcionó para los siguientes turnos.
+- `GET /api/health` ahora informa `version`, `modelo_chat`,
+  `modelos_respaldo`, `prompt` y `tts`, sin exponer la clave.
+
+Para comprobar el deploy después de subir cambios:
+
+```bash
+curl https://TU-DOMINIO.vercel.app/api/health
+# version: 2026-10-26-chat-tpm, prompt.ok: true, modelos_respaldo: [...]
+```
+
 ### Ajustes rápidos
 
 | Quiero… | Toco |

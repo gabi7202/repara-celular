@@ -24,7 +24,7 @@ function track(ev, d) { try { W.dataLayer = W.dataLayer || []; W.dataLayer.push(
 function dormir(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 function log() { try { if (W.console && console.info) console.info.apply(console, ['[voz]'].concat([].slice.call(arguments))); } catch (e) {} }
 
-var CFG = null, PROMPT = '', CTX = '';
+var CFG = null, CTX = '';
 var historial = [], turnosSinAccion = 0, propuestasConvertidas = 0, autorizacionLeadEnTurno = false, leadGuardadoEnTurno = false;
 var manosLibres = true, velUsuario = 0.9, iniciado = false, cicloActivo = false;
 var recogn = null, detenerTodo = false;
@@ -323,9 +323,11 @@ function intentarJSON(s) {
 }
 
 async function llamarLLM(mensajes) {
+  /* El prompt maestro lo pone el SERVIDOR (datos/prompt-agente.md). No lo
+     mandamos desde aquí: antes viajaba duplicado y agotaba el TPM de Groq. */
   var cuerpo = {
     modelo: CFG.llm.modelo, temperature: CFG.llm.temperature, max_tokens: CFG.llm.maxTokens,
-    sistema: PROMPT, contexto: CTX, mensajes: mensajes, herramientas: HERRAMIENTAS
+    contexto: CTX, mensajes: mensajes, herramientas: HERRAMIENTAS
   };
   /* timeout propio: si Vercel tarda o el teléfono cambia de red, NO dejamos a
      Lupita congelada en "Pensando…" — abortamos y caemos al manejo de error. */
@@ -1048,14 +1050,9 @@ async function cargarConfig() {
   var r = await fetch(url, { cache: 'no-cache' });
   if (!r.ok) throw new Error('cfg_' + r.status);
   CFG = await r.json();
-  var purl = (CFG.llm && CFG.llm.promptUrl) || 'datos/prompt-agente.md';
-  var pr = await fetch(purl, { cache: 'no-cache' });
-  var crudo = pr.ok ? await pr.text() : '';
-  /* El archivo trae una cabecera de documentación que menciona los marcadores, así que
-     tomamos la ÚLTIMA apertura y el primer cierre posterior. */
-  var i = crudo.lastIndexOf('===PROMPT==='), j = i >= 0 ? crudo.indexOf('===FIN===', i) : -1;
-  PROMPT = (i >= 0 && j > i) ? crudo.slice(i + 12, j).trim() : crudo.trim();
-  if (!PROMPT) throw new Error('prompt_vacio');
+  /* El prompt maestro ya no se descarga en el navegador: /api/chat lo lee de
+     datos/prompt-agente.md en el servidor. Así una sola copia define a Lupita
+     y no se duplican tokens en cada turno. */
   manosLibres = !(CFG.conversacion && CFG.conversacion.manosLibres === false);
   var mb = $('#vozManos'); if (mb) mb.setAttribute('aria-pressed', String(manosLibres));
 }

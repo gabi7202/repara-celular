@@ -30,7 +30,7 @@ const { URL } = require('url');
    funciones de Vercel. Los archivos _ no se enrutan como endpoint en Vercel y
    aquí solo se requieren como librería — cero duplicación de lógica. */
 const { groqKey, esPlaceholder, chatConFallback, sttConFallback } = require('./api/_groq');
-const { cotizarServer, parseSalida } = require('./api/_agente');
+const { cotizarServer, parseSalida, componerSistema } = require('./api/_agente');
 
 /* Carga .env sin dependencias (dotenv-style): claves → process.env.
    Las variables que ya existan en el entorno tienen prioridad sobre .env,
@@ -175,12 +175,9 @@ const server = http.createServer(async (req, res) => {
 
   /* ── API ── */
   if (u.pathname === '/api/health'){
-    const kg = process.env.GROQ_API_KEY && !esPlaceholder(process.env.GROQ_API_KEY) ? String(process.env.GROQ_API_KEY).trim() : '';
-    return json(res, 200, { ok:true, ts:new Date().toISOString(), leads: leer(LEADS).length, backend:'local',
-      groq: process.env.GROQ_API_KEY && !esPlaceholder(process.env.GROQ_API_KEY) ? 'conectada' : 'FALTA_GROQ_API_KEY',
-      groq_detalle: { estado: process.env.GROQ_API_KEY && !esPlaceholder(process.env.GROQ_API_KEY) ? 'conectada' : 'FALTA_GROQ_API_KEY',
-        info:{ longitud: kg.length, empieza_gsk:/^gsk_/i.test(kg), espacios_dentro:/\s/.test(kg) } },
-      node: process.version }, req);
+    /* Mismo diagnóstico que api/health.js en Vercel (una sola fuente). */
+    const datos = require('./api/health').datos();
+    return json(res, 200, Object.assign({ leads: leer(LEADS).length }, datos), req);
   }
 
   if (u.pathname === '/api/leads' && req.method === 'POST'){
@@ -299,10 +296,11 @@ const server = http.createServer(async (req, res) => {
       const i = crudo.lastIndexOf('===PROMPT==='), j = i >= 0 ? crudo.indexOf('===FIN===', i) : -1;
       maestro = (i >= 0 && j > i) ? crudo.slice(i + 12, j).trim() : crudo.trim();
     } catch(e){ log('prompt maestro no encontrado:', e.message); }
-    const sistema = [maestro, String(body.sistema || '').slice(0, 12000)].filter(Boolean).join('\n\n')
-                  + (body.contexto ? '\n\n' + String(body.contexto).slice(0, 12000) : '');
+    /* Igual que en Vercel: nunca duplicar el prompt maestro (disparaba el 429). */
+    const sistema = componerSistema(maestro, body.sistema, body.contexto);
     mensajes.unshift({ role:'system', content: sistema });
     const tools = Array.isArray(body.herramientas) ? body.herramientas.filter(t => t && t.type === 'function' && t.function && t.function.name).slice(0, 12) : undefined;
+    const modelo = process.env.GROQ_CHAT_MODEL || body.modelo;
     const payloadBase = {
       messages: mensajes,
       temperature: Number.isFinite(body.temperature) ? Math.min(1.2, Math.max(0, body.temperature)) : 0.45,
@@ -311,11 +309,16 @@ const server = http.createServer(async (req, res) => {
       stream: false,
       ...(tools && tools.length ? { tools, tool_choice:'auto' } : {})
     };
+    if (!modelo || /gpt-oss/i.test(String(modelo))) payloadBase.reasoning_effort = 'low';
     try {
       let d = null, jsonFormat = true;
-      const modelo = process.env.GROQ_CHAT_MODEL || body.modelo;
       try { d = await chatConFallback(Object.assign({ response_format:{ type:'json_object' } }, payloadBase), modelo, key); }
-      catch(e){ jsonFormat = false; d = await chatConFallback(payloadBase, modelo, key); }
+      catch(e){
+        const s = e.groqStatus || e.status;
+        if (s !== 400 && s !== 422) throw e;
+        jsonFormat = false;
+        d = await chatConFallback(payloadBase, modelo, key);
+      }
       const msg = (d.choices && d.choices[0] && d.choices[0].message) || {};
       const sal = parseSalida(msg.content || '');
       log('chat', msg.tool_calls ? 'tool_calls:' + msg.tool_calls.map(t=>t.function.name).join(',') : (sal.decir||'').slice(0,60).replace(/\n/g,' '), '· modelo', d._modelo_usado);

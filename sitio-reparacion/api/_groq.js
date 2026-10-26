@@ -32,6 +32,15 @@ const CANDIDATOS_STT = [
 ];
 /* cache en memoria de la instancia: modelo que ya respondió bien */
 let chatOk = null, sttOk = null;
+/* Enfriamiento por modelo: Groq limita TPM POR MODELO. Cuando uno se agota,
+   lo saltamos unos segundos y probamos el siguiente en vez de insistir y
+   dejar a Lupita muda. La memoria es por instancia (suficiente en caliente). */
+const chatCool = new Map(), sttCool = new Map();
+function enEspera(mapa, modelo){ return (mapa.get(modelo) || 0) > Date.now(); }
+function enfriar(mapa, modelo, err){
+  const seg = Math.max(3, Number(err && err.retryAfter) || 12);
+  mapa.set(modelo, Date.now() + Math.min(60, seg) * 1000);
+}
 
 /* Clave genérica de arranque (placeholder): permite que el build/deploy de
    Vercel funcione "de fábrica" sin GROQ_API_KEY. Lupita arranca y responde con
@@ -70,6 +79,9 @@ async function post(path, headers, body, ms){
       const msg = data && data.error && (data.error.message || data.error.code) ? String(data.error.message || data.error.code) : txt.slice(0, 200);
       const e = new Error('groq_' + r.status + ': ' + msg.slice(0, 200));
       e.groqStatus = r.status;
+      /* Groq manda Retry-After en segundos cuando es 429. */
+      const ra = parseInt(r.headers.get('retry-after') || '0', 10);
+      if (Number.isFinite(ra) && ra > 0) e.retryAfter = ra;
       throw e;
     }
     return data;
@@ -87,27 +99,43 @@ function esReintentable(err){
 /** Chat completions con fallback de modelos + retries. `preferido` viene de datos/agente.json. */
 async function chatConFallback(payloadBase, preferido, key){
   const lista = [];
-  if (preferido) lista.push(String(preferido).slice(0, 60));
-  if (chatOk && !lista.includes(chatOk)) lista.push(chatOk);
+  /* Si un modelo ya respondió bien (p. ej. el respaldo 120b tras un 429 del
+     20b), va primero: así no volvemos a tropezar con el que está saturado. */
+  if (chatOk) lista.push(chatOk);
+  if (preferido && !lista.includes(String(preferido).slice(0, 60))) lista.push(String(preferido).slice(0, 60));
   CANDIDATOS_CHAT.forEach(m => { if (!lista.includes(m)) lista.push(m); });
-  let ultimoErr = null;
+  let ultimoErr = null, todosEnfriados = true;
   for (let i = 0; i < lista.length; i++){
     const model = lista[i];
+    if (enEspera(chatCool, model)) continue;
+    todosEnfriados = false;
     for (let intento = 0; intento < 2; intento++){
       try {
         const d = await post('/chat/completions',
           { 'Content-Type':'application/json', Authorization:'Bearer ' + key },
           JSON.stringify(Object.assign({}, payloadBase, { model })));
         chatOk = model;
+        chatCool.delete(model);
         return Object.assign({ _modelo_usado: model }, d);
       } catch(e){
         ultimoErr = e;
         const s = e.groqStatus;
         if (s === 404 || s === 400 || s === 422) break;           /* ese modelo no sirve: prueba el siguiente */
-        if (esReintentable(e) && intento === 0){ await sleep(s === 429 ? 700 : 400); continue; } /* reintenta el mismo */
+        if (s === 429){
+          /* TPM agotado en ESTE modelo: el siguiente tiene su propio cupo.
+             No esperamos aquí; la espera mataría la conversación de voz. */
+          enfriar(chatCool, model, e);
+          break;
+        }
+        if ((s >= 500 || s === 401 || s === 403) && intento === 0){ await sleep(400); continue; }
         throw e;                                                  /* 401 definitivo tras retry, red, etc. */
       }
     }
+  }
+  if ((ultimoErr && ultimoErr.groqStatus === 429) || (!ultimoErr && todosEnfriados)){
+    const e = new Error('groq_429: todos los modelos están en su límite de tokens por minuto; reintenta en unos segundos');
+    e.groqStatus = 429; e.code = 'limite_groq'; e.retryAfter = 15;
+    throw e;
   }
   throw ultimoErr || new Error('groq_sin_modelos_disponibles');
 }
@@ -115,26 +143,35 @@ async function chatConFallback(payloadBase, preferido, key){
 /** Transcripción Whisper con fallback de modelos + retries. */
 async function sttConFallback(formFactory, preferido, key){
   const lista = [];
-  if (preferido) lista.push(String(preferido).slice(0, 60));
-  if (sttOk && !lista.includes(sttOk)) lista.push(sttOk);
+  if (sttOk) lista.push(sttOk);
+  if (preferido && !lista.includes(String(preferido).slice(0, 60))) lista.push(String(preferido).slice(0, 60));
   CANDIDATOS_STT.forEach(m => { if (!lista.includes(m)) lista.push(m); });
-  let ultimoErr = null;
+  let ultimoErr = null, todosEnfriados = true;
   for (let i = 0; i < lista.length; i++){
     const model = lista[i];
+    if (enEspera(sttCool, model)) continue;
+    todosEnfriados = false;
     for (let intento = 0; intento < 2; intento++){
       try {
         const fd = formFactory(model);
         const d = await post('/audio/transcriptions', { Authorization:'Bearer ' + key }, fd);
         sttOk = model;
+        sttCool.delete(model);
         return Object.assign({ _modelo_usado: model }, d);
       } catch(e){
         ultimoErr = e;
         const s = e.groqStatus;
         if (s === 404 || s === 400 || s === 422) break;
-        if (esReintentable(e) && intento === 0){ await sleep(s === 429 ? 900 : 500); continue; }
+        if (s === 429){ enfriar(sttCool, model, e); break; }
+        if ((s >= 500 || s === 401 || s === 403) && intento === 0){ await sleep(500); continue; }
         throw e;
       }
     }
+  }
+  if ((ultimoErr && ultimoErr.groqStatus === 429) || (!ultimoErr && todosEnfriados)){
+    const e = new Error('groq_429: transcripción temporalmente limitada; reintenta en unos segundos');
+    e.groqStatus = 429; e.code = 'limite_groq'; e.retryAfter = 15;
+    throw e;
   }
   throw ultimoErr || new Error('groq_stt_sin_modelo');
 }
