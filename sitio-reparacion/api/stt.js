@@ -37,7 +37,7 @@ module.exports = async function handler(req, res) {
     };
     const d = await sttConFallback(formFactory, b.modelo || 'whisper-large-v3-turbo', key);
     /* capa final: si aun así escribió "tapatech", se corrige antes de devolverlo */
-    const txt = corregirSTT(d.text || '');
+    const txt = corregirSTT(d.text || '').trim();
     return json(res, 200, { ok:true, text: txt, idioma: d.language || 'es', modelo: d._modelo_usado || '' });
   } catch(e){
     const status = e.status || e.groqStatus || 500;
