@@ -107,9 +107,12 @@ function esCopiaDelMaestro(extra, maestro){
  *  lo variable (contexto en vivo). Los tokens cacheados no consumen TPM. */
 function componerSistema(maestro, extra, contexto){
   const m = String(maestro || '').trim();
-  let e = String(extra || '').trim().slice(0, 4000);
-  const ctx = String(contexto || '').trim().slice(0, 8000);
+  /* Comparar ANTES de recortar: la firma del prompt está al inicio y al final;
+     si recortáramos primero podríamos perder la marca del final. */
+  let e = String(extra || '').trim();
   if (e && esCopiaDelMaestro(e, m)) e = '';
+  e = e.slice(0, 4000);
+  const ctx = String(contexto || '').trim().slice(0, 8000);
   return [m, e, ctx].filter(Boolean).join('\n\n');
 }
 
