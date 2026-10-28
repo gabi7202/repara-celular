@@ -348,9 +348,10 @@ p{text-wrap:pretty}
 /* Asegura que la imagen del hero quede SIEMPRE por debajo de los botones del encabezado (WhatsApp / Cotizar gratis), incluso al hacer scroll */
 .hdr{z-index:80}
 .hero h1{color:#000}
-.hero h1 em{font-style:normal;color:var(--acc-ink);position:relative}
-@media(min-width:700px){.hero h1 em{white-space:nowrap}}
-.hero h1 em::after{content:"";position:absolute;left:0;right:0;bottom:.06em;height:.09em;background:var(--acc);opacity:.4;border-radius:2px}
+/* Etiqueta bajo el H1: hereda los mismos estilos tipográficos del h1 (clamp, peso 800, interlineado) pero es un <p>, no parte del H1 */
+.hero-tag{font-size:clamp(2.1rem,6.2vw,3.7rem);line-height:1.1;letter-spacing:-.02em;font-weight:800;text-wrap:balance;color:var(--acc-ink);position:relative;margin-top:6px;display:inline-block}
+@media(min-width:700px){.hero-tag{white-space:nowrap}}
+.hero-tag::after{content:"";position:absolute;left:0;right:0;bottom:.06em;height:.09em;background:var(--acc);opacity:.4;border-radius:2px}
 .hero-sub{color:var(--txt-2);font-size:clamp(1rem,2.3vw,1.16rem);margin-top:18px;max-width:56ch}
 .hero-badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;padding:0;list-style:none}
 .hero-badges li{display:inline-flex;align-items:center;gap:7px;font-size:.79rem;font-weight:600;color:var(--txt);background:rgba(255,255,255,.7);border:1px solid var(--line);padding:7px 13px;border-radius:999px;backdrop-filter:blur(6px)}
@@ -946,7 +947,8 @@ html[data-lite="1"] .voz-sorp-txt::after{display:none}
   <div class="wrap">
     <div>
       <span class="eyebrow"><span class="dot" aria-hidden="true"></span> Taller físico en Tapachula · <span id="stTxt2">abierto ahora</span></span>
-      <h1>Reparación de celulares en Tapachula: <em>pantalla lista en 40 minutos</em></h1>
+      <h1>Reparación de celulares en Tapachula</h1>
+      <p class="hero-tag" aria-hidden="true">pantalla lista en 40 minutos</p>
       <p class="hero-sub">Reparamos cualquier celular —pantallas rotas, baterías que no duran, puertos de carga dañados, equipos mojados— además de laptops y consolas (Xbox, PlayStation, Switch). Diagnóstico <b>gratis</b>, precio cerrado antes de tocar tu equipo y <b>garantía escrita de 30 días</b>. También vamos por él a tu casa o trabajo.</p>
       <ul class="hero-badges">
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Entrega en 40–60 min</li>
