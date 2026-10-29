@@ -1,0 +1,33 @@
+# TapaTech
+
+> Taller de reparación de celulares, laptops y consolas en Tapachula, Chiapas. Diagnóstico gratuito, garantía escrita de 30 días y entrega en 40–60 minutos.
+
+TapaTech es un taller físico en Tapachula especializado en la reparación de dispositivos móviles, computadoras y consolas de videojuegos. Ofrecemos diagnóstico gratuito, precios cerrados antes de reparar y garantía por escrito.
+
+## Servicios
+
+- [Reparación de celulares](https://reparocelulares.vercel.app/#servicios): Cambio de pantalla, batería, puerto de carga, cámaras, limpieza por líquido, software y microsoldadura.
+- [Reparación de laptops](https://reparocelulares.vercel.app/#servicios): Formateo, instalación de sistema, upgrade a SSD, aumento de RAM, limpieza interna y cambio de pasta térmica.
+- [Reparación de consolas](https://reparocelulares.vercel.app/#servicios): Reparación de Xbox, PlayStation y Nintendo Switch (HDMI, joysticks, lectores de discos, sobrecalentamiento).
+
+## Cotizador en línea
+
+- [Cotizador de reparación](https://reparaciondecelulares.vercel.app/servicio#cotizador): Obtén un precio aproximado al instante para tu modelo específico. Sin registro.
+
+## Contacto y ubicación
+
+- [Página de contacto](https://reparocelulares.vercel.app/#contacto): Formulario, teléfono y WhatsApp.
+- Teléfono / WhatsApp: 962 288 9585
+- Dirección: Quinceava Avenida Sur & 18ª C. Ote., Los Naranjos, 16 de Septiembre, C.P. 30705, Tapachula, Chiapas, México.
+- Horario: Lunes a sábado de 9:00 a 19:00 (horario corrido). Domingo cerrado (urgencias por WhatsApp).
+
+## Garantía y políticas
+
+- Garantía escrita de 30 días en pieza y mano de obra.
+- Diagnóstico gratuito (15–30 min) con precio cerrado por escrito.
+- Nunca solicitamos contraseñas.
+- Pruebas de funcionamiento frente al cliente.
+
+## Optional
+
+- [Preguntas frecuentes](https://reparocelulares.vercel.app/#faq): Respuestas sobre tiempos de reparación, garantía y servicios a domicilio.
